@@ -1,0 +1,13 @@
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    background-color: #00F7FF;
+    transition: background-color 300ms ease-in-out;
+    line-height: 1.5;
+}

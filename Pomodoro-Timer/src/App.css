@@ -1,0 +1,12 @@
+.container {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.working {
+    background-color: #1800B2;
+}
+
+.hidden {
+    display: none;
+}
