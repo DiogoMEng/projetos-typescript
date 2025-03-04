@@ -1,6 +1,7 @@
-import app from './app';
+import app from "./app";
+import "dotenv"
 
-app.listen("3000", () => {
+app.listen(process.env.PORT, () => {
     const date = new Date();
     console.log("server running.\n" + date);
   });
