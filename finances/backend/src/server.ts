@@ -1,5 +1,5 @@
 import app from "./app";
-import "dotenv"
+import "dotenv/config"
 
 app.listen(process.env.PORT, () => {
     const date = new Date();
