@@ -73,6 +73,12 @@ services:
 ```yml
 # Inicializa o contêineres que foram definidos no arquivo docker-compose.yml
 docker-compose up -d
+
+# Encerra e remove tudo que foi criado com "docker-compose up"
+docker-compose down
+
+# Verifica os containeres que ainda estão em execução
+docker-compose ps
 ```
 
 ---
@@ -135,3 +141,4 @@ expenses_id: {
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
 }
+```

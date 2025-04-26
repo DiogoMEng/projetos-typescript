@@ -16,7 +16,7 @@
 		"strictPropertyInitialization": false,
 		"typeRoots": ["./src/@types"]
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "20250415191737-expense.js"],
 	"exclude": ["node_modules", "dist"],
 	"ts-node": {
 		"files": true
