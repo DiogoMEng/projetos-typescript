@@ -1,48 +1,55 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
-import { UnauthorizedError, BadRequestError } from '../errors';
-import { Request, Response, NextFunction } from "express"
+import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import User from "../database/models/User";
 
-typescript
+// Define a type for the authenticated user (excluding password)
+type AuthenticatedUser = {
+  id: number;
+  // Add other user properties here
+  [key: string]: any;
+};
 
-/**
- * Express middleware to authenticate requests using JWT.
- * Attaches the authenticated user (without password) to req.user.
- */
+// Extend Express Request type to include user property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthenticatedUser;
+    }
+  }
+}
+
 export const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
+  const authorization = req.headers.authorization;
+
+  if (!authorization || !authorization.startsWith("Bearer ")) {
+    throw new UnauthorizedError("Acesso não Autorizado");
+  }
+
+  const token = authorization.split(" ")[1];
+
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw new UnauthorizedError('Acesso não autorizado');
-    }
+    const { id } = jwt.verify(token, process.env.JWT_PASS ?? "") as { id: number };
 
-    const token = authHeader.split(' ')[1];
-    const secret = process.env.JWT_PASS;
-    if (!secret) {
-      throw new UnauthorizedError('JWT secret not configured');
-    }
-
-    const payload = jwt.verify(token, secret) as { id: number };
-    const user = await User.findByPk(payload.id);
+    const user = await User.findByPk(id);
 
     if (!user) {
-      throw new BadRequestError('E-mail ou senha inválidos');
+      throw new BadRequestError("Usuário não encontrado");
     }
 
-    // Exclude password from user object
-    const { password, ...loggedUser } = user.get ? user.get() : user;
-    req.user = loggedUser;
+    // Safely remove password from user object
+    const userData = user.toJSON ? user.toJSON() : JSON.parse(JSON.stringify(user));
+    const { password, ...loggedUser } = userData;
+
+    // Assign the user data to req.user
+    req.user = loggedUser as AuthenticatedUser;
 
     next();
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    throw new UnauthorizedError("Token inválido ou expirado");
   }
 };

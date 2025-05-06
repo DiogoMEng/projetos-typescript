@@ -12,6 +12,13 @@ class UserService {
   async show() {
 
     const users = await this.model.findAll({ attributes: ["fullName", "email"] });
+
+    const user = true;
+
+    if (user) {
+      throw new BadRequestError("Este e-mail já existe");
+    }
+
     return resp(200, users);
 
   }
