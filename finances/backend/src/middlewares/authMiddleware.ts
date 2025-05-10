@@ -1,36 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import User from "../database/models/User";
-
-// Define a type for the authenticated user (excluding password)
-type AuthenticatedUser = {
-  id: number;
-  // Add other user properties here
-  [key: string]: any;
-};
-
-// Extend Express Request type to include user property
-declare global {
-  namespace Express {
-    interface Request {
-      user?: AuthenticatedUser;
-    }
-  }
-}
+import { AuthenticatedUser } from "../interfaces/user.protocol";
 
 export const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const authorization = req.headers.authorization;
+  const { authorization } = req.headers;
 
-  if (!authorization || !authorization.startsWith("Bearer ")) {
-    throw new UnauthorizedError("Acesso não Autorizado");
-  }
-
-  const token = authorization.split(" ")[1];
+  const token = authorization!.split(" ")[1];
 
   try {
     const { id } = jwt.verify(token, process.env.JWT_PASS ?? "") as { id: number };
@@ -38,7 +18,8 @@ export const authMiddleware = async (
     const user = await User.findByPk(id);
 
     if (!user) {
-      throw new BadRequestError("Usuário não encontrado");
+      res.status(401).json({ message: "User not found" });
+      return;
     }
 
     // Safely remove password from user object
@@ -50,6 +31,6 @@ export const authMiddleware = async (
 
     next();
   } catch (error) {
-    throw new UnauthorizedError("Token inválido ou expirado");
+    res.status(401).json({ message: error });
   }
 };

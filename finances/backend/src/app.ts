@@ -1,15 +1,14 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import router from "./routes/routes";
-import { errorMiddleware } from "./middlewares/error";
 
 class App {
   public readonly app: Application
 
   constructor () {
     this.app = express();
-    this.routes();
     this.middleware();
+    this.routes();
   }
 
   middleware() {
@@ -17,12 +16,11 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cors())
-    this.app.use(errorMiddleware);
-
+    
   }
-
+  
   routes() {
-    this.app.use(router)
+    this.app.use(router);
   }
 }
 
