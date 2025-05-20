@@ -7,7 +7,7 @@ const control =  new UserController();
 
 userRouter.get("/user", control.show.bind(control));
 userRouter.post("/user", control.create.bind(control));
-userRouter.post("/login", control.login.bind(control));
+userRouter.delete("/user/:id", control.delete.bind(control));
 userRouter.get("/profile", authMiddleware, control.getProfile.bind(control));
 
 export default userRouter;

@@ -1,5 +1,13 @@
 # API DE AUTENTICAÇÃO COM JWT
 
+# <p id="sumario">Sumário</p>
+
+Parte 1: <a href="#dependencias">Dependências de Projeto</a>
+
+Parte 2: <a href="#criando-entidades">Criando as Entidades</a>
+
+Parte 3: <a href="#arquivo-types">Arquivo de Types</a>
+
 # <p id="dependencias">Dependências de Projeto</p>
 
 `express-async-errors`: utilizado para o gerenciamento de erros.
