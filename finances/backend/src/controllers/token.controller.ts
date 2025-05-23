@@ -18,6 +18,10 @@ class TokenController {
 
       const verifyPass = await bcrypt.compare(password, user!.password);
 
+      if (!verifyPass) {
+        return res.status(401).json({ message: "Email ou senha inválidos" });
+      }
+
       const token = jwt.sign(
         { id: user!.userId },
         process.env.JWT_PASS ?? "",

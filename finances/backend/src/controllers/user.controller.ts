@@ -46,39 +46,9 @@ class UserController {
     }
 
   }
-
-
-  async login(req: Request, res: Response, next: NextFunction) {
-
-    try {
-      const { email, password } = req.body;
-      const user = await this.model.findOne({ where: { email } });
-
-      if (!user) {
-        return res.status(401).json({ message: "Email ou senha inválidos" });
-      }
-
-      const verifyPass = await bcrypt.compare(password, user!.password);
-
-      const token = jwt.sign(
-        { id: user!.userId },
-        process.env.JWT_PASS ?? "",
-        { expiresIn: "7d" }
-      );
-
-      const { password: _, ...userLogin } = user!.get({ plain: true });
-
-      return res.status(200).json({user: userLogin, token });
-    } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
-    }
-
-  }
-
+  
 
   async delete(req: Request, res: Response, next: NextFunction) {
-
-    console.log("Entrou no delete");
 
     try {
       const { id } = req.params;
@@ -98,16 +68,6 @@ class UserController {
 
   }
 
-
-  async getProfile(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    
-    try {
-      return res.json(req.user);
-    } catch (error) {
-      next(error);
-    }
-
-  }
 }
 
 export default UserController;

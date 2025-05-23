@@ -6,8 +6,7 @@ const userRouter = Router();
 const control =  new UserController();
 
 userRouter.get("/user", control.show.bind(control));
-userRouter.post("/user", control.create.bind(control));
+userRouter.post("/create", control.create.bind(control));
 userRouter.delete("/user/:id", control.delete.bind(control));
-userRouter.get("/profile", authMiddleware, control.getProfile.bind(control));
 
 export default userRouter;
