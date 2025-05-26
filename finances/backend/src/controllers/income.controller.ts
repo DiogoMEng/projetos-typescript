@@ -9,18 +9,9 @@ class IncomeController {
   async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     
     try {
-      const { 
-        description, 
-        value, 
-        dateReceipt,
-        type
-      } = req.body;
-
       const { userId } = req.user as AuthenticatedUser;
 
-      const newEntry = await this.model.create({ description, value, dateReceipt, type, userId });
-
-      const { ...entry } = newEntry.get({ plain: true });
+      const newEntry = await this.model.create(req.body);
 
       return res.status(200).json({ message: "Novo valor de entrada registrado com sucesso" });
     } catch (error) {
@@ -87,12 +78,14 @@ class IncomeController {
       const entry = await this.model.findByPk(id);
 
       if (!entry) {
-        return res.status(404).json({ message: "Ocorreu um erro ao tentar deletar o registro" });
+        return res.status(404).json({ message: "Registro inexistente ou inválido" });
       }
 
-      await entry.destroy();
+      const newEntry = await entry.update(req.body);
 
-      return res.status(200).json({ message: "Registro de entrada deletado" });
+      const { description, value, dateReceipt, type } = newEntry.get({ plain: true });
+
+      return res.status(200).json({ description, value, dateReceipt, type });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
