@@ -10,8 +10,14 @@ class IncomeController {
     
     try {
       const { userId } = req.user as AuthenticatedUser;
+      const {
+        description,
+        value,
+        dateReceipt,
+        type
+      } = req.body
 
-      const newEntry = await this.model.create(req.body);
+      await this.model.create({ description, value, dateReceipt, type, userId });
 
       return res.status(200).json({ message: "Novo valor de entrada registrado com sucesso" });
     } catch (error) {

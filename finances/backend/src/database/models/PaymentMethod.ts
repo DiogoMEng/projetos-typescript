@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import db from ".";
+import User from "./User";
 
 class PaymentMethod extends Model {
   declare paymentMethodId: number
@@ -21,6 +22,16 @@ PaymentMethod.init({
   description: {
     type: DataTypes.STRING,
     defaultValue: "No notes"
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "user",
+      key: "userId"
+    },
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE"
   }
   
 }, {
@@ -29,6 +40,20 @@ PaymentMethod.init({
   modelName: "PaymentMethod",
   underscored: true,
   timestamps: false
+});
+
+PaymentMethod.belongsTo(User, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+  as: "user"
+});
+
+User.hasMany(PaymentMethod, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+  as: "paymentMethods"
 });
 
 export default PaymentMethod;

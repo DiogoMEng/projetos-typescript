@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { ModelStatic } from "sequelize";
 import bcrypt from "bcryptjs";

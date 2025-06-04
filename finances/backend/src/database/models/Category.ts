@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import db from ".";
+import User from "./User";
 
 class Category extends Model {
   declare categoryId: number
@@ -21,6 +22,16 @@ Category.init({
   description: {
     type: DataTypes.STRING,
     defaultValue: "No notes"
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "user",
+      key: "userId"
+    },
+    onUpdate: "CASCADE",
+    onDelete: "CASCADE"
   }
 }, {
   sequelize: db,
@@ -28,6 +39,20 @@ Category.init({
   modelName: "Category",
   underscored: true,
   timestamps: false
+});
+
+Category.belongsTo(User, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+  as: "user"
+});
+
+User.hasMany(Category, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+  as: "categories"
 });
 
 export default Category;

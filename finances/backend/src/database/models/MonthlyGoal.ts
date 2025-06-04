@@ -61,3 +61,5 @@ User.hasMany(MonthlyGoal, {
   onUpdate: "CASCADE",
   as: "monthlyGoal"
 })
+
+export default MonthlyGoal;
