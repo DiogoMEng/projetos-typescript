@@ -16,11 +16,11 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cors())
-
+    
   }
-
+  
   routes() {
-    this.app.use(router)
+    this.app.use(router);
   }
 }
 
