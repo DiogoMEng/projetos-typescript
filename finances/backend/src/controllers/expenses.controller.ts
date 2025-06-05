@@ -11,15 +11,20 @@ class ExpenseController {
     try {
       const { userId } = req.user as AuthenticatedUser;
       const {
-        name,
-        description
+        description,
+        value,
+        date,
+        observation,
+        situation,
+        categoryId,
+        paymentMethodId
       } = req.body
 
-      console.log("Category:", req.body);
+      console.log("Expense:", req.body, "\nuserId:", userId, "\n");
 
-      await this.model.create({ name, description, userId });
+      await this.model.create({ description, value, date, observation, situation, userId, categoryId, paymentMethodId });
 
-      return res.status(200).json({ message: "Nova Categoria de despesa adicionada" });
+      return res.status(200).json({ message: "Uma nova despesa foi adicionada a conta com sucesso" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
@@ -32,9 +37,9 @@ class ExpenseController {
     try {
       const { userId } = req.user as AuthenticatedUser;
 
-      const categories = await this.model.findAll({ where: { userId } });
+      const expenses = await this.model.findAll({ where: { userId } });
 
-      return res.status(200).json(categories);
+      return res.status(200).json(expenses);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
@@ -47,15 +52,15 @@ class ExpenseController {
     try {
       const { id } = req.params;
 
-      const category = await this.model.findByPk(id);
+      const expense = await this.model.findByPk(id);
 
-      if (!category) {
-        return res.status(404).json({ message: "Esta categoria não existe" });
+      if (!expense) {
+        return res.status(404).json({ message: "Não há registros para esta despesa" });
       }
 
-      await category.destroy();
+      await expense.destroy();
 
-      return res.status(200).json({ message: "Categoria de despesa deletado com sucesso" });
+      return res.status(200).json({ message: "Despesa deletada com sucesso" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
@@ -67,19 +72,35 @@ class ExpenseController {
     try {
       const { id } = req.params;
       const {
-        name,
-        description
+        description,
+        value,
+        date,
+        observation,
+        situation,
+        categoryId,
+        paymentMethodId
       } = req.body
 
-      const category = await this.model.findByPk(id);
+      const expense = await this.model.findByPk(id);
 
-      if (!category) {
+      if (!expense) {
         return res.status(404).json({ message: "Categoria de despesa deletado com sucesso" });
       }
 
-      await category.update({ name, description });
+      await expense.update({ description, value, date, observation, situation, categoryId, paymentMethodId });
 
-      return res.status(200).json({message: "Categoria Atualizada", newCategory: { name, description } });
+      return res.status(200).json({
+        message: "Categoria Atualizada", 
+        newCategory: { 
+          description, 
+          value, 
+          date, 
+          observation, 
+          situation, 
+          categoryId, 
+          paymentMethodId 
+        } 
+      });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }

@@ -15,7 +15,7 @@ class CategoryController {
         description
       } = req.body
 
-      console.log("Category:", req.body);
+      console.log("Category:", req.body, userId);
 
       await this.model.create({ name, description, userId });
 
