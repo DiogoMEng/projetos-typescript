@@ -5,8 +5,9 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 const userRouter = Router();
 const control =  new UserController();
 
-userRouter.get("/user", control.show.bind(control));
+userRouter.get("/user", authMiddleware,control.show.bind(control));
 userRouter.post("/create", control.create.bind(control));
-userRouter.delete("/user/:id", control.delete.bind(control));
+userRouter.delete("/delete/:id", authMiddleware,control.delete.bind(control));
+userRouter.put("/update/:id", authMiddleware,control.update.bind(control));
 
 export default userRouter;
