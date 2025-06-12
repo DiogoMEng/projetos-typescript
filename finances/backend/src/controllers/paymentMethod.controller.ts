@@ -2,90 +2,94 @@ import { Request, Response, NextFunction } from "express";
 import { ModelStatic } from "sequelize";
 import PaymentMethod from "../database/models/PaymentMethod";
 import { AuthenticatedUser } from "../interfaces/user.protocol";
+import PaymentMethodSchema from "../schemas/paymentMethod.schema";
 
 class PaymentMethodController {
   private model: ModelStatic<PaymentMethod> = PaymentMethod;
 
   async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    
+    const { id: userId } = req.user as AuthenticatedUser;
+    const bodyWithUser = { ...req.body, userId };
+
+    const { error } = PaymentMethodSchema.createPaymentMethod().validate(bodyWithUser, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({
+        message: error.details.map((d: any) => d.message).join("; ")
+      });
+    }
+
     try {
-      const { userId } = req.user as AuthenticatedUser;
-      const {
-        type,
-        description
-      } = req.body
-
+      const { type, description } = req.body;
       await this.model.create({ type, description, userId });
-
       return res.status(200).json({ message: "Novo método de pagamento adicionado" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
-
   }
 
-
   async show(req: Request, res: Response, next: NextFunction) {
-
     try {
-      const { userId } = req.user as AuthenticatedUser;
-
+      const { id: userId } = req.user as AuthenticatedUser;
       const methods = await this.model.findAll({ where: { userId } });
-
       return res.status(200).json(methods);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
-
   }
-  
 
   async delete(req: Request, res: Response, next: NextFunction) {
+    const { error } = PaymentMethodSchema.idParam().validate(req.params, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({
+        message: error.details.map((d: any) => d.message).join("; ")
+      });
+    }
 
     try {
       const { id } = req.params;
-
       const method = await this.model.findByPk(id);
 
-      console.log(method);
-
       if (!method) {
-        return res.status(404).json({ message: "Este método de pagamento ainda não existe" });
+        return res.status(404).json({ message: "Este método de pagamento não existe." });
       }
 
       await method.destroy();
-
       return res.status(200).json({ message: "Método de pagamento deletado com sucesso" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
-
   }
 
   async update(req: Request, res: Response, next: NextFunction) {
+    const paramValidation = PaymentMethodSchema.idParam().validate(req.params, { abortEarly: false });
+    if (paramValidation.error) {
+      return res.status(400).json({
+        message: paramValidation.error.details.map((d: any) => d.message).join("; ")
+      });
+    }
+
+    const { error } = PaymentMethodSchema.updatePaymentMethod().validate(req.body, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({
+        message: error.details.map((d: any) => d.message).join("; ")
+      });
+    }
 
     try {
       const { id } = req.params;
-      const {
-        type,
-        description
-      } = req.body
-
+      const { type, description } = req.body;
       const method = await this.model.findByPk(id);
 
       if (!method) {
-        return res.status(404).json({ message: "Este método de pagamento ainda não existe" });
+        return res.status(404).json({ message: "Este método de pagamento não existe." });
       }
 
-      await method.update({message: "Método de Pagamento Atualizado", newMethod: { type, description } });
-
-      return res.status(200).json({  });
+      await method.update({ type, description });
+      return res.status(200).json({ message: "Método de Pagamento Atualizado", updatedMethod: { type, description } });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
-
   }
-
 }
 
 export default PaymentMethodController;
