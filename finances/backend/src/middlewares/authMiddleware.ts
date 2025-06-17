@@ -13,20 +13,22 @@ export const authMiddleware = async (
   const token = authorization!.split(" ")[1];
 
   try {
-    const { id } = jwt.verify(token, process.env.JWT_PASS ?? "") as { id: number };
-
-    const user = await User.findByPk(id);
-
-    if (!user) {
-      res.status(401).json({ message: "User not found" });
+    if (!token) {
+      res.status(401).json({ message: "Olá! Para acessar essa área, é necessário estar logado. Faça seu login ou registre-se em poucos segundos!" });
       return;
     }
 
-    // Safely remove password from user object
+    const { id } = jwt.verify(token, process.env.JWT_PASS ?? "") as { id: number };
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      res.status(401).json({ message: "Olá! Para acessar essa área, é necessário estar logado. Faça seu login ou registre-se em poucos segundos! Usuário" });
+      return;
+    }
+
     const userData = user.toJSON ? user.toJSON() : JSON.parse(JSON.stringify(user));
     const { password, ...loggedUser } = userData;
 
-    // Assign the user data to req.user
     req.user = loggedUser as AuthenticatedUser;
 
     next();
