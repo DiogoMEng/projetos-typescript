@@ -27,11 +27,13 @@ class UserSchema {
         }),
       password: Joi.string()
         .min(6)
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!?@&])[A-Za-z\d!?@&]{6,}$/)
         .required()
         .messages({
           "string.base": "A senha deve ser um texto.",
           "string.empty": "A senha é obrigatória.",
           "string.min": "A senha deve ter pelo menos {#limit} caracteres.",
+          "string.pattern.base": "A senha deve conter letras minúscula e maiúscula, números e caracteres especiais (!, ?, @ ou &).",
           "any.required": "A senha é obrigatória.",
         }),
     });
@@ -50,10 +52,12 @@ class UserSchema {
         }),
       password: Joi.string()
         .min(6)
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!?@&])[A-Za-z\d!?@&]{6,}$/)
         .optional()
         .messages({
           "string.base": "A senha deve ser um texto.",
           "string.min": "A senha deve ter pelo menos {#limit} caracteres.",
+          "string.pattern.base": "A senha deve conter letras minúscula e maiúscula, números e caracteres especiais (!, ?, @ ou &).",
         }),
     })
       .or('name', 'password')

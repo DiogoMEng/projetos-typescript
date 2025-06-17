@@ -5,16 +5,25 @@ import User from "../database/models/User";
 import { AuthenticatedUser } from "../interfaces/user.protocol";
 import UserSchema from "../schemas/user.schema";
 
+
+/**
+ * CONTROLLER RESPONSIBLE FOR HANDLING USER-RELATED OPERATIONS:
+ * - CREATION, LISTING, UPDATING AND DELETION OF USERS. 
+ */
 class UserController {
   private model: ModelStatic<User> = User;
 
   /**
-   * CREATES A NEW USER AFTER VALIDATING INPUT AND HASHING THE PASSWORD.
+   * CREATE A NEW USER:
+   * - Validates request body.
+   * - Checks if user already exists by email.
+   * - Hashes password and saves user to the database.
+   * - Returns the created user (without password).
    */
   async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { error } = UserSchema.createUser().validate(req.body);
+    const { error } = UserSchema.createUser().validate(req.body, { abortEarly: false });
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.status(400).json({ message: error.details.map((d: any) => d.message).join("; ") });
     }
 
     try {
@@ -28,7 +37,6 @@ class UserController {
       const hashPassword = await bcrypt.hash(password, 10);
       const newUser = await this.model.create({ fullName, email, password: hashPassword });
 
-      // Exclude password from response
       const { password: _, ...user } = newUser.get({ plain: true });
 
       return res.status(200).json(user);
@@ -37,8 +45,10 @@ class UserController {
     }
   }
 
+
   /**
-   * RETRIEVER ALL USERS' FULL NAMES AND EMAILS.
+   *  LIST ALL USERS:
+   *  - Returns an array of users with only fullName and email.
    */
   async show(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
@@ -54,13 +64,17 @@ class UserController {
     }
   }
 
+
   /**
-   * DELETES A USER BY ID AFTER VALIDATING INPUT.
+   *  DELETE A USER BY ID:
+   *  - Validates the ID parameter.
+   *  - Checks if the user exists.
+   *  - Deletes the user from the database.
    */
   async delete(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { error } = UserSchema.deleteUser().validate(req.params);
+    const { error } = UserSchema.deleteUser().validate(req.params, { abortEarly: false });
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.status(400).json({ message: error.details.map((d: any) => d.message).join("; ") });
     }
 
     try {
@@ -78,13 +92,16 @@ class UserController {
     }
   }
 
+
   /**
-   * UPDATES USER INFORMATION AFTER VALIDATING INPUT AND HASHING THE NEW PASSWORD.
+   *  UPDATE USER INFORMATION:
+   *  - Validates request body.
+   *  - Updates fullName and/or password for the authenticated user.
    */
   async update(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { error, value } = UserSchema.updateUser().validate(req.body);
+    const { error, value } = UserSchema.updateUser().validate(req.body, { abortEarly: false });
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      return res.status(400).json({ message: error.details.map((d: any) => d.message).join("; ") });
     }
 
     try {

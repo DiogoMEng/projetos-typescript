@@ -35,6 +35,7 @@ class ExpenseController {
     }
   }
 
+
   async show(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req.user as AuthenticatedUser;
@@ -44,6 +45,7 @@ class ExpenseController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
 
   async delete(req: Request, res: Response, next: NextFunction) {
     const { error } = ExpenseSchema.idParam().validate(req.params, { abortEarly: false });
@@ -68,6 +70,7 @@ class ExpenseController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+  
 
   async update(req: Request, res: Response, next: NextFunction) {
     const paramValidation = ExpenseSchema.idParam().validate(req.params, { abortEarly: false });

@@ -3,6 +3,7 @@ import Joi from "joi";
 class IncomeSchema {
 
   static createIncome() {
+    
     return Joi.object({
       description: Joi.string()
         .min(3)
@@ -15,7 +16,7 @@ class IncomeSchema {
           "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
           "any.required": "A descrição é obrigatória.",
         }),
-      amount: Joi.number()
+      value: Joi.number()
         .positive()
         .precision(2)
         .required()
@@ -25,15 +26,16 @@ class IncomeSchema {
           "number.precision": "O valor pode ter no máximo 2 casas decimais.",
           "any.required": "O valor é obrigatório.",
         }),
-      date: Joi.date()
-        .iso()
+      dateReceipt: Joi.string()
+        .pattern(/^\d{4}-\d{2}-\d{2}$/)
         .required()
         .messages({
-          "date.base": "A data deve ser válida.",
-          "date.format": "A data deve estar no formato ISO.",
+          "string.base": "A data deve ser um texto.",
+          "string.empty": "A data é obrigatória.",
+          "string.pattern.base": "A data deve estar no formato YYYY-MM-DD (exemplo: 2025-06-17).",
           "any.required": "A data é obrigatória.",
         }),
-      category: Joi.string()
+      type: Joi.string()
         .min(3)
         .max(50)
         .optional()
@@ -66,7 +68,7 @@ class IncomeSchema {
           "string.min": "A descrição deve ter pelo menos {#limit} caracteres.",
           "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
         }),
-      amount: Joi.number()
+      value: Joi.number()
         .positive()
         .precision(2)
         .optional()
@@ -75,14 +77,16 @@ class IncomeSchema {
           "number.positive": "O valor deve ser positivo.",
           "number.precision": "O valor pode ter no máximo 2 casas decimais.",
         }),
-      date: Joi.date()
-        .iso()
-        .optional()
+      dateReceipt: Joi.string()
+        .pattern(/^\d{4}-\d{2}-\d{2}$/)
+        .required()
         .messages({
-          "date.base": "A data deve ser válida.",
-          "date.format": "A data deve estar no formato ISO.",
+          "string.base": "A data deve ser um texto.",
+          "string.empty": "A data é obrigatória.",
+          "string.pattern.base": "A data deve estar no formato YYYY-MM-DD (exemplo: 2025-06-17).",
+          "any.required": "A data é obrigatória.",
         }),
-      category: Joi.string()
+      type: Joi.string()
         .min(3)
         .max(50)
         .optional()
@@ -113,20 +117,6 @@ class IncomeSchema {
     });
   }
 
-  static showIncome() {
-    return Joi.object({
-      id: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          "number.base": "O ID deve ser um número.",
-          "number.integer": "O ID deve ser um número inteiro.",
-          "number.positive": "O ID deve ser um número positivo.",
-          "any.required": "O ID é obrigatório.",
-        }),
-    });
-  }
 }
 
 export default IncomeSchema;

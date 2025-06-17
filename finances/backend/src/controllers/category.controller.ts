@@ -8,7 +8,6 @@ class CategoryController {
   private model: ModelStatic<Category> = Category;
 
   async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    // Adiciona userId ao body para validação
     const { id: userId } = req.user as AuthenticatedUser;
     const bodyWithUser = { ...req.body, userId };
 
@@ -28,6 +27,7 @@ class CategoryController {
     }
   }
 
+
   async show(req: Request, res: Response, next: NextFunction) {
     try {
       const { id: userId } = req.user as AuthenticatedUser;
@@ -37,6 +37,7 @@ class CategoryController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+
 
   async delete(req: Request, res: Response, next: NextFunction) {
     const { error } = CategorySchema.deleteCategory().validate(req.params, { abortEarly: false });
@@ -60,6 +61,7 @@ class CategoryController {
       res.status(500).json({ message: "Internal server error" });
     }
   }
+  
 
   async update(req: Request, res: Response, next: NextFunction) {
     // Validação do parâmetro id
@@ -70,7 +72,6 @@ class CategoryController {
       });
     }
 
-    // Validação do corpo
     const { error } = CategorySchema.updateCategory().validate(req.body, { abortEarly: false });
     if (error) {
       return res.status(400).json({
