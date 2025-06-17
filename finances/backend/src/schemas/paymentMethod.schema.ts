@@ -8,30 +8,20 @@ class PaymentMethodSchema {
         .max(50)
         .required()
         .messages({
-          "string.base": "O campo 'type' deve ser um texto.",
-          "string.empty": "O campo 'type' não pode ser vazio.",
-          "string.min": "O campo 'type' deve ter pelo menos {#limit} caractere.",
-          "string.max": "O campo 'type' deve ter no máximo {#limit} caracteres.",
-          "any.required": "O campo 'type' é obrigatório.",
+          "string.base": "O campo deve ser um texto.",
+          "string.empty": "O campo não pode ser vazio.",
+          "string.min": "O campo deve ter pelo menos {#limit} caractere.",
+          "string.max": "O campo deve ter no máximo {#limit} caracteres.",
+          "any.required": "O campo é obrigatório.",
         }),
       description: Joi.string()
         .allow("")
         .max(255)
         .optional()
         .messages({
-          "string.base": "O campo 'description' deve ser um texto.",
-          "string.max": "O campo 'description' deve ter no máximo {#limit} caracteres.",
-        }),
-      userId: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          "number.base": "O ID do usuário deve ser um número.",
-          "number.integer": "O ID do usuário deve ser um número inteiro.",
-          "number.positive": "O ID do usuário deve ser positivo.",
-          "any.required": "O ID do usuário é obrigatório.",
-        }),
+          "string.base": "A descrição deve ser um texto.",
+          "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
+        })
     });
   }
 
@@ -42,18 +32,18 @@ class PaymentMethodSchema {
         .max(50)
         .optional()
         .messages({
-          "string.base": "O campo 'type' deve ser um texto.",
-          "string.empty": "O campo 'type' não pode ser vazio.",
-          "string.min": "O campo 'type' deve ter pelo menos {#limit} caractere.",
-          "string.max": "O campo 'type' deve ter no máximo {#limit} caracteres.",
+          "string.base": "O campo deve ser um texto.",
+          "string.empty": "O campo não pode ser vazio.",
+          "string.min": "O campo deve ter pelo menos {#limit} caractere.",
+          "string.max": "O campo deve ter no máximo {#limit} caracteres.",
         }),
       description: Joi.string()
         .allow("")
         .max(255)
         .optional()
         .messages({
-          "string.base": "O campo 'description' deve ser um texto.",
-          "string.max": "O campo 'description' deve ter no máximo {#limit} caracteres.",
+          "string.base": "A descrição deve ser um texto.",
+          "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
         }),
     })
     .or('type', 'description')
