@@ -6,12 +6,14 @@ class ExpenseSchema {
       description: Joi.string()
         .min(3)
         .max(255)
+        .pattern(/^(?!^\d+$).*$/)
         .required()
         .messages({
           "string.base": "A descrição deve ser um texto.",
           "string.empty": "A descrição é obrigatória.",
           "string.min": "A descrição deve ter pelo menos {#limit} caracteres.",
           "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
+          "string.pattern.base": "A descrição não pode conter apenas números.",
           "any.required": "A descrição é obrigatória.",
         }),
       value: Joi.number()
@@ -24,12 +26,12 @@ class ExpenseSchema {
           "number.precision": "O valor pode ter no máximo 2 casas decimais.",
           "any.required": "O valor é obrigatório.",
         }),
-      date: Joi.date()
-        .iso()
+      date: Joi.string()
+        .pattern(/^\d{4}-\d{2}-\d{2}$/)
         .required()
         .messages({
           "date.base": "A data deve ser válida.",
-          "date.format": "A data deve estar no formato ISO.",
+          "string.pattern.base": "A data deve estar no formato YYYY-MM-DD (exemplo: 2025-06-17).",
           "any.required": "A data é obrigatória.",
         }),
       observation: Joi.string()
@@ -43,28 +45,8 @@ class ExpenseSchema {
       situation: Joi.boolean()
         .required()
         .messages({
-          "boolean.base": "O campo 'situation' deve ser verdadeiro ou falso.",
-          "any.required": "O campo 'situation' é obrigatório.",
-        }),
-      categoryId: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          "number.base": "O campo 'categoryId' deve ser um número.",
-          "number.integer": "O campo 'categoryId' deve ser um número inteiro.",
-          "number.positive": "O campo 'categoryId' deve ser positivo.",
-          "any.required": "O campo 'categoryId' é obrigatório.",
-        }),
-      paymentMethodId: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          "number.base": "O campo 'paymentMethodId' deve ser um número.",
-          "number.integer": "O campo 'paymentMethodId' deve ser um número inteiro.",
-          "number.positive": "O campo 'paymentMethodId' deve ser positivo.",
-          "any.required": "O campo 'paymentMethodId' é obrigatório.",
+          "boolean.base": "A situação deve ser verdadeiro ou falso.",
+          "any.required": "A situação' é obrigatório.",
         }),
     });
   }
@@ -89,12 +71,12 @@ class ExpenseSchema {
           "number.positive": "O valor deve ser positivo.",
           "number.precision": "O valor pode ter no máximo 2 casas decimais.",
         }),
-      date: Joi.date()
-        .iso()
+      date: Joi.string()
+        .pattern(/^\d{4}-\d{2}-\d{2}$/)
         .optional()
         .messages({
           "date.base": "A data deve ser válida.",
-          "date.format": "A data deve estar no formato ISO.",
+          "string.pattern.base": "A data deve estar no formato YYYY-MM-DD (exemplo: 2025-06-17)."
         }),
       observation: Joi.string()
         .allow("")
@@ -107,28 +89,10 @@ class ExpenseSchema {
       situation: Joi.boolean()
         .optional()
         .messages({
-          "boolean.base": "O campo 'situation' deve ser verdadeiro ou falso.",
-        }),
-      categoryId: Joi.number()
-        .integer()
-        .positive()
-        .optional()
-        .messages({
-          "number.base": "O campo 'categoryId' deve ser um número.",
-          "number.integer": "O campo 'categoryId' deve ser um número inteiro.",
-          "number.positive": "O campo 'categoryId' deve ser positivo.",
-        }),
-      paymentMethodId: Joi.number()
-        .integer()
-        .positive()
-        .optional()
-        .messages({
-          "number.base": "O campo 'paymentMethodId' deve ser um número.",
-          "number.integer": "O campo 'paymentMethodId' deve ser um número inteiro.",
-          "number.positive": "O campo 'paymentMethodId' deve ser positivo.",
-        }),
+          "boolean.base": "A situação deve ser verdadeiro ou falso.",
+        })
     })
-    .or('description', 'value', 'date', 'observation', 'situation', 'categoryId', 'paymentMethodId')
+    .or('description', 'value', 'date', 'observation', 'situation')
     .messages({
       "object.missing": "Informe pelo menos um campo para atualizar.",
     });
