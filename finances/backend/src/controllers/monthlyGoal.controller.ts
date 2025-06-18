@@ -4,12 +4,23 @@ import MonthlyGoal from "../database/models/MonthlyGoal";
 import { AuthenticatedUser } from "../interfaces/user.protocol";
 import MonthlyGoalSchema from "../schemas/monthlyGoal.schema";
 
+/**
+ *  CONTROLLER RESPONSIBLE FOR HANDLING INCOME (ENTRY) OPERATIONS:
+ *  - CREATE, LIST, UPDATE AND DELETE INCOME RECORDS FOR AUTHENTICATED USERS.
+ */
 class MonthlyGoalController {
   private model: ModelStatic<MonthlyGoal> = MonthlyGoal;
 
+  /**
+   *  CREATE A NEW INCOME ENTRY FOR THE AUTHENTICATED USER:
+   *  - adds userId to the request body.
+   *  - validates the complete payload (including userId).
+   *  - if validation passes, creates the income record in the database. 
+   */
   async create(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { id: userId } = req.user as AuthenticatedUser;
-    const bodyWithUser = { ...req.body, userId };
+    
+    const { userId } = req.user as AuthenticatedUser;
+    const bodyWithUser = req.body;
 
     const { error } = MonthlyGoalSchema.createMonthlyGoal().validate(bodyWithUser, { abortEarly: false });
     if (error) {
@@ -25,20 +36,37 @@ class MonthlyGoalController {
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
+
   }
 
+
+  /**
+   *  LIST ALL INCOME ENTRIES FOR THE AUTHENTICATED USER:
+   *  - Fetches all income records associated with the user's userId.
+   *  - returns an array of income entries belonging to the current user 
+   */
   async show(req: Request, res: Response, next: NextFunction) {
+
     try {
-      const { id: userId } = req.user as AuthenticatedUser;
+      const { userId } = req.user as AuthenticatedUser;
       const goals = await this.model.findAll({ where: { userId } });
       return res.status(200).json(goals);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
+
   }
 
+
+  /**
+   *  DELETE AN INCOME ENTRY BY ITS ID:
+   *  - Validates the route parameter (id).
+   *  - Checks if the income record exists.
+   *  - Deletes the record if found.
+   */
   async delete(req: Request, res: Response, next: NextFunction) {
     const { error } = MonthlyGoalSchema.idParam().validate(req.params, { abortEarly: false });
+
     if (error) {
       return res.status(400).json({
         message: error.details.map((d: any) => d.message).join("; ")
@@ -60,8 +88,17 @@ class MonthlyGoalController {
     }
   }
 
+
+  /**
+   *  UPDATE AN EXISTING INCOME ENTRY BY ITS ID:
+   *  - Validates the id parameter and the request body.
+   *  - Checks if the income record exists.
+   *  - Updates the record with new values if found.
+   */
   async update(req: Request, res: Response, next: NextFunction) {
+    
     const paramValidation = MonthlyGoalSchema.idParam().validate(req.params, { abortEarly: false });
+
     if (paramValidation.error) {
       return res.status(400).json({
         message: paramValidation.error.details.map((d: any) => d.message).join("; ")
@@ -69,6 +106,7 @@ class MonthlyGoalController {
     }
 
     const { error } = MonthlyGoalSchema.updateMonthlyGoal().validate(req.body, { abortEarly: false });
+
     if (error) {
       return res.status(400).json({
         message: error.details.map((d: any) => d.message).join("; ")
@@ -89,6 +127,7 @@ class MonthlyGoalController {
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
+
   }
 }
 

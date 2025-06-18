@@ -8,30 +8,20 @@ class CategorySchema {
         .max(50)
         .required()
         .messages({
-          "string.base": "O campo 'name' deve ser um texto.",
-          "string.empty": "O campo 'name' não pode ser vazio.",
-          "string.min": "O campo 'name' deve ter pelo menos {#limit} caracteres.",
-          "string.max": "O campo 'name' deve ter no máximo {#limit} caracteres.",
-          "any.required": "O campo 'name' é obrigatório.",
+          "string.base": "O nome deve ser um texto.",
+          "string.empty": "O nome não pode ser vazio.",
+          "string.min": "O nome deve ter pelo menos {#limit} caracteres.",
+          "string.max": "O nome deve ter no máximo {#limit} caracteres.",
+          "any.required": "O nome é obrigatório.",
         }),
       description: Joi.string()
         .allow("")
         .max(255)
         .optional()
         .messages({
-          "string.base": "O campo 'description' deve ser um texto.",
-          "string.max": "O campo 'description' deve ter no máximo {#limit} caracteres.",
-        }),
-      userId: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          "number.base": "O ID do usuário deve ser um número.",
-          "number.integer": "O ID do usuário deve ser um número inteiro.",
-          "number.positive": "O ID do usuário deve ser positivo.",
-          "any.required": "O ID do usuário é obrigatório.",
-        }),
+          "string.base": "A descrição deve ser um texto.",
+          "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
+        })
     });
   }
 
@@ -42,18 +32,18 @@ class CategorySchema {
         .max(50)
         .optional()
         .messages({
-          "string.base": "O campo 'name' deve ser um texto.",
-          "string.empty": "O campo 'name' não pode ser vazio.",
-          "string.min": "O campo 'name' deve ter pelo menos {#limit} caracteres.",
-          "string.max": "O campo 'name' deve ter no máximo {#limit} caracteres.",
+          "string.base": "O nome deve ser um texto.",
+          "string.empty": "O nome não pode ser vazio.",
+          "string.min": "O nome deve ter pelo menos {#limit} caracteres.",
+          "string.max": "O nome deve ter no máximo {#limit} caracteres.",
         }),
       description: Joi.string()
         .allow("")
         .max(255)
         .optional()
         .messages({
-          "string.base": "O campo 'description' deve ser um texto.",
-          "string.max": "O campo 'description' deve ter no máximo {#limit} caracteres.",
+          "string.base": "A descrição deve ser um texto.",
+          "string.max": "A descrição deve ter no máximo {#limit} caracteres.",
         }),
     })
     .or('name', 'description')
@@ -77,20 +67,6 @@ class CategorySchema {
     });
   }
 
-  static showCategory() {
-    return Joi.object({
-      id: Joi.number()
-        .integer()
-        .positive()
-        .required()
-        .messages({
-          "number.base": "O ID deve ser um número.",
-          "number.integer": "O ID deve ser um número inteiro.",
-          "number.positive": "O ID deve ser um número positivo.",
-          "any.required": "O ID é obrigatório.",
-        }),
-    });
-  }
 }
 
 export default CategorySchema;
