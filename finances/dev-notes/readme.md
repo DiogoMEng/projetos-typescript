@@ -18,26 +18,29 @@ Parte 2: <a href="#orm" style="font-weight: bold">Configuração de Conexão do 
 Utilizado para buildar a imagem do backend para o container Docker.
 
 ```dockerfile
-# Utiliza a imagem do node
-FROM node:16.14-alpine
+# Define a imagem base como Node.js v18 sobre Alpine Linux
+# --> Alpine é uma distro minimalista, o que reduz o tamanho 
+#     da imagem e melhora o    tempo de pull/push.
+FROM node:18-alpine
 
-# Informar a pasta de trabalho que será utilizado dentro do container
-WORKDIR /app-backend
+# Copia todo o contexto de build (diretório atual) para /app 
+# dentro da imagem.
+ADD . /app
 
-# Copia tudo que tem package para o container
-# -- COPY <diretorio_local> <diretorio_container>
-COPY package* .
+# Define /app como diretório de trabalho padrão para os 
+# próximos comandos e para o processo final.
+WORKDIR /app
 
-# Instala as depências no container
-RUN npm install
+# Instala o pacote sqlite (cliente/CLI e libs) usando 
+# o gerenciador de pacotes do Alpine (apk).
+RUN apk add --update-cache sqlite
 
-# Copia todos os arquivos de /backend para o container
-COPY . .
+# Troca o usuário para node (não-root), que já existe 
+# na imagem oficial do Node.
+USER node
 
-# Comando padrão para rodar no container
-ENTRYPOINT ["npm", "run"]
-
-CMD ["dev"]
+# Define o comando padrão quando o container inicia.
+CMD npm install
 ```
 
 ## <p id="docker-compose">Docker-Compose</p>
@@ -45,42 +48,82 @@ CMD ["dev"]
 Ferramenta que permite definir e gerenciar vários containers do Docker.
 
 ```yml
-version: '3'
+# Configuração do Docker Compose para o projeto Finances
+# Este arquivo define os serviços, redes e volumes para executar a aplicação em contêineres.
+# Inclui serviços de desenvolvimento, teste e banco de dados.
 
-# Declara todos os serviços que serão executados
+# Versão do formato do Docker Compose (opcional, mas boa prática)
+version: '3.8'
+
+# Seção de serviços: Define os contêineres que compõem a aplicação
 services:
-  # Serviço de backend
-  backend:
-    # Cria uma imagem a partir do dockerfile presente em ./backedn
-    build: ./backend
-    # Porta em que o serviço será executado
+  # Serviço de desenvolvimento: Executa a API em modo de desenvolvimento
+  dev:
+    # Constrói a imagem a partir do diretório ./api (onde o Dockerfile está localizado)
+    build: ./api
+    # Nome do contêiner
+    container_name: finances_dev
+    # Comando para executar dentro do contêiner (inicia o servidor de desenvolvimento)
+    command: npm run dev
+    # Diretório de trabalho dentro do contêiner
+    working_dir: /app
+    # Mapeamento de portas: porta do host 3000 para porta do contêiner 3000
     ports:
-      - 3000:3000
-    # Variáveis de ambientes necessárias para conexão com a base de dados
+      - "3000:3000"
+    # Variáveis de ambiente para a aplicação
     environment:
-      - DB_USER=root
-      - DB_PASS=password
-      - DB_NAME=finances
-      - DB_HOST=db
-      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS
-    # Todas as alterações locais serão refletidas dentro do container
+      - DB_USER=postgres          # Nome de usuário do banco de dados
+      - DB_PASS=admin123          # Senha do banco de dados
+      - DB_NAME=finances_db       # Nome do banco de dados
+      - DB_HOST=db                # Host do banco de dados (refere-se ao serviço db)
+      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS  # Chave secreta para tokens JWT
+    # Volumes: Monta o diretório local ./api em /app no contêiner com cache
     volumes:
-      - ./backend:/app-backend
-    container_name: finances_backend
-    # Container restarta toda vez que cair
-    restart: always
-    # Informa que o serviço de backend depende do serviço de banco de dados para funcionar
+      - ./api/:/app:cached
+    # Dependências: Este serviço depende do serviço db para iniciar primeiro
     depends_on:
       - db
-  
-  db:
-    # Imagem do banco de dados que será utilizado
-    image: mysql
+
+  # Serviço de teste: Executa os testes da API
+  test:
+    # Constrói a imagem a partir do diretório atual (raiz do projeto)
+    build: .
+    # Nome do contêiner
+    container_name: finances_api_test
+    # Comando para executar dentro do contêiner (executa testes)
+    command: npm run test
+    # Diretório de trabalho dentro do contêiner
+    working_dir: /app
+    # Mapeamento de portas: porta do host 4000 para porta do contêiner 4000 (para servidor de teste se necessário)
     ports:
-      - 3306:3306
+      - "4000:4000"
+    # Volumes: Monta o diretório local ./api em /app no contêiner com cache
+    volumes:
+      - ./api/:/app:cached
+
+  # Serviço de banco de dados: Banco de dados PostgreSQL
+  db:
+    # Usa a imagem oficial do PostgreSQL
+    image: postgres
+    # Nome do contêiner
+    container_name: finances_db
+    # Variáveis de ambiente para PostgreSQL
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-    restart: always
+      - POSTGRES_USER=postgres      # Nome de usuário superusuário padrão
+      - POSTGRES_PASSWORD=admin123  # Senha para o superusuário
+      - POSTGRES_DB=finances_db     # Nome do banco de dados padrão a ser criado
+    # Mapeamento de portas: porta do host 5432 para porta do contêiner 5432
+    ports:
+      - "5432:5432"
+    # Volumes: Volume nomeado 'database' montado no diretório de dados do PostgreSQL
+    volumes:
+      - database:/var/lib/postgresql/data  # Nota: Caminho corrigido para /var/lib/postgresql/data
+
+# Seção de volumes: Define volumes nomeados para dados persistentes
+volumes:
+  # Volume nomeado para persistência do banco de dados
+  database:
+    # Este volume persiste os dados mesmo se o contêiner for removido
 ```
 
 ```yml
@@ -92,6 +135,10 @@ docker-compose down
 
 # Verifica os containeres que ainda estão em execução
 docker-compose ps
+
+# se conecta ao banco pelo terminal
+docker ps
+docker exec -it <nome_container> /bin/sh
 ```
 
 --- <a href="#sumário">Retornar ao sumário</a> ---

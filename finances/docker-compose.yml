@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   dev:
     build: ./api
@@ -7,15 +9,16 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_USER=postgres
-      - DB_PASS=admin123
-      - DB_NAME=finances_db
-      - DB_HOST=db
-      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS
+      - DB_USER=postgres          
+      - DB_PASS=admin123          
+      - DB_NAME=finances_db       
+      - DB_HOST=db                
+      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS  
     volumes:
       - ./api/:/app:cached
     depends_on:
       - db
+
   test:
     build: .
     container_name: finances_api_test
@@ -24,18 +27,19 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - ./api/:/app:cached  
+      - ./api/:/app:cached
+
   db:
     image: postgres
     container_name: finances_db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=admin123
-      - POSTGRES_DB=finances_db
+      - POSTGRES_USER=postgres      
+      - POSTGRES_PASSWORD=admin123  
+      - POSTGRES_DB=finances_db     
     ports:
       - "5432:5432"
     volumes:
-      - database:/var/lib/postgresql
-  
+      - database:/var/lib/postgresql/data  
+
 volumes:
-   database:
+  database:
