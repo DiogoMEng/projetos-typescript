@@ -20,12 +20,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   RoleUserBoxBottom.init({
+    role_user_box_bottom_id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUID,
+    },
     box_bottom_id: DataTypes.INTEGER,
     user_id: DataTypes.INTEGER,
     role_id: DataTypes.INTEGER,
   }, {
     sequelize,
-    modelName: 'role_user_box_bottom',
+    modelName: 'RoleUserBoxBottom',
+    tableName: 'role_user_box_bottoms',
   });
   return RoleUserBoxBottom;
 };

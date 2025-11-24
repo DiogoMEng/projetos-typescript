@@ -12,11 +12,17 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Role.init({
+    role_id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUID,
+    },
     name: DataTypes.STRING,
     description: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'role',
+    modelName: 'Role',
+    tableName: 'roles',
   });
   return Role;
 };

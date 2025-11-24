@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'user_id',
         as: 'category_user',
       });
+      Category.hasMany(models.Transaction, {
+        foreignKey: 'category_id',
+        as: 'category_transactions',
+      });
     }
   }
   Category.init({
