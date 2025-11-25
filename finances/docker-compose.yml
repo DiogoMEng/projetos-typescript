@@ -1,27 +1,45 @@
-version: '3'
+version: '3.8'
 
 services:
-  backend:
-    build: ./backend
+  dev:
+    build: ./api
+    container_name: finances_dev
+    command: npm run dev
+    working_dir: /app
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
-      - DB_USER=root
-      - DB_PASS=password
-      - DB_NAME=finances
-      - DB_HOST=db
-      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS
+      - DB_USER=postgres          
+      - DB_PASS=admin123          
+      - DB_NAME=finances_db       
+      - DB_HOST=db                
+      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS  
     volumes:
-      - ./backend:/app-backend
-    container_name: finances
-    restart: always
+      - ./api/:/app:cached
     depends_on:
       - db
-  
-  db:
-    image: mysql
+
+  test:
+    build: .
+    container_name: finances_api_test
+    command: npm run test
+    working_dir: /app
     ports:
-      - 3306:3306
+      - "4000:4000"
+    volumes:
+      - ./api/:/app:cached
+
+  db:
+    image: postgres
+    container_name: finances_db
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-    restart: always
+      - POSTGRES_USER=postgres      
+      - POSTGRES_PASSWORD=admin123  
+      - POSTGRES_DB=finances_db     
+    ports:
+      - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data  
+
+volumes:
+  database:
