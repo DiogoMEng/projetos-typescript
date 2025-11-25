@@ -7,15 +7,15 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.hasMany(models.Category, {
         foreignKey: 'user_id',
-        as: 'user_categories',
+        as: 'categories',
       });
       User.hasMany(models.RoleUserBoxBottom, {
         foreignKey: 'user_id',
-        as: 'user_role_box_bottoms',
+        as: 'owned_boxes',
       });
       User.hasMany(models.BoxBottom, {
         foreignKey: 'user_id',
-        as: 'user_box_bottoms',
+        as: 'boxAssignments',
       });
     }
   }
@@ -25,13 +25,26 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUID,
     },
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'Users',
+    tableName: 'users',
   });
   return User;
 };

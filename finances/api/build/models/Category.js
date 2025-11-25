@@ -7,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Category.belongsTo(models.User, {
         foreignKey: 'user_id',
-        as: 'category_user',
+        as: 'creator',
       });
       Category.hasMany(models.Transaction, {
         foreignKey: 'category_id',
-        as: 'category_transactions',
+        as: 'transactions',
       });
     }
   }
@@ -21,12 +21,29 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUID,
     },
-    user_id: DataTypes.INTEGER,
-    nome: DataTypes.STRING,
-    type: DataTypes.ENUM('receita', 'despesa'),
+    user_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: 'unique_user_category',
+    },
+    type: {
+      type: DataTypes.ENUM('receita', 'despesa'),
+      allowNull: false,
+    },
   }, {
     sequelize,
-    modelName: 'category',
+    modelName: 'Category',
+    tableName: 'categories',
+    indexes: [
+      {
+        unique: true,
+        fields: ['user_id', 'nome'],
+      },
+    ],
   });
   return Category;
 };

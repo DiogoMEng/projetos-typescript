@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Role.hasMany(models.RoleUserBoxBottom, {
         foreignKey: 'role_id',
-        as: 'role_user_box_bottoms',
+        as: 'assignments',
       });
     }
   }
@@ -17,7 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUID,
     },
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
     description: DataTypes.STRING,
   }, {
     sequelize,
