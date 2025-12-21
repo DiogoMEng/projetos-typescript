@@ -25,7 +25,8 @@
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.2.2",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
