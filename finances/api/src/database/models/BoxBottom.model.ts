@@ -17,6 +17,23 @@ export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttribute
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  static associate(models: any) {
+    BoxBottomModel.belongsTo(models.UserModel, {
+      foreignKey: 'userId',
+      as: 'BoxCreator',
+    });
+
+    BoxBottomModel.hasMany(models.TransactionModel, {
+      foreignKey: 'boxBottomId',
+      as: 'boxTransactions',
+    });
+
+    BoxBottomModel.hasMany(models.RUBBModel, {
+      foreignKey: 'boxBottomId',
+      as: 'boxMembers',
+    })
+  }
 }
 
 export default function (sequelize: Sequelize): typeof BoxBottomModel {

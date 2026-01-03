@@ -6,7 +6,7 @@ export type TrasactionCreationAttributes = Optional<
   'boxBottomId'
 >
 
-export class TrasactionModel extends Model< Trasaction, TrasactionCreationAttributes > implements Trasaction {
+export class TransactionModel extends Model< Trasaction, TrasactionCreationAttributes > implements Trasaction {
   public trasactionId!: string;
   public boxBottomId!: string;
   public categoryId!: string;
@@ -19,10 +19,22 @@ export class TrasactionModel extends Model< Trasaction, TrasactionCreationAttrib
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  static associate(models: any) {
+    TransactionModel.belongsTo(models.BoxBottomModel, {
+      foreignKey: 'boxBottomId',
+      as: 'targetBox',
+    });
+
+    TransactionModel.belongsTo(models.CategoryModel, {
+      foreignKey: 'categoryId',
+      as: 'transactionCategory',
+    });
+  }
 }
 ''
-export default function (sequelize: Sequelize): typeof TrasactionModel {
-  TrasactionModel.init({
+export default function (sequelize: Sequelize): typeof TransactionModel {
+  TransactionModel.init({
     trasactionId: {
       allowNull: false,
       primaryKey: true,
@@ -68,5 +80,5 @@ export default function (sequelize: Sequelize): typeof TrasactionModel {
     timestamps: true,
   });
 
-  return TrasactionModel;
+  return TransactionModel;
 }

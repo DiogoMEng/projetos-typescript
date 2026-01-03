@@ -21,17 +21,17 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
   static associate(models: any) {
     UserModel.hasMany(models.CategoryModel, {
       foreignKey: 'userId',
-      as: 'categories',
+      as: 'userCategories',
     });
 
     UserModel.hasMany(models.BoxBottomModel, {
       foreignKey: 'userId',
-      as: 'ownedBoxex',
+      as: 'userOwnedBoxex',
     })
 
     UserModel.hasMany(models.UBBModel, {
       foreignKey: 'userId',
-      as: 'boxAssignments',
+      as: ' userPermissions',
     })
   }
 }

@@ -16,6 +16,18 @@ export class CategoryModel extends Model< Category, CategoryCreationAttributes >
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  static associate(models: any) {
+    CategoryModel.belongsTo(models.UserModel, {
+      foreignKey: 'userId',
+      as: 'categoryOwner',
+    });
+
+    CategoryModel.hasMany(models.TransactionModel, {
+      foreignKey: 'categoryId',
+      as: 'categoryTransactions',
+    })
+  }
 }
 
 export default function (sequelize: Sequelize): typeof CategoryModel {

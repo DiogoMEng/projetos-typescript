@@ -16,6 +16,23 @@ export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements 
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  static associate(models: any) {
+    RUBBModel.belongsTo(models.UserModel, {
+      foreignKey: 'userId',
+      as: 'assignedUser',
+    });
+
+    RUBBModel.belongsTo(models.BoxBottomModel, {
+      foreignKey: 'boxBottomId',
+      as: 'assignedBox',
+    });
+
+    RUBBModel.belongsTo(models.RoleModel, {
+      foreignKey: 'roleId',
+      as: 'assignedRole',
+    })
+  }
 }
 
 export default function (sequelize: Sequelize): typeof RUBBModel {

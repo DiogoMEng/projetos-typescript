@@ -15,6 +15,13 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  static associate(models: any) {
+    RoleModel.hasMany(models.models.UBBModel, {
+      foreignKey: 'roleId',
+      as: 'roleAssignments',
+    })
+  }
 }
 
 export default function (sequelize: Sequelize): typeof RoleModel {
