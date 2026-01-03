@@ -9,11 +9,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_USER=postgres          
-      - DB_PASS=admin123          
-      - DB_NAME=finances_db       
-      - DB_HOST=db                
-      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS  
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      JWT_SECRET: ${JWT_SECRET}
     volumes:
       - ./api/:/app:cached
     depends_on:
@@ -30,12 +30,12 @@ services:
       - ./api/:/app:cached
 
   db:
-    image: postgres
+    image: ${DB_DIALECT}
     container_name: finances_db
     environment:
-      - POSTGRES_USER=postgres      
-      - POSTGRES_PASSWORD=admin123  
-      - POSTGRES_DB=finances_db     
+      - POSTGRES_USER=${DB_USER}      
+      - POSTGRES_PASSWORD=${DB_PASS}  
+      - POSTGRES_DB=${DB_NAME} 
     ports:
       - "5432:5432"
     volumes:
