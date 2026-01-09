@@ -1,5 +1,5 @@
 import { hash } from 'bcryptjs';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { DB } from '../database/models';
 import { User } from '../interfaces/user.interface';
 
@@ -16,7 +16,7 @@ class UserService {
     try {
       const passwordHash = await hash(dto.password, 8);
       const newUser = await DB.Users.create({
-        userId: uuid.v4(),
+        userId: uuidv4(),
         name: dto.name,
         email: dto.email,
         password: passwordHash,

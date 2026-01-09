@@ -9,8 +9,8 @@ import RUBBModel from './RoleUserBoxBottom';
 
 import {
   DB_PORT,
-  DB_USER,
-  DB_PASS,
+  DB_USERNAME,
+  DB_PASSWORD,
   DB_NAME,
   DB_HOST,
   NODE_ENV,
@@ -19,8 +19,8 @@ import {
 
 const sequelize = new Sequelize.Sequelize(
   DB_NAME as string,
-  DB_USER as string,
-  DB_PASS as string,
+  DB_USERNAME as string,
+  DB_PASSWORD as string,
   {
     dialect: (DB_DIALECT as Sequelize.Dialect) || 'postgres',
     host: DB_HOST,

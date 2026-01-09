@@ -10,7 +10,7 @@ class UserController {
       const user = await userService.register({
         name, email, password
       });
-      res.status(201).json(user);
+      res.status(201).json({ name, email });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -18,3 +18,5 @@ class UserController {
     }
   }
 }
+
+export default UserController;
