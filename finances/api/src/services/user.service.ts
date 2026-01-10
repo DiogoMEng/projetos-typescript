@@ -26,6 +26,31 @@ class UserService {
       throw new Error('Error registering user.');
     }
   }
+
+  async getAllUsers(): Promise<User[]> {
+    const users = await DB.Users.findAll({
+      attributes: {
+        exclude: ['password'],
+      }
+    });
+    return users;
+  }
+
+  async getUserById(id: string): Promise<User | null> {
+    const user = await DB.Users.findByPk(id, {
+      attributes: {
+        exclude: ['password'],
+      }
+    });
+    if(!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  async editUser(id: string, dto: Partial<User>): Promise<void> {
+    // ...
+  }
 }
 
 export default UserService;

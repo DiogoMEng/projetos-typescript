@@ -17,6 +17,42 @@ class UserController {
       }
     }
   }
+
+  static async getAllUsers(req: Request, res: Response) {
+    try {
+      const users = await userService.getAllUsers();
+      res.status(200).json(users);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+      }
+    }
+  }
+
+  static async getUserById(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const user = await userService.getUserById(id);
+      res.status(200).json(user);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({ message: error.message });
+      }
+    }
+  }
+
+  static async editUser(req: Request, res: Response) {
+    const { id } = req.params;
+    const dto = req.body;
+    try {
+      await userService.editUser(id, dto);
+      res.status(200).json({ message: 'User updated successfully' });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
+  }
 }
 
 export default UserController;

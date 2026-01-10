@@ -12,8 +12,6 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
   public email!: string;
   public name!: string;
   public password!: string;
-  public created_at: string | undefined;
-  public updated_at: string | undefined;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -61,8 +59,6 @@ export default function (sequelize: Sequelize): typeof UserModel {
       type: DataTypes.STRING(255),
       field: 'password',
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
   }, {
     tableName: 'users',
     sequelize,
