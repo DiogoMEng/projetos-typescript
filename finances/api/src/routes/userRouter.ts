@@ -7,6 +7,7 @@ router
   .post('/users/register', UserController.register)
   .get('/users', UserController.getAllUsers)
   .get('/user/:id', UserController.getUserById)
-  .put('/user/:id', UserController.editUser);
+  .put('/user/:id', UserController.editUser)
+  .delete('/user/:id', UserController.deleteUser);
 
 export default router;

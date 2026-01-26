@@ -48,8 +48,20 @@ class UserService {
     return user;
   }
 
-  async editUser(id: string, dto: Partial<User>): Promise<void> {
-    // ...
+  async editUser(id: string, dto: Partial<User>): Promise<boolean | void> {
+    const listUpdateData = await DB.Users.update(dto, {
+      where: { userId: id },
+    });
+    if (listUpdateData[0] === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await DB.Users.destroy({
+      where: { userId: id },
+    });
   }
 }
 

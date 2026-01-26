@@ -45,9 +45,24 @@ class UserController {
     const { id } = req.params;
     const dto = req.body;
     try {
-      await userService.editUser(id, dto);
+      const updatedRecord = await userService.editUser(id, dto);
+      if (!updatedRecord) {
+        return res.status(404).json({ message: 'User not found' });
+      }
       res.status(200).json({ message: 'User updated successfully' });
     } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
+  }
+
+  static async deleteUser(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      await userService.deleteUser(id);
+      res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) { 
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       }
