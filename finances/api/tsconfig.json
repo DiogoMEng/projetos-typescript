@@ -9,6 +9,8 @@
 		"resolveJsonModule": true,
 		"allowJs": true,
 		"outDir": "./build",
+		"rootDir": "./src",
+		"baseUrl": "./src",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
@@ -16,8 +18,8 @@
 		"strictPropertyInitialization": false,
 		// "typeRoots": ["./@types"]
 	},
-	"include": ["./**/*", "20250415191737-expense.js"],
-	"exclude": ["node_modules", "build"],
+	"include": ["./**/*.ts", "src/database/models/index.ts"],
+	"exclude": ["node_modules"],
 	"ts-node": {
 		"files": true
 	}
