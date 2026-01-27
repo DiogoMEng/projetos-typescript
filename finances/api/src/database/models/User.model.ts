@@ -17,17 +17,17 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
   public readonly updatedAt!: Date;
 
   static associate(models: any) {
-    UserModel.hasMany(models.CategoryModel, {
+    UserModel.hasMany(models.Categories, {
       foreignKey: 'userId',
       as: 'userCategories',
     });
 
-    UserModel.hasMany(models.BoxBottomModel, {
+    UserModel.hasMany(models.BoxBottoms, {
       foreignKey: 'userId',
       as: 'userOwnedBoxex',
     })
 
-    UserModel.hasMany(models.UBBModel, {
+    UserModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'userId',
       as: ' userPermissions',
     })

@@ -17,7 +17,7 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
   public readonly updatedAt!: Date;
 
   static associate(models: any) {
-    RoleModel.hasMany(models.models.UBBModel, {
+    RoleModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'roleId',
       as: 'roleAssignments',
     })

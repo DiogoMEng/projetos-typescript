@@ -18,17 +18,17 @@ export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements 
   public readonly updatedAt!: Date;
 
   static associate(models: any) {
-    RUBBModel.belongsTo(models.UserModel, {
+    RUBBModel.belongsTo(models.Users, {
       foreignKey: 'userId',
       as: 'assignedUser',
     });
 
-    RUBBModel.belongsTo(models.BoxBottomModel, {
+    RUBBModel.belongsTo(models.BoxBottoms, {
       foreignKey: 'boxBottomId',
       as: 'assignedBox',
     });
 
-    RUBBModel.belongsTo(models.RoleModel, {
+    RUBBModel.belongsTo(models.Roles, {
       foreignKey: 'roleId',
       as: 'assignedRole',
     })
