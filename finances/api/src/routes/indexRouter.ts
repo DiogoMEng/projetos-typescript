@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import userRouter from './user.router';
 import categoryRouter from './category.router';
+import boxBottomRouter from './boxBottom.router';
 import { Application } from 'express';
 
 export default (app: Application) => {
@@ -8,5 +9,6 @@ export default (app: Application) => {
     bodyParser.json(),
     userRouter,
     categoryRouter,
+    boxBottomRouter,
   )
 }

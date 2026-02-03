@@ -64,9 +64,7 @@ export default function (sequelize: Sequelize): typeof BoxBottomModel {
       allowNull: false,
       type: DataTypes.NUMBER,
       field: 'target_value',
-    },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
+    }
   }, {
     tableName: 'box_bottoms',
     sequelize,
