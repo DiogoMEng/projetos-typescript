@@ -21,12 +21,12 @@ export class TransactionModel extends Model< Trasaction, TrasactionCreationAttri
   public readonly updatedAt!: Date;
 
   static associate(models: any) {
-    TransactionModel.belongsTo(models.BoxBottomModel, {
+    TransactionModel.belongsTo(models.BoxBottoms, {
       foreignKey: 'boxBottomId',
       as: 'targetBox',
     });
 
-    TransactionModel.belongsTo(models.CategoryModel, {
+    TransactionModel.belongsTo(models.Categories, {
       foreignKey: 'categoryId',
       as: 'transactionCategory',
     });

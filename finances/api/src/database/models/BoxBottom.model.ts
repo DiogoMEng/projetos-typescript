@@ -19,17 +19,17 @@ export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttribute
   public readonly updatedAt!: Date;
 
   static associate(models: any) {
-    BoxBottomModel.belongsTo(models.UserModel, {
+    BoxBottomModel.belongsTo(models.Users, {
       foreignKey: 'userId',
       as: 'BoxCreator',
     });
 
-    BoxBottomModel.hasMany(models.TransactionModel, {
+    BoxBottomModel.hasMany(models.Transactions, {
       foreignKey: 'boxBottomId',
       as: 'boxTransactions',
     });
 
-    BoxBottomModel.hasMany(models.RUBBModel, {
+    BoxBottomModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'boxBottomId',
       as: 'boxMembers',
     })

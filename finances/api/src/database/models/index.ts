@@ -53,3 +53,10 @@ export const DB = {
   sequelize,
   Sequelize
 }
+
+Object.keys(DB).forEach(modelName => {
+  const model = (DB as any)[modelName];
+  if (model.associate) {
+    model.associate(DB);
+  }
+});

@@ -18,12 +18,12 @@ export class CategoryModel extends Model< Category, CategoryCreationAttributes >
   public readonly updatedAt!: Date;
 
   static associate(models: any) {
-    CategoryModel.belongsTo(models.UserModel, {
+    CategoryModel.belongsTo(models.Users, {
       foreignKey: 'userId',
       as: 'categoryOwner',
     });
 
-    CategoryModel.hasMany(models.TransactionModel, {
+    CategoryModel.hasMany(models.Transactions, {
       foreignKey: 'categoryId',
       as: 'categoryTransactions',
     })
@@ -53,12 +53,11 @@ export default function (sequelize: Sequelize): typeof CategoryModel {
       allowNull: false,
       type: DataTypes.ENUM('receita', 'despesa'),
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
   }, {
     tableName: 'categories',
     sequelize,
     timestamps: true,
+    underscored: true,
   });
 
   return CategoryModel;
