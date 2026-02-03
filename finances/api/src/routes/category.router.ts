@@ -6,8 +6,8 @@ const router = Router();
 router
   .post('/category/register/:id', CategoryController.register)
   .get('/categories/:id', CategoryController.getAllCategoriesByUser)
-  // .get('/user/:id', UserController.getUserById)
-  // .put('/user/:id', UserController.editUser)
-  // .delete('/user/:id', UserController.deleteUser);
+  .get('/category/:id', CategoryController.getCategoryById)
+  .put('/category/:id', CategoryController.editCategory)
+  .delete('/category/:id', CategoryController.deleteCategory);
 
 export default router;

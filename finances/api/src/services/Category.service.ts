@@ -42,6 +42,30 @@ class CategoryService {
     });
     return categories;
   }
+
+  async getCategoryById(id: string): Promise<Category | null> {
+    const category = await DB.Categories.findByPk(id);
+    if(!category) {
+      throw new Error('Category not found');
+    }
+    return category;
+  }
+
+  async editCategory(id: string, dto: Partial<Category>): Promise<boolean | void> {
+    const listUpdateData = await DB.Categories.update(dto, {
+      where: { categoryId: id },
+    });
+    if (listUpdateData[0] === 0) {
+      return false;
+    }
+    return true;
+  }
+
+  async deleteCategory(id: string): Promise<void> {
+    await DB.Categories.destroy({
+      where: { categoryId: id },
+    });
+  }
 }
 
 export default CategoryService;
