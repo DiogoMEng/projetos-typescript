@@ -5,9 +5,9 @@ const router = Router();
 
 router
   .post('/boxBottom/register/:id', BoxBottomController.register)
-  .get('/boxBottom/:id', BoxBottomController.getAllBoxBottomsByUser);
-  // .get('/category/:id', CategoryController.getCategoryById)
-  // .put('/category/:id', CategoryController.editCategory)
-  // .delete('/category/:id', CategoryController.deleteCategory);
+  .get('/boxBottoms/:id', BoxBottomController.getAllBoxBottomsByUser)
+  .get('/boxBottom/:id', BoxBottomController.getBoxBottomById)
+  .put('/boxBottom/:id', BoxBottomController.editBoxBottom)
+  .delete('/boxBottom/:id', BoxBottomController.deleteBoxBottom);
 
 export default router;

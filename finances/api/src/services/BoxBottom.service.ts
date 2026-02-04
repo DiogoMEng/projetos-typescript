@@ -39,29 +39,33 @@ class BoxBottomService {
     return boxBottoms;
   }
 
-  // async getCategoryById(id: string): Promise<Category | null> {
-  //   const category = await DB.Categories.findByPk(id);
-  //   if(!category) {
-  //     throw new Error('Category not found');
-  //   }
-  //   return category;
-  // }
+  async getBoxBottomById(id: string): Promise<BoxBottom | null> {
+    const boxBottom = await DB.BoxBottoms.findByPk(id, {
+      attributes: {
+        exclude: ['userId']
+      }
+    });
+    if(!boxBottom) {
+      throw new Error('BoxBottom not found');
+    }
+    return boxBottom;
+  }
 
-  // async editCategory(id: string, dto: Partial<Category>): Promise<boolean | void> {
-  //   const listUpdateData = await DB.Categories.update(dto, {
-  //     where: { categoryId: id },
-  //   });
-  //   if (listUpdateData[0] === 0) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  async editBoxBottom(id: string, dto: Partial<BoxBottom>): Promise<boolean | void> {
+    const listUpdateData = await DB.BoxBottoms.update(dto, {
+      where: { boxBottomId: id },
+    });
+    if (listUpdateData[0] === 0) {
+      return false;
+    }
+    return true;
+  }
 
-  // async deleteCategory(id: string): Promise<void> {
-  //   await DB.Categories.destroy({
-  //     where: { categoryId: id },
-  //   });
-  // }
+  async deleteBoxBottom(id: string): Promise<void> {
+    await DB.BoxBottoms.destroy({
+      where: { boxBottomId: id },
+    });
+  }
 }
 
 export default BoxBottomService;
