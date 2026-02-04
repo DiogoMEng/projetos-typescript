@@ -3,11 +3,11 @@ import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type RoleCreationAttributes = Optional<
   Role,
-  'rolesId'
+  'roleId'
 >
 
 export class RoleModel extends Model< Role, RoleCreationAttributes > implements Role {
-  public rolesId!: string;
+  public roleId!: string;
   public name!: string;
   public description!: string;
   public created_at: string | undefined;
@@ -26,12 +26,12 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
 
 export default function (sequelize: Sequelize): typeof RoleModel {
   RoleModel.init({
-    rolesId: {
+    roleId: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: 'roles_id',
+      field: 'role_id',
     },
     name: {
       allowNull: false,
@@ -44,8 +44,6 @@ export default function (sequelize: Sequelize): typeof RoleModel {
       unique: true,
       field: 'description',
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
   }, {
     tableName: 'roles',
     sequelize,
