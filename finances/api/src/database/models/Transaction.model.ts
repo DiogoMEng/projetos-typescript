@@ -72,10 +72,8 @@ export default function (sequelize: Sequelize): typeof TransactionModel {
       type: DataTypes.STRING,
       field: 'description',
     },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
   }, {
-    tableName: 'users',
+    tableName: 'transactions',
     sequelize,
     timestamps: true,
   });
