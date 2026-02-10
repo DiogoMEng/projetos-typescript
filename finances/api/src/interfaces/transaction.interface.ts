@@ -1,5 +1,5 @@
-export interface Trasaction {
-  trasactionId?: string;
+export interface Transaction {
+  transactionId?: string;
   boxBottomId: string;
   categoryId: string;
   movementType: string;

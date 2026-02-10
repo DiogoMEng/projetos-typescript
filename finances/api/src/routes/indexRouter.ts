@@ -1,8 +1,9 @@
 import bodyParser from 'body-parser';
-import userRouter from './user.router';
-import categoryRouter from './category.router';
-import boxBottomRouter from './boxBottom.router';
-import roleRouter from './role.router';
+import userRouter from './user.route';
+import categoryRouter from './category.route';
+import boxBottomRouter from './boxBottom.route';
+import roleRouter from './role.route';
+import transactionRouter from './trasaction.route';
 import { Application } from 'express';
 
 export default (app: Application) => {
@@ -11,6 +12,7 @@ export default (app: Application) => {
     userRouter,
     categoryRouter,
     boxBottomRouter,
-    roleRouter
+    roleRouter,
+    transactionRouter
   )
 }
