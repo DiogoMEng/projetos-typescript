@@ -1,13 +1,13 @@
 import { Router } from "express";
-import TransationController from "../controllers/Transaction.controller";
+import TransactionController from "../controllers/Transaction.controller";
 
 const router = Router();
 
 router
-  .post('/transactions/register/:boxBottomId/:categoryId', TransationController.register)
-  // .get('/boxBottoms/:id', TransactionController.getAllBoxBottomsByUser)
-  // .get('/boxBottom/:id', TransactionController.getBoxBottomById)
-  // .put('/boxBottom/:id', TransactionController.editBoxBottom)
-  // .delete('/boxBottom/:id', TransactionController.deleteBoxBottom);
+  .post('/transactions/register/:boxBottomId/:categoryId', TransactionController.register)
+  .get('/transactions/:id', TransactionController.getAllTransactions)
+  .get('/transaction/:id', TransactionController.getTransactionById)
+  .put('/transaction/:id', TransactionController.editTransaction)
+  .delete('/transaction/:id', TransactionController.deleteTransaction);
 
 export default router;

@@ -24,57 +24,57 @@ class TransactionController {
     }
   }
 
-  // static async getAllBoxBottomsByUser(req: Request, res: Response) {
-  //   const { id } = req.params;
-  //   try {
-  //     const boxBottoms = await boxBottomService.getAllBoxBottomsByUser(id);
-  //     res.status(200).json(boxBottoms);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       res.status(400).json({ message: error.message });
-  //     }
-  //   }
-  // }
+  static async getAllTransactions(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const transactions = await transactionService.getAllTransactions(id);
+      res.status(200).json(transactions);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
+  }
 
-  // static async getBoxBottomById(req: Request, res: Response) {
-  //   const { id } = req.params;
-  //   try {
-  //     const boxBottom = await boxBottomService.getBoxBottomById(id);
-  //     res.status(200).json(boxBottom);
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       res.status(404).json({ message: error.message });
-  //     }
-  //   }
-  // }
+  static async getTransactionById(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      const transaction = await transactionService.getTransactionById(id);
+      res.status(200).json(transaction);
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(404).json({ message: error.message });
+      }
+    }
+  }
 
-  // static async editBoxBottom(req: Request, res: Response) {
-  //   const { id } = req.params;
-  //   const dto = req.body;
-  //   try {
-  //     const updatedRecord = await boxBottomService.editBoxBottom(id, dto);
-  //     if (!updatedRecord) {
-  //       return res.status(404).json({ message: 'BoxBottom not found' });
-  //     }
-  //     res.status(200).json({ message: 'BoxBottom updated successfully' });
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       res.status(400).json({ message: error.message });
-  //     }
-  //   }
-  // }
+  static async editTransaction(req: Request, res: Response) {
+    const { id } = req.params;
+    const dto = req.body;
+    try {
+      const updatedRecord = await transactionService.editTransaction(id, dto);
+      if (!updatedRecord) {
+        return res.status(404).json({ message: 'Transaction not found' });
+      }
+      res.status(200).json({ message: 'Transaction updated successfully' });
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
+  }
 
-  // static async deleteBoxBottom(req: Request, res: Response) {
-  //   const { id } = req.params;
-  //   try {
-  //     await boxBottomService.deleteBoxBottom(id);
-  //     res.status(200).json({ message: 'BoxBottom deleted successfully' });
-  //   } catch (error) { 
-  //     if (error instanceof Error) {
-  //       res.status(400).json({ message: error.message });
-  //     }
-  //   }
-  // }
+  static async deleteTransaction(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      await transactionService.deleteTransaction(id);
+      res.status(200).json({ message: 'Transaction deleted successfully' });
+    } catch (error) { 
+      if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
+      }
+    }
+  }
 }
 
 export default TransactionController;

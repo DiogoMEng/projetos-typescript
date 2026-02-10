@@ -1,12 +1,12 @@
-import { Trasaction } from '../../interfaces/transaction.interface';
+import { Transaction } from '../../interfaces/transaction.interface';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type TrasactionCreationAttributes = Optional<
-  Trasaction,
+  Transaction,
   'boxBottomId'
 >
 
-export class TransactionModel extends Model< Trasaction, TrasactionCreationAttributes > implements Trasaction {
+export class TransactionModel extends Model< Transaction, TrasactionCreationAttributes > implements Transaction {
   public trasactionId!: string;
   public boxBottomId!: string;
   public categoryId!: string;
@@ -35,12 +35,12 @@ export class TransactionModel extends Model< Trasaction, TrasactionCreationAttri
 ''
 export default function (sequelize: Sequelize): typeof TransactionModel {
   TransactionModel.init({
-    trasactionId: {
+    transactionId: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: 'trasaction_id',
+      field: 'transaction_id',
     },
     boxBottomId: {
       allowNull: false,

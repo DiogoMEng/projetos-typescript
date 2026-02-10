@@ -31,45 +31,57 @@ class TransactionService {
     }
   }
 
-  // async getAllBoxBottomsByUser(id: string): Promise<BoxBottom[]> {
-  //   const boxBottoms = await DB.BoxBottoms.findAll({
-  //     where: {
-  //       userId: id
-  //     },
-  //     attributes: {
-  //       exclude: ['userId']
-  //     }
-  //   });
-  //   return boxBottoms;
-  // }
+  async getAllTransactions(id: string): Promise<Transaction[]> {
+    const transactions = await DB.Transactions.findAll({
+    include: [
+      {
+        model: DB.BoxBottoms,
+        as: 'targetBox',
+        where: { userId: id },
+        attributes: ['name']
+      },
+      {
+        model: DB.Categories,
+        as: 'transactionCategory',
+        attributes: ['name', 'type']
+      }
+    ],
+    order: [['transactionDate', 'DESC']],
+    limit: 50,
+    attributes: {
+      exclude: ['boxBottomId', 'categoryId']
+    }
+  });
+    return transactions;
+  }
 
-  // async getBoxBottomById(id: string): Promise<BoxBottom | null> {
-  //   const boxBottom = await DB.BoxBottoms.findByPk(id, {
-  //     attributes: {
-  //       exclude: ['userId']
-  //     }
-  //   });
-  //   if(!boxBottom) {
-  //     throw new Error('BoxBottom not found');
-  //   }
-  //   return boxBottom;
-  // }
+  async getTransactionById(id: string): Promise<Transaction | null> {
+    const transaction = await DB.Transactions.findByPk(id, {
+      attributes: {
+        exclude: ['boxBottomId', 'categoryId']
+      }
+    });
+    if(!transaction) {
+      throw new Error('Transaction not found');
+    }
+    return transaction;
+  }
 
-  // async editBoxBottom(id: string, dto: Partial<BoxBottom>): Promise<boolean | void> {
-  //   const listUpdateData = await DB.BoxBottoms.update(dto, {
-  //     where: { boxBottomId: id },
-  //   });
-  //   if (listUpdateData[0] === 0) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  async editTransaction(id: string, dto: Partial<Transaction>): Promise<boolean | void> {
+    const listUpdateData = await DB.Transactions.update(dto, {
+      where: { transactionId: id },
+    });
+    if (listUpdateData[0] === 0) {
+      return false;
+    }
+    return true;
+  }
 
-  // async deleteBoxBottom(id: string): Promise<void> {
-  //   await DB.BoxBottoms.destroy({
-  //     where: { boxBottomId: id },
-  //   });
-  // }
+  async deleteTransaction(id: string): Promise<void> {
+    await DB.Transactions.destroy({
+      where: { transactionId: id },
+    });
+  }
 }
 
 export default TransactionService;
