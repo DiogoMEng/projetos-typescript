@@ -7,9 +7,10 @@
     "dev": "nodemon --watch src --exec ts-node src/server.ts",
     "build": "tsc && tsc-alias && echo 'Build Finished!'",
     "lint": "eslint . --ext .ts",
-    "db:migrate": "ts-node -r tsconfig-paths/register .node_modules/bin/sequelize db:migrate",
-    "db:seed": "ts-node -r tsconfig-paths/register .node_modules/bin/sequelize db:seed:all",
-    "db:undo": "ts-node -r tsconfig-paths/register .node_modules/bin/sequelize db:migrate:undo:all"
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:seed:generate": "npx sequelize-cli seed:generate --name",
+    "db:seed": "npx sequelize-cli db:seed --seed",
+    "db:seed:undo": "npx sequelize-cli db:seed:undo"
   },
   "keywords": [],
   "author": "",
