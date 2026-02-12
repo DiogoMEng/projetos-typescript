@@ -4,6 +4,7 @@ import categoryRouter from './category.route';
 import boxBottomRouter from './boxBottom.route';
 import roleRouter from './role.route';
 import transactionRouter from './trasaction.route';
+import RoleUserBoxBottomRouter from './roleUserBoxBottom.route';
 import { Application } from 'express';
 
 export default (app: Application) => {
@@ -13,6 +14,7 @@ export default (app: Application) => {
     categoryRouter,
     boxBottomRouter,
     roleRouter,
-    transactionRouter
+    transactionRouter,
+    RoleUserBoxBottomRouter
   )
 }
