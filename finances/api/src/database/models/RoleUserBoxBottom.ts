@@ -7,10 +7,10 @@ export type RUBBCreationAttributes = Optional<
 >
 
 export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements RUBB {
-  public roleUserBoxBottomId!: number;
-  public boxBottomId!: number;
-  public userId!: number;
-  public roleId!: number;
+  public roleUserBoxBottomId!: string;
+  public boxBottomId!: string;
+  public userId!: string;
+  public roleId!: string;
   public created_at: string | undefined;
   public updated_at: string | undefined;
 
@@ -58,13 +58,12 @@ export default function (sequelize: Sequelize): typeof RUBBModel {
       allowNull: false,
       type: DataTypes.UUID,
       field: 'role_id',
-    },
-    created_at: DataTypes.DATE,
-    updated_at: DataTypes.DATE,
+    }
   }, {
-    tableName: 'users',
+    tableName: 'role_user_box_bottoms',
     sequelize,
     timestamps: true,
+    underscored: true,
   });
 
   return RUBBModel
