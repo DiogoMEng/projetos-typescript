@@ -5,9 +5,8 @@ const router = Router();
 
 router
   .post('/permission/:userId/:boxBottomId/register/', RoleUserBoxBottomController.register)
-  // .get('/boxBottoms/:id', BoxBottomController.getAllBoxBottomsByUser)
-  // .get('/boxBottom/:id', BoxBottomController.getBoxBottomById)
-  // .put('/boxBottom/:id', BoxBottomController.editBoxBottom)
-  // .delete('/boxBottom/:id', BoxBottomController.deleteBoxBottom);
+  .get('/members/:boxBottomId', RoleUserBoxBottomController.getAllMembers)
+  .put('/permission/:userId/:boxBottomId', RoleUserBoxBottomController.editRole)
+  .delete('/permission/:roleUserBoxBottomId', RoleUserBoxBottomController.deleteBoxBottom);
 
 export default router;

@@ -1,6 +1,7 @@
 import { DB } from '../database/models';
 import { v4 as uuidv4 } from 'uuid';
 import { RUBB } from '../interfaces/roleUserBoxBottom.interface';
+import { where } from 'sequelize';
 
 class RoelUserBoxBottomService {
   async register(dto: RUBB): Promise<RUBB> {
@@ -34,45 +35,47 @@ class RoelUserBoxBottomService {
     }
   }
 
-  // async getAllBoxBottomsByUser(id: string): Promise<BoxBottom[]> {
-  //   const boxBottoms = await DB.BoxBottoms.findAll({
-  //     where: {
-  //       userId: id
-  //     },
-  //     attributes: {
-  //       exclude: ['userId']
-  //     }
-  //   });
-  //   return boxBottoms;
-  // }
+  async getAllMembers(boxBottomId: string): Promise<RUBB[]> {
+    const members = await DB.RoleUserBoxBottoms.findAll({
+      where: {
+        boxBottomId
+      },
+      include: [
+        {
+          model: DB.Users,
+          as: 'assignedUser',
+          attributes: ['name', 'email']
+        },
+        {
+          model: DB.Roles,
+          as: 'assignedRole',
+          attributes: ['name']
+        }
+      ]
+    });
+    return members;
+  }
 
-  // async getBoxBottomById(id: string): Promise<BoxBottom | null> {
-  //   const boxBottom = await DB.BoxBottoms.findByPk(id, {
-  //     attributes: {
-  //       exclude: ['userId']
-  //     }
-  //   });
-  //   if(!boxBottom) {
-  //     throw new Error('BoxBottom not found');
-  //   }
-  //   return boxBottom;
-  // }
+  async editRole(userId: string, boxBottomId: string, dto: { roleId: string }): Promise<boolean | void> {
+    const roleExists = await DB.Roles.findByPk(dto.roleId);
+    if(!roleExists) throw new Error('The specified role does not exist.');
+    const listUpdateData = await DB.RoleUserBoxBottoms.update({
+      roleId: dto.roleId
+    }, {
+      where: { 
+        userId, boxBottomId },
+    });
+    if (listUpdateData[0] === 0) {
+      return false;
+    }
+    return true;
+  }
 
-  // async editBoxBottom(id: string, dto: Partial<BoxBottom>): Promise<boolean | void> {
-  //   const listUpdateData = await DB.BoxBottoms.update(dto, {
-  //     where: { boxBottomId: id },
-  //   });
-  //   if (listUpdateData[0] === 0) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
-  // async deleteBoxBottom(id: string): Promise<void> {
-  //   await DB.BoxBottoms.destroy({
-  //     where: { boxBottomId: id },
-  //   });
-  // }
+  async deleteMember(id: string): Promise<void> {
+    await DB.RoleUserBoxBottoms.destroy({
+      where: { roleUserBoxBottomId: id },
+    });
+  }
 }
 
 export default RoelUserBoxBottomService;
