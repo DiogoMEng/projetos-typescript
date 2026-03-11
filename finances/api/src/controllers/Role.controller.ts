@@ -7,7 +7,7 @@ class RoleController {
   static async getAllRoles(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const roles = await roleService.getAllRoles(id);
+      const roles = await roleService.getAll(id);
       res.status(200).json(roles);
     } catch (error) {
       if (error instanceof Error) {
