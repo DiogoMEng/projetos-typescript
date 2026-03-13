@@ -1,11 +1,10 @@
 import { DB } from '../database/models';
-import { v4 as uuidv4 } from 'uuid';
 import { Role } from '../interfaces/role.interface';
+import { Service } from './Service'
 
-class RoleService {
-  async getAllRoles(id: string): Promise<Role[]> {
-    const roles = await DB.Roles.findAll();
-    return roles;
+class RoleService extends Service<any, Role> {
+  constructor() {
+    super(DB.Roles, 'roleId');
   }
 }
 

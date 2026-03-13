@@ -4,10 +4,10 @@ import CategoryController from "../controllers/Category.controller";
 const router = Router();
 
 router
-  .post('/category/register/:id', CategoryController.register)
-  .get('/categories/:id', CategoryController.getAllCategoriesByUser)
-  .get('/category/:id', CategoryController.getCategoryById)
-  .put('/category/:id', CategoryController.editCategory)
-  .delete('/category/:id', CategoryController.deleteCategory);
+  .post('/category/register/:userId', CategoryController.register)
+  .get('/categories/:userId', CategoryController.getAllCategoriesByUser)
+  .get('/category/:categoryId', CategoryController.getCategoryById)
+  .put('/category/:categoryId', CategoryController.editCategory)
+  .delete('/category/:categoryId', CategoryController.deleteCategory);
 
 export default router;

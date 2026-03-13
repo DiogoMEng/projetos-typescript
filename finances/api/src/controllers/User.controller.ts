@@ -7,7 +7,7 @@ class UserController {
   static async register(req: Request, res: Response) {
     const { name, email, password } = req.body;
     try {
-      const user = await userService.register({
+      const user = await userService.create({
         name, email, password
       });
       res.status(201).json({ name, email });
@@ -32,7 +32,7 @@ class UserController {
   static async getUserById(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const user = await userService.getUserById(id);
+      const user = await userService.getById(id);
       res.status(200).json(user);
     } catch (error) {
       if (error instanceof Error) {
@@ -45,7 +45,7 @@ class UserController {
     const { id } = req.params;
     const dto = req.body;
     try {
-      const updatedRecord = await userService.editUser(id, dto);
+      const updatedRecord = await userService.update(id, dto);
       if (!updatedRecord) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -60,7 +60,7 @@ class UserController {
   static async deleteUser(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      await userService.deleteUser(id);
+      await userService.delete(id);
       res.status(200).json({ message: 'User deleted successfully' });
     } catch (error) { 
       if (error instanceof Error) {

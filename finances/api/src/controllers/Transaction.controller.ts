@@ -10,7 +10,7 @@ class TransactionController {
       movementType, value, transactionDate, description
      } = req.body;
     try {
-      const transaction = await transactionService.register({
+      const transaction = await transactionService.create({
         boxBottomId, categoryId, movementType, value, transactionDate, description
       });
       res.status(201).json({ 
@@ -25,9 +25,9 @@ class TransactionController {
   }
 
   static async getAllTransactions(req: Request, res: Response) {
-    const { id } = req.params;
+    const { userId } = req.params;
     try {
-      const transactions = await transactionService.getAllTransactions(id);
+      const transactions = await transactionService.getAllTransactionsByUser(userId);
       res.status(200).json(transactions);
     } catch (error) {
       if (error instanceof Error) {
@@ -37,9 +37,9 @@ class TransactionController {
   }
 
   static async getTransactionById(req: Request, res: Response) {
-    const { id } = req.params;
+    const { transactionId } = req.params;
     try {
-      const transaction = await transactionService.getTransactionById(id);
+      const transaction = await transactionService.getById(transactionId);
       res.status(200).json(transaction);
     } catch (error) {
       if (error instanceof Error) {
@@ -52,7 +52,7 @@ class TransactionController {
     const { id } = req.params;
     const dto = req.body;
     try {
-      const updatedRecord = await transactionService.editTransaction(id, dto);
+      const updatedRecord = await transactionService.update(id, dto);
       if (!updatedRecord) {
         return res.status(404).json({ message: 'Transaction not found' });
       }
@@ -67,7 +67,7 @@ class TransactionController {
   static async deleteTransaction(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      await transactionService.deleteTransaction(id);
+      await transactionService.delete(id);
       res.status(200).json({ message: 'Transaction deleted successfully' });
     } catch (error) { 
       if (error instanceof Error) {
