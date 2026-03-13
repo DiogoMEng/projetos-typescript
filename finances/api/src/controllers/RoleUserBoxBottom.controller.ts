@@ -11,7 +11,7 @@ class RoleUserBoxBottomController {
       return res.status(400).json({ message: 'Missing required fields: userId, boxBottomId, roleId' }); 
     }
     try {
-      const permission = await roleUserBoxBottomService.register({
+      const permission = await roleUserBoxBottomService.create({
         userId,
         boxBottomId,
         roleId
@@ -44,7 +44,7 @@ class RoleUserBoxBottomController {
     const { userId, boxBottomId } = req.params;
     const { roleId } = req.body;
     try {
-      const updatedRecord = await roleUserBoxBottomService.editRole(userId, boxBottomId, { roleId });
+      const updatedRecord = await roleUserBoxBottomService.editRole(userId, boxBottomId, roleId);
       if (!updatedRecord) {
         return res.status(404).json({ message: 'Access record not found for this user in the specified box.' });
       }
@@ -59,7 +59,7 @@ class RoleUserBoxBottomController {
   static async deleteBoxBottom(req: Request, res: Response) {
     const { roleUserBoxBottomId } = req.params;
     try {
-      await roleUserBoxBottomService.deleteMember(roleUserBoxBottomId);
+      await roleUserBoxBottomService.delete(roleUserBoxBottomId);
       res.status(200).json({ message: 'Member deleted successfully' });
     } catch (error) { 
       if (error instanceof Error) {
