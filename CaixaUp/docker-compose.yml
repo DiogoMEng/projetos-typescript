@@ -3,14 +3,14 @@ version: '3.8'
 services:
   dev:
     build: ./api
-    container_name: finances_dev
+    container_name: caixaup_dev
     command: npm run dev
     working_dir: /app
     ports:
       - "3000:3000"
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
+      DB_USER: ${DB_USERNAME}
+      DB_PASS: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       DB_HOST: ${DB_HOST}
       JWT_SECRET: ${JWT_SECRET}
@@ -21,7 +21,7 @@ services:
 
   test:
     build: .
-    container_name: finances_api_test
+    container_name: caixaup_api_test
     command: npm run test
     working_dir: /app
     ports:
@@ -31,15 +31,15 @@ services:
 
   db:
     image: ${DB_DIALECT}
-    container_name: finances_db
+    container_name: caixaup_db
     environment:
-      - POSTGRES_USER=${DB_USER}      
-      - POSTGRES_PASSWORD=${DB_PASS}  
+      - POSTGRES_USER=${DB_USERNAME}      
+      - POSTGRES_PASSWORD=${DB_PASSWORD}  
       - POSTGRES_DB=${DB_NAME} 
     ports:
       - "5432:5432"
     volumes:
-      - database:/var/lib/postgresql/data  
+      - database:/var/lib/postgresql
 
 volumes:
   database:
