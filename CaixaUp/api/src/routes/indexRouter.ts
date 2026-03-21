@@ -5,6 +5,7 @@ import boxBottomRouter from './boxBottom.route';
 import roleRouter from './role.route';
 import transactionRouter from './trasaction.route';
 import RoleUserBoxBottomRouter from './roleUserBoxBottom.route';
+import authRouter from './auth.route';
 import { Application } from 'express';
 
 export default (app: Application) => {
@@ -15,6 +16,7 @@ export default (app: Application) => {
     boxBottomRouter,
     roleRouter,
     transactionRouter,
-    RoleUserBoxBottomRouter
+    RoleUserBoxBottomRouter,
+    authRouter
   )
 }
