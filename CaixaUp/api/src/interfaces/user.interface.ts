@@ -1,3 +1,5 @@
+import { JwtPayload } from "jsonwebtoken";
+
 export interface User {
   userId?: string;
   name: string;
@@ -7,4 +9,9 @@ export interface User {
   updated_at?: string;
 }
 
-export type AuthCredentials = Pick<User, 'email' | 'password'>;
+export interface TokenPayload extends JwtPayload {
+  userId: string;
+  email: string;
+}
+
+export type AuthCredentials = Pick<User, 'email' | 'password'>
