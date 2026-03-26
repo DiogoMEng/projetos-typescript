@@ -16,7 +16,7 @@ class AuthService {
     const accessToken = sign(
       { userId: user.userId, email: user.email },
       JWT_SECRET!,
-      { expiresIn: '86400' }
+      { expiresIn: '5d' }
     );
     return { accessToken };
   }

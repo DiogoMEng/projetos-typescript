@@ -1,13 +1,15 @@
 import { Router } from "express";
 import TransactionController from "../controllers/Transaction.controller";
+import checkAuth from "../middlewares/checkAuth";
 
 const router = Router();
 
+router.use(checkAuth)
 router
   .post('/transactions/register/:boxBottomId/:categoryId', TransactionController.register)
-  .get('/transactions/:userId', TransactionController.getAllTransactions)
+  .get('/transactions/', TransactionController.getAllTransactions)
   .get('/transaction/:transactionId', TransactionController.getTransactionById) 
-  .put('/transaction/:id', TransactionController.editTransaction)
-  .delete('/transaction/:id', TransactionController.deleteTransaction);
+  .put('/transaction/:transactionId', TransactionController.editTransaction)
+  .delete('/transaction/:transactionId', TransactionController.deleteTransaction);
 
 export default router;

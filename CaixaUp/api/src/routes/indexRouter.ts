@@ -11,12 +11,12 @@ import { Application } from 'express';
 export default (app: Application) => {
   app.use(
     bodyParser.json(),
+    authRouter,
     userRouter,
     categoryRouter,
     boxBottomRouter,
     roleRouter,
     transactionRouter,
-    RoleUserBoxBottomRouter,
-    authRouter
+    RoleUserBoxBottomRouter
   )
 }
