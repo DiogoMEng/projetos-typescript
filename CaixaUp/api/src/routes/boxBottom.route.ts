@@ -1,13 +1,16 @@
 import { Router } from "express";
 import BoxBottomController from "../controllers/BoxBottom.controller";
+import checkAuth from "../middlewares/checkAuth";
 
 const router = Router();
 
+router.use(checkAuth);
+
 router
-  .post('/boxBottom/register/:userId', BoxBottomController.register)
-  .get('/boxBottoms/:userId', BoxBottomController.getAllBoxBottomsByUser)
-  .get('/boxBottom/:boxBottomId', BoxBottomController.getBoxBottomById)
-  .put('/boxBottom/:boxBottomId', BoxBottomController.editBoxBottom)
-  .delete('/boxBottom/:boxBottomId', BoxBottomController.deleteBoxBottom);
+  .post('/', BoxBottomController.register)
+  .get('/', BoxBottomController.getAllBoxBottomsByUser)
+  .get('/:boxBottomId', BoxBottomController.getBoxBottomById)
+  .put('/:boxBottomId', BoxBottomController.editBoxBottom)
+  .delete('/:boxBottomId', BoxBottomController.deleteBoxBottom);
 
 export default router;

@@ -5,8 +5,8 @@ const roleUserBoxBottomService = new RoleUserBoxBottomService();
 
 class RoleUserBoxBottomController {
   static async register(req: Request, res: Response) {
-    const { userId, boxBottomId } = req.params;
-    const { roleId } = req.body;
+    const { boxBottomId } = req.params;
+    const { userId, roleId } = req.body;
     if (!userId || !boxBottomId || !roleId) {
       return res.status(400).json({ message: 'Missing required fields: userId, boxBottomId, roleId' }); 
     }

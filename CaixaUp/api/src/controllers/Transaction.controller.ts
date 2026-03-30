@@ -25,7 +25,7 @@ class TransactionController {
   }
 
   static async getAllTransactions(req: Request, res: Response) {
-    const { userId } = req.params;
+    const userId = req.userId as string;
     try {
       const transactions = await transactionService.getAllTransactionsByUser(userId);
       res.status(200).json(transactions);
@@ -49,10 +49,10 @@ class TransactionController {
   }
 
   static async editTransaction(req: Request, res: Response) {
-    const { id } = req.params;
+    const { transactionId } = req.params;
     const dto = req.body;
     try {
-      const updatedRecord = await transactionService.update(id, dto);
+      const updatedRecord = await transactionService.update(transactionId, dto);
       if (!updatedRecord) {
         return res.status(404).json({ message: 'Transaction not found' });
       }
@@ -65,9 +65,9 @@ class TransactionController {
   }
 
   static async deleteTransaction(req: Request, res: Response) {
-    const { id } = req.params;
+    const { transactionId } = req.params;
     try {
-      await transactionService.delete(id);
+      await transactionService.delete(transactionId);
       res.status(200).json({ message: 'Transaction deleted successfully' });
     } catch (error) { 
       if (error instanceof Error) {

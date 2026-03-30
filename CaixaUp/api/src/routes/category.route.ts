@@ -1,13 +1,15 @@
 import { Router } from "express";
 import CategoryController from "../controllers/Category.controller";
+import checkAuth from "../middlewares/checkAuth";
 
 const router = Router();
 
+router.use(checkAuth)
 router
-  .post('/category/register/:userId', CategoryController.register)
-  .get('/categories/:userId', CategoryController.getAllCategoriesByUser)
-  .get('/category/:categoryId', CategoryController.getCategoryById)
-  .put('/category/:categoryId', CategoryController.editCategory)
-  .delete('/category/:categoryId', CategoryController.deleteCategory);
+  .post('/', CategoryController.register)
+  .get('/', CategoryController.getAllCategoriesByUser)
+  .get('/:categoryId', CategoryController.getCategoryById)
+  .put('/:categoryId', CategoryController.editCategory)
+  .delete('/:categoryId', CategoryController.deleteCategory);
 
 export default router;

@@ -5,7 +5,7 @@ const categoryService = new CategoryService();
 
 class CategoryController {
   static async register(req: Request, res: Response) {
-    const { userId } = req.params;
+    const userId = req.userId as string;
     const { name, type } = req.body;
     try {
       const category = await categoryService.create({
@@ -20,7 +20,7 @@ class CategoryController {
   }
 
   static async getAllCategoriesByUser(req: Request, res: Response) {
-    const { userId } = req.params;
+    const userId = req.userId as string;
     try {
       const categories = await categoryService.getAllCategoriesByUser(userId);
       res.status(200).json(categories);

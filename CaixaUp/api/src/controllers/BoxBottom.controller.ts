@@ -5,7 +5,7 @@ const boxBottomService = new BoxBottomService();
 
 class BoxBottomController {
   static async register(req: Request, res: Response) {
-    const { userId } = req.params;
+    const userId = req.userId as string;
     const { name, description, targetValue } = req.body;
     try {
       const boxBottom = await boxBottomService.create({
@@ -20,7 +20,7 @@ class BoxBottomController {
   }
 
   static async getAllBoxBottomsByUser(req: Request, res: Response) {
-    const { userId } = req.params;
+    const userId = req.userId as string;
     try {
       const boxBottoms = await boxBottomService.getAllBoxBottomsByUser(userId);
       res.status(200).json(boxBottoms);
