@@ -6,10 +6,10 @@ const router = Router();
 
 router.use(checkAuth)
 router
-  .post('/transactions/register/:boxBottomId/:categoryId', TransactionController.register)
-  .get('/transactions/', TransactionController.getAllTransactions)
-  .get('/transaction/:transactionId', TransactionController.getTransactionById) 
-  .put('/transaction/:transactionId', TransactionController.editTransaction)
-  .delete('/transaction/:transactionId', TransactionController.deleteTransaction);
+  .post('/box-bottom/:boxBottomId/category/:categoryId', TransactionController.register)
+  .get('/', TransactionController.getAllTransactions)
+  .get('/:transactionId', TransactionController.getTransactionById) 
+  .put('/:transactionId', TransactionController.editTransaction)
+  .delete('/:transactionId', TransactionController.deleteTransaction);
 
 export default router;

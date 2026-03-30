@@ -1,12 +1,14 @@
 import { Router } from "express";
 import RoleUserBoxBottomController from "../controllers/RoleUserBoxBottom.controller";
+import checkAuth from "../middlewares/checkAuth";
 
 const router = Router();
 
+router.use(checkAuth);
 router
-  .post('/permission/:userId/:boxBottomId/register/', RoleUserBoxBottomController.register)
-  .get('/members/:boxBottomId', RoleUserBoxBottomController.getAllMembers)
-  .put('/permission/:userId/:boxBottomId', RoleUserBoxBottomController.editRole)
-  .delete('/permission/:roleUserBoxBottomId', RoleUserBoxBottomController.deleteBoxBottom);
+  .post('/box-bottom/:boxBottomId/register/', checkAuth, RoleUserBoxBottomController.register)
+  .get('/box-bottom/:boxBottomId', checkAuth, RoleUserBoxBottomController.getAllMembers)
+  .put('/box-bottom/:userId/:boxBottomId', checkAuth, RoleUserBoxBottomController.editRole)
+  .delete('/:roleUserBoxBottomId', checkAuth, RoleUserBoxBottomController.deleteBoxBottom);
 
 export default router;

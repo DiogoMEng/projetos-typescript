@@ -7,10 +7,10 @@ const router = Router();
 router.use(checkAuth);
 
 router
-  .post('/boxBottom/register/', BoxBottomController.register)
-  .get('/boxBottoms/', BoxBottomController.getAllBoxBottomsByUser)
-  .get('/boxBottom/:boxBottomId', BoxBottomController.getBoxBottomById)
-  .put('/boxBottom/:boxBottomId', BoxBottomController.editBoxBottom)
-  .delete('/boxBottom/:boxBottomId', BoxBottomController.deleteBoxBottom);
+  .post('/', BoxBottomController.register)
+  .get('/', BoxBottomController.getAllBoxBottomsByUser)
+  .get('/:boxBottomId', BoxBottomController.getBoxBottomById)
+  .put('/:boxBottomId', BoxBottomController.editBoxBottom)
+  .delete('/:boxBottomId', BoxBottomController.deleteBoxBottom);
 
 export default router;
