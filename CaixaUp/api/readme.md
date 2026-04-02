@@ -225,9 +225,28 @@ api/
 }
 ```
 
+### Autenticação
+**POST** `/auth/login`
+Realiza login e retorna token JWT.
+
+**Request Body**
+```json
+{
+  "email": "joao@email.com",
+  "password": "senha123"
+}
+```
+
+**Response**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
 ### Usuários
-**POST** `/users/register`
-Registra um novo usuário.
+**POST** `/users`
+Registra um novo usuário. *(Pública)*
 
 **Request Body**
 ```json
@@ -239,64 +258,64 @@ Registra um novo usuário.
 ```
 
 **GET** `/users`
-Lista todos os usuários (sem senha).
+Lista todos os usuários (sem senha). *(Pública)*
 
-**GET** `/user/:id`
-Obtém usuário específico por ID.
+**GET** `/users/:id`
+Obtém usuário específico por ID. *(Pública)*
 
-**PUT** `/user/:id`
+**PUT** `/users/:id`
 Edita dados do usuário.
 
-**DELETE** `/user/:id`
+**DELETE** `/users/:id`
 Remove usuário.
 
 ### Categorias
-**POST** `/categories/register`
-Cria nova categoria.
+**POST** `/categories`
+Cria nova categoria. *(Protegida)*
 
 **GET** `/categories`
-Lista categorias.
+Lista categorias. *(Protegida)*
 
-**GET** `/category/:id`
-Obtém categoria por ID.
+**GET** `/categories/:categoryId`
+Obtém categoria por ID. *(Protegida)*
 
-**PUT** `/category/:id`
-Edita categoria.
+**PUT** `/categories/:categoryId`
+Edita categoria. *(Protegida)*
 
-**DELETE** `/category/:id`
-Remove categoria.
+**DELETE** `/categories/:categoryId`
+Remove categoria. *(Protegida)*
 
 ### Caixas (Box Bottoms)
-**POST** `/box-bottoms/register`
-Cria nova caixa.
+**POST** `/box-bottoms`
+Cria nova caixa. *(Protegida)*
 
 **GET** `/box-bottoms`
-Lista caixas.
+Lista caixas. *(Protegida)*
 
-**GET** `/box-bottom/:id`
-Obtém caixa por ID.
+**GET** `/box-bottoms/:boxBottomId`
+Obtém caixa por ID. *(Protegida)*
 
-**PUT** `/box-bottom/:id`
-Edita caixa.
+**PUT** `/box-bottoms/:boxBottomId`
+Edita caixa. *(Protegida)*
 
-**DELETE** `/box-bottom/:id`
-Remove caixa.
+**DELETE** `/box-bottoms/:boxBottomId`
+Remove caixa. *(Protegida)*
 
 ### Transações
-**POST** `/transactions/register/:boxBottomId/:categoryId`
-Registra nova transação.
+**POST** `/transactions/:boxBottomId/:categoryId`
+Registra nova transação. *(Protegida)*
 
 **GET** `/transactions/:id`
-Lista transações (por caixa?).
+Lista transações (por caixa?). *(Protegida)*
 
-**GET** `/transaction/:id`
-Obtém transação por ID.
+**GET** `/transactions/:id`
+Obtém transação por ID. *(Protegida)*
 
-**PUT** `/transaction/:id`
-Edita transação.
+**PUT** `/transactions/:id`
+Edita transação. *(Protegida)*
 
-**DELETE** `/transaction/:id`
-Remove transação.
+**DELETE** `/transactions/:id`
+Remove transação. *(Protegida)*
 
 ### Roles
 **POST** `/roles/register`
@@ -333,11 +352,28 @@ Remove associação.
 ---
 
 ## 🔐 Autenticação e Autorização
-- **Tipo**: JWT (JSON Web Tokens) - planejado mas não implementado
+- **Tipo**: JWT (JSON Web Tokens) - ✅ Implementado
 - **Papéis**: Sistema de roles para controle de permissões
 - **Fluxo**: Registro → Login → Token JWT → Acesso autorizado
 
-**Nota**: A autenticação JWT está configurada mas os middlewares de autenticação ainda não foram implementados.
+### Autenticação JWT
+A autenticação JWT está **completamente implementada**. O middleware `checkAuth` valida o token em todas as requisições protegidas.
+
+**Como usar:**
+1. Registre um novo usuário em `POST /users`
+2. Faça login em `POST /auth/login` para obter o token JWT
+3. Use o token no header `Authorization: Bearer <token>` em requisições protegidas
+
+**Rotas Protegidas (requerem autenticação):**
+- `/categories` - Gerenciamento de categorias
+- `/box-bottoms` - Gerenciamento de caixas
+- `/transactions` - Gerenciamento de transações
+- `/role-user-box-bottoms` - Associações de roles
+
+**Rotas Públicas:**
+- `POST /users` - Registro de usuários
+- `GET /users` - Listar usuários
+- `POST /auth/login` - Login
 
 ---
 
@@ -389,9 +425,9 @@ npm run test
 
 ## 🔒 Segurança
 - **Proteções**: Hashing de senhas com bcryptjs
-- **Criptografia**: JWT para tokens (quando implementado)
-- **Prevenção**: Validação de entrada, CORS habilitado
-- **Vulnerabilidades**: Autenticação ainda não implementada
+- **Criptografia**: JWT para tokens (✅ Implementado)
+- **Prevenção**: Validação de entrada, CORS habilitado, Middleware de autenticação em rotas protegidas
+- **Melhorias futuras**: Rate limiting, validação com Joi mais rigorosa, logs de auditoria
 
 ---
 
