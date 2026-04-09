@@ -1,9 +1,13 @@
 import express from 'express';
+import cors from 'cors';
 import router from './routes/indexRouter';
 import { DB } from './database/models/index';
 import { PORT, DB_PORT } from './config';
 
 const appServer = express();
+appServer.use(cors({
+  origin: 'http://localhost:8080'
+}));
 const port = PORT || 3000;
 
 appServer.use(express.json());
