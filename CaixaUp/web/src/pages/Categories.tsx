@@ -8,19 +8,16 @@ import { MotionButton } from "@/components/MotionButton";
 import { categoryService, type Category } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-
-const PRESET_COLORS = [
-  "#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#06b6d4", "#f97316",
-];
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
-  const [newColor, setNewColor] = useState(PRESET_COLORS[0]);
+  const [newType, setNewType] = useState<"receita" | "despesa">("despesa");
   const [saving, setSaving] = useState(false);
 
   const fetchCategories = () => {
@@ -36,16 +33,22 @@ export default function CategoriesPage() {
     if (!newName.trim()) return;
     setSaving(true);
     try {
-      await categoryService.create({ name: newName, color: newColor });
+      await categoryService.create({ name: newName, type: newType });
       toast.success("Categoria criada!");
       setDialogOpen(false);
       setNewName("");
+      setNewType("despesa");
       fetchCategories();
     } catch {
       toast.error("Erro ao criar categoria.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const typeColor = (cat: Category) => {
+    if (cat.color) return cat.color;
+    return cat.type === "receita" ? "#22c55e" : "#ef4444";
   };
 
   return (
@@ -81,11 +84,12 @@ export default function CategoriesPage() {
             >
               <div
                 className="h-10 w-10 rounded-full mx-auto mb-2 flex items-center justify-center"
-                style={{ background: cat.color + "20" }}
+                style={{ background: typeColor(cat) + "20" }}
               >
-                <Tag className="h-5 w-5" style={{ color: cat.color }} />
+                <Tag className="h-5 w-5" style={{ color: typeColor(cat) }} />
               </div>
               <p className="text-sm font-medium text-foreground truncate">{cat.name}</p>
+              <p className="text-xs text-muted-foreground mt-0.5 capitalize">{cat.type}</p>
             </motion.div>
           ))}
         </div>
@@ -102,18 +106,16 @@ export default function CategoriesPage() {
               <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Ex: Alimentação" className="mt-1" />
             </div>
             <div>
-              <Label className="text-sm font-medium text-foreground">Cor</Label>
-              <div className="flex gap-2 mt-2 flex-wrap">
-                {PRESET_COLORS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setNewColor(c)}
-                    className={`h-8 w-8 rounded-full transition-transform ${newColor === c ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110" : "hover:scale-105"}`}
-                    style={{ background: c }}
-                  />
-                ))}
-              </div>
+              <Label className="text-sm font-medium text-foreground">Tipo</Label>
+              <Select value={newType} onValueChange={(v) => setNewType(v as "receita" | "despesa")}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="despesa">Despesa</SelectItem>
+                  <SelectItem value="receita">Receita</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <MotionButton onClick={handleCreate} className="w-full" disabled={saving}>
               {saving ? "Salvando..." : "Criar Categoria"}

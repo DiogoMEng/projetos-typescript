@@ -6,9 +6,9 @@ const router = Router();
 
 router.use(checkAuth);
 router
-  .post('/box-bottom/:boxBottomId/register/', checkAuth, RoleUserBoxBottomController.register)
-  .get('/box-bottom/:boxBottomId', checkAuth, RoleUserBoxBottomController.getAllMembers)
-  .put('/box-bottom/:userId/:boxBottomId', checkAuth, RoleUserBoxBottomController.editRole)
-  .delete('/:roleUserBoxBottomId', checkAuth, RoleUserBoxBottomController.deleteBoxBottom);
+  .post('/box-bottom/:boxBottomId/register/', RoleUserBoxBottomController.register)
+  .get('/box-bottom/:boxBottomId', RoleUserBoxBottomController.getAllMembers)
+  .put('/box-bottom/:userId/:boxBottomId', RoleUserBoxBottomController.editRole)
+  .delete('/:roleUserBoxBottomId', RoleUserBoxBottomController.deleteBoxBottom);
 
 export default router;

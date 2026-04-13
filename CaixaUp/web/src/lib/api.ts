@@ -26,6 +26,7 @@ api.interceptors.request.use((config) => {
 
   if (!isPublicPost) {
     const token = getToken();
+    console.log("[CaixaUp] Interceptor — token presente:", !!token, "| URL:", config.url);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -81,20 +82,21 @@ export interface User {
 export interface Transaction {
   id: string;
   description: string;
-  amount: number;
-  type: "income" | "expense";
+  value: number;
+  movementType: "inflow" | "outflow";
   category_id: string;
   category?: Category;
   box_id: string;
   box?: Box;
-  date: string;
+  transactionDate: string;
   created_at: string;
 }
 
 export interface Category {
   id: string;
   name: string;
-  color: string;
+  type: "receita" | "despesa";
+  color?: string;
   icon?: string;
 }
 
@@ -102,6 +104,7 @@ export interface Box {
   id: string;
   name: string;
   description?: string;
+  targetValue?: string;
   balance?: number;
 }
 
@@ -153,7 +156,7 @@ export const userService = {
 
 // Categories
 export const categoryService = {
-  create: (data: Omit<Category, "id">) =>
+  create: (data: { name: string; type: "receita" | "despesa" }) =>
     api.post<ApiResponse<Category>>(ENDPOINTS.CATEGORIES.BASE, data),
 
   getAll: () =>
@@ -171,7 +174,7 @@ export const categoryService = {
 
 // Box Bottoms / Caixas
 export const boxService = {
-  create: (data: Omit<Box, "id">) =>
+  create: (data: { name: string; description: string; targetValue: string }) =>
     api.post<ApiResponse<Box>>(ENDPOINTS.BOX_BOTTOMS.BASE, data),
 
   getAll: () =>
@@ -192,7 +195,7 @@ export const transactionService = {
   create: (
     boxBottomId: string,
     categoryId: string,
-    data: Omit<Transaction, "id" | "created_at" | "category_id" | "box_id" | "category" | "box">
+    data: { movementType: "inflow" | "outflow"; value: number; transactionDate: string; description: string }
   ) =>
     api.post<ApiResponse<Transaction>>(
       ENDPOINTS.TRANSACTIONS.CREATE(boxBottomId, categoryId),
@@ -214,7 +217,7 @@ export const transactionService = {
 
 // Role User Box Bottoms
 export const roleUserBoxBottomService = {
-  register: (boxBottomId: string, data?: Record<string, unknown>) =>
+  register: (boxBottomId: string, data: { roleId: string }) =>
     api.post<ApiResponse<RoleUserBoxBottom>>(
       ENDPOINTS.ROLE_USER_BOX_BOTTOMS.REGISTER(boxBottomId),
       data

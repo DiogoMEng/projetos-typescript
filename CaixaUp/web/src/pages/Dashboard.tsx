@@ -36,18 +36,18 @@ export default function DashboardPage() {
   }, []);
 
   const totalIncome = transactions
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter((t) => t.movementType === "inflow")
+    .reduce((sum, t) => sum + t.value, 0);
   const totalExpense = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter((t) => t.movementType === "outflow")
+    .reduce((sum, t) => sum + t.value, 0);
   const balance = totalIncome - totalExpense;
 
   const expensesByCategory = transactions
-    .filter((t) => t.type === "expense")
+    .filter((t) => t.movementType === "outflow")
     .reduce((acc, t) => {
       const name = t.category?.name || "Sem categoria";
-      acc[name] = (acc[name] || 0) + t.amount;
+      acc[name] = (acc[name] || 0) + t.value;
       return acc;
     }, {} as Record<string, number>);
 
@@ -56,7 +56,7 @@ export default function DashboardPage() {
     value,
   }));
 
-  const recent = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+  const recent = [...transactions].sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()).slice(0, 5);
 
   const firstName = user?.name?.split(" ")[0] || "Usuário";
 
@@ -192,22 +192,22 @@ export default function DashboardPage() {
                   <div
                     className={cn(
                       "h-9 w-9 rounded-full flex items-center justify-center text-xs font-semibold",
-                      t.type === "income" ? "bg-income text-income-foreground" : "bg-expense text-expense-foreground"
+                      t.movementType === "inflow" ? "bg-income text-income-foreground" : "bg-expense text-expense-foreground"
                     )}
                   >
-                    {t.type === "income" ? "+" : "-"}
+                    {t.movementType === "inflow" ? "+" : "-"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate text-foreground">{t.description}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(t.date)}</p>
+                    <p className="text-xs text-muted-foreground">{formatDate(t.transactionDate)}</p>
                   </div>
                   <p
                     className={cn(
                       "text-sm font-semibold",
-                      t.type === "income" ? "text-income-foreground" : "text-expense-foreground"
+                      t.movementType === "inflow" ? "text-income-foreground" : "text-expense-foreground"
                     )}
                   >
-                    {t.type === "income" ? "+" : "-"}{formatCurrency(t.amount)}
+                    {t.movementType === "inflow" ? "+" : "-"}{formatCurrency(t.value)}
                   </p>
                 </div>
               ))}

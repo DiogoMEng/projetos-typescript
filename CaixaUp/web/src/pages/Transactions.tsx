@@ -27,7 +27,7 @@ export default function TransactionsPage() {
   const filtered = transactions.filter((t) =>
     t.description.toLowerCase().includes(search.toLowerCase())
   );
-  const grouped = groupByDate(filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+  const grouped = groupByDate(filtered.sort((a, b) => new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()));
 
   return (
     <PageTransition className="flex-1 p-4 md:p-6 max-w-3xl mx-auto w-full">
@@ -66,7 +66,7 @@ export default function TransactionsPage() {
           {Object.entries(grouped).map(([dateKey, items]) => (
             <div key={dateKey}>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">
-                {formatDate(items[0].date)}
+                {formatDate(items[0].transactionDate)}
               </p>
               <div className="space-y-1.5">
                 {items.map((t, i) => (
@@ -81,10 +81,10 @@ export default function TransactionsPage() {
                     <div
                       className={cn(
                         "h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
-                        t.type === "income" ? "bg-income text-income-foreground" : "bg-expense text-expense-foreground"
+                        t.movementType === "inflow" ? "bg-income text-income-foreground" : "bg-expense text-expense-foreground"
                       )}
                     >
-                      {t.type === "income" ? "↑" : "↓"}
+                      {t.movementType === "inflow" ? "↑" : "↓"}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate text-foreground">{t.description}</p>
@@ -95,10 +95,10 @@ export default function TransactionsPage() {
                     <p
                       className={cn(
                         "text-sm font-bold tabular-nums",
-                        t.type === "income" ? "text-income-foreground" : "text-expense-foreground"
+                        t.movementType === "inflow" ? "text-income-foreground" : "text-expense-foreground"
                       )}
                     >
-                      {t.type === "income" ? "+" : "-"}{formatCurrency(t.amount)}
+                      {t.movementType === "inflow" ? "+" : "-"}{formatCurrency(t.value)}
                     </p>
                   </motion.div>
                 ))}

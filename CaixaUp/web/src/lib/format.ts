@@ -31,9 +31,9 @@ export function formatFullDate(dateStr: string): string {
   });
 }
 
-export function groupByDate<T extends { date: string }>(items: T[]): Record<string, T[]> {
+export function groupByDate<T extends { transactionDate: string }>(items: T[]): Record<string, T[]> {
   return items.reduce((groups, item) => {
-    const key = new Date(item.date).toDateString();
+    const key = new Date(item.transactionDate).toDateString();
     if (!groups[key]) groups[key] = [];
     groups[key].push(item);
     return groups;

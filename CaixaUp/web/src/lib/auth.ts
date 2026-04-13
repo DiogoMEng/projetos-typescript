@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 
-const TOKEN_KEY = "caixaup_token";
+const TOKEN_KEY = "accessToken";
 
 export interface JwtPayload {
   userId: string;

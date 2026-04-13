@@ -18,6 +18,7 @@ export default function BoxesPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
+  const [newTargetValue, setNewTargetValue] = useState("");
   const [saving, setSaving] = useState(false);
 
   const fetchBoxes = () => {
@@ -33,11 +34,16 @@ export default function BoxesPage() {
     if (!newName.trim()) return;
     setSaving(true);
     try {
-      await boxService.create({ name: newName, description: newDesc });
+      await boxService.create({
+        name: newName,
+        description: newDesc,
+        targetValue: newTargetValue || "0",
+      });
       toast.success("Caixa criado!");
       setDialogOpen(false);
       setNewName("");
       setNewDesc("");
+      setNewTargetValue("");
       fetchBoxes();
     } catch {
       toast.error("Erro ao criar caixa.");
@@ -107,8 +113,20 @@ export default function BoxesPage() {
               <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Ex: Conta Principal" className="mt-1" />
             </div>
             <div>
-              <Label className="text-sm font-medium text-foreground">Descrição (opcional)</Label>
+              <Label className="text-sm font-medium text-foreground">Descrição</Label>
               <Input value={newDesc} onChange={(e) => setNewDesc(e.target.value)} placeholder="Ex: Meu banco principal" className="mt-1" />
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-foreground">Valor Meta (R$)</Label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                value={newTargetValue}
+                onChange={(e) => setNewTargetValue(e.target.value)}
+                placeholder="Ex: 3500.00"
+                className="mt-1"
+              />
             </div>
             <MotionButton onClick={handleCreate} className="w-full" disabled={saving}>
               {saving ? "Salvando..." : "Criar Caixa"}
