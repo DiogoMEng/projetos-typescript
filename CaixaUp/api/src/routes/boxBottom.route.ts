@@ -1,6 +1,7 @@
 import { Router } from "express";
 import BoxBottomController from "../controllers/BoxBottom.controller";
 import checkAuth from "../middlewares/checkAuth";
+import checkRole from "../middlewares/checkRole";
 
 const router = Router();
 
@@ -8,7 +9,7 @@ router.use(checkAuth);
 
 router
   .post('/', BoxBottomController.register)
-  .get('/', BoxBottomController.getAllBoxBottomsByUser)
+  .get('/', checkRole(['OWNER', 'MANAGER']), BoxBottomController.getAllBoxBottomsByUser)
   .get('/:boxBottomId', BoxBottomController.getBoxBottomById)
   .put('/:boxBottomId', BoxBottomController.editBoxBottom)
   .delete('/:boxBottomId', BoxBottomController.deleteBoxBottom);
