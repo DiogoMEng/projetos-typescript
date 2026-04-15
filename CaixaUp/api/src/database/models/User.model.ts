@@ -1,3 +1,4 @@
+import { RUBBModel } from '../models/RoleUserBoxBottom';
 import { User } from '../../interfaces/user.interface';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
@@ -12,6 +13,8 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
   public email!: string;
   public name!: string;
   public password!: string;
+
+  public userPermissions?: RUBBModel[];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -29,7 +32,7 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
 
     UserModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'userId',
-      as: ' userPermissions',
+      as: 'userPermissions',
     })
   }
 }
