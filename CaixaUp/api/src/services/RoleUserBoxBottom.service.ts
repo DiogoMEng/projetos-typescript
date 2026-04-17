@@ -39,6 +39,15 @@ class RoelUserBoxBottomService extends Service<any, RUBB> {
     );
     return affectedRows > 0;
   }
+
+  async deleteMember(userId: string, boxBottomId: string): Promise<void> {
+    await DB.RoleUserBoxBottoms.destroy({
+      where: {
+        userId,
+        boxBottomId
+      }
+    })
+  }
 }
 
 export default RoelUserBoxBottomService;

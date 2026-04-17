@@ -57,9 +57,9 @@ class RoleUserBoxBottomController {
   }
 
   static async deleteBoxBottom(req: Request, res: Response) {
-    const { roleUserBoxBottomId } = req.params;
+    const { userId, boxBottomId } = req.params;
     try {
-      await roleUserBoxBottomService.delete(roleUserBoxBottomId);
+      await roleUserBoxBottomService.deleteMember(userId, boxBottomId);
       res.status(200).json({ message: 'Member deleted successfully' });
     } catch (error) { 
       if (error instanceof Error) {

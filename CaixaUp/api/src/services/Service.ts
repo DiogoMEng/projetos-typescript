@@ -44,7 +44,8 @@ export abstract class Service<T extends Model, DTO> {
 
   async delete(id: string): Promise<void> {
     await this.model.destroy({
-      where: { [this.primaryKey]: id } as any
+      where: { 
+        [this.primaryKey]: id } as any
     });
   }
 
