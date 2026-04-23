@@ -1,4 +1,4 @@
-  import BoxBottomService from '../services/BoxBottom.service';
+import BoxBottomService from '../services/BoxBottom.service';
 import { Request, Response } from 'express';
 
 const boxBottomService = new BoxBottomService();
@@ -11,7 +11,10 @@ class BoxBottomController {
       const boxBottom = await boxBottomService.create({
         name, description, targetValue, userId
       });
-        res.status(201).json({ message: `BoxBottom ${boxBottom.name} created successfully.` });
+      res.status(201).json({ 
+        message: `BoxBottom ${boxBottom.name} created successfully.`,
+        boxBottomId: boxBottom.boxBottomId,
+      });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });

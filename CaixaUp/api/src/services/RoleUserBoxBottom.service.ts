@@ -2,24 +2,11 @@ import { DB } from '../database/models';
 import { RUBB } from '../interfaces/roleUserBoxBottom.interface';
 import { Service } from './Service';
 
-class RoelUserBoxBottomService extends Service<any, RUBB> {
+
+
+class RoleUserBoxBottomService extends Service<any, RUBB> {
   constructor() {
     super(DB.RoleUserBoxBottoms, 'roleUserBoxBottomId');
-  }
-
-  protected async beforeCreate(dto: RUBB): Promise<void> {
-    const [user, box, role] = await Promise.all([
-      DB.Users.findByPk(dto.userId),
-      DB.BoxBottoms.findByPk(dto.boxBottomId),
-      DB.Roles.findByPk(dto.roleId)
-    ]);
-
-    if (!user || !box  || !role) throw new Error('Usuário, Caixa ou Função não encontrados');
-
-    const existingPermission = await DB.RoleUserBoxBottoms.findOne({
-      where: { userId: dto.userId, boxBottomId: dto.boxBottomId }
-    });
-    if (existingPermission) throw new Error('O usuário já possui permissão nesta caixa.');
   }
 
   async getAllMembers(boxBottomId: string): Promise<RUBB[]> {
@@ -40,14 +27,20 @@ class RoelUserBoxBottomService extends Service<any, RUBB> {
     return affectedRows > 0;
   }
 
-  async deleteMember(userId: string, boxBottomId: string): Promise<void> {
-    await DB.RoleUserBoxBottoms.destroy({
-      where: {
-        userId,
-        boxBottomId
-      }
-    })
+  protected async beforeCreate(dto: RUBB): Promise<void> {
+    const [user, box, role] = await Promise.all([
+      DB.Users.findByPk(dto.userId),
+      DB.BoxBottoms.findByPk(dto.boxBottomId),
+      DB.Roles.findByPk(dto.roleId)
+    ]);
+
+    if (!user || !box  || !role) throw new Error('Usuário, Caixa ou Função não encontrados');
+
+    const existingPermission = await DB.RoleUserBoxBottoms.findOne({
+      where: { userId: dto.userId, boxBottomId: dto.boxBottomId }
+    });
+    if (existingPermission) throw new Error('O usuário já possui permissão nesta caixa.');
   }
 }
 
-export default RoelUserBoxBottomService;
+export default RoleUserBoxBottomService;

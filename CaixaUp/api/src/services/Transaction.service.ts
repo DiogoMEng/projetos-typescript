@@ -13,7 +13,7 @@ class TransactionService extends Service<any, Transaction> {
         {
           model: DB.BoxBottoms,
           as: 'targetBox',
-          where: { userId: userId },
+          where: { userId },
           attributes: [ 'name' ]
         },
         {
@@ -29,7 +29,7 @@ class TransactionService extends Service<any, Transaction> {
       }
     })
   }
-
+  
   protected async beforeCreate(dto: Transaction): Promise<void> {
     if (dto.value <= 0) throw new Error('Valor deve ser maior que zero.');
 

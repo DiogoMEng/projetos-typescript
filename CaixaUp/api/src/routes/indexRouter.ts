@@ -3,7 +3,7 @@ import userRouter from './user.route';
 import categoryRouter from './category.route';
 import boxBottomRouter from './boxBottom.route';
 import roleRouter from './role.route';
-import transactionRouter from './trasaction.route';
+import transactionRouter from './transaction.route';
 import RoleUserBoxBottomRouter from './roleUserBoxBottom.route';
 import authRouter from './auth.route';
 import { Application } from 'express';
