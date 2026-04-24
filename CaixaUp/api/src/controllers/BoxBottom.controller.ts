@@ -1,5 +1,5 @@
-import BoxBottomService from '../services/BoxBottom.service';
-import { Request, Response } from 'express';
+import BoxBottomService from "../services/BoxBottom.service";
+import { Request, Response } from "express";
 
 const boxBottomService = new BoxBottomService();
 
@@ -9,9 +9,9 @@ class BoxBottomController {
     const { name, description, targetValue } = req.body;
     try {
       const boxBottom = await boxBottomService.create({
-        name, description, targetValue, userId
+        name, description, targetValue, userId,
       });
-      res.status(201).json({ 
+      res.status(201).json({
         message: `BoxBottom ${boxBottom.name} created successfully.`,
         boxBottomId: boxBottom.boxBottomId,
       });
@@ -52,9 +52,9 @@ class BoxBottomController {
     try {
       const updatedRecord = await boxBottomService.update(boxBottomId, dto);
       if (!updatedRecord) {
-        return res.status(404).json({ message: 'BoxBottom not found' });
+        return res.status(404).json({ message: "BoxBottom not found" });
       }
-      res.status(200).json({ message: 'BoxBottom updated successfully' });
+      res.status(200).json({ message: "BoxBottom updated successfully" });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -66,8 +66,8 @@ class BoxBottomController {
     const { boxBottomId } = req.params;
     try {
       await boxBottomService.delete(boxBottomId);
-      res.status(200).json({ message: 'BoxBottom deleted successfully' });
-    } catch (error) { 
+      res.status(200).json({ message: "BoxBottom deleted successfully" });
+    } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       }

@@ -1,5 +1,5 @@
-import RoleUserBoxBottomService from '../services/RoleUserBoxBottom.service';
-import { Request, Response } from 'express';
+import RoleUserBoxBottomService from "../services/RoleUserBoxBottom.service";
+import { Request, Response } from "express";
 
 const roleUserBoxBottomService = new RoleUserBoxBottomService();
 
@@ -8,17 +8,17 @@ class RoleUserBoxBottomController {
     const { boxBottomId } = req.params;
     const { userId, roleId } = req.body;
     if (!userId || !boxBottomId || !roleId) {
-      return res.status(400).json({ message: 'Missing required fields: userId, boxBottomId, roleId' }); 
+      return res.status(400).json({ message: "Missing required fields: userId, boxBottomId, roleId" });
     }
     try {
       const permission = await roleUserBoxBottomService.create({
         userId,
         boxBottomId,
-        roleId
+        roleId,
       });
-      res.status(201).json({ 
-        message: `Permission registered successfully.`,
-        data: permission
+      res.status(201).json({
+        message: "Permission registered successfully.",
+        data: permission,
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -46,9 +46,9 @@ class RoleUserBoxBottomController {
     try {
       const updatedRecord = await roleUserBoxBottomService.editRole(userId, boxBottomId, roleId);
       if (!updatedRecord) {
-        return res.status(404).json({ message: 'Access record not found for this user in the specified box.' });
+        return res.status(404).json({ message: "Access record not found for this user in the specified box." });
       }
-      res.status(200).json({ message: 'User role updated successfully' });
+      res.status(200).json({ message: "User role updated successfully" });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -60,8 +60,8 @@ class RoleUserBoxBottomController {
     const { userId } = req.params;
     try {
       await roleUserBoxBottomService.delete(userId);
-      res.status(200).json({ message: 'Member deleted successfully' });
-    } catch (error) { 
+      res.status(200).json({ message: "Member deleted successfully" });
+    } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       }

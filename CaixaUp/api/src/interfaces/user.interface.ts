@@ -14,4 +14,4 @@ export interface TokenPayload extends JwtPayload {
   email: string;
 }
 
-export type AuthCredentials = Pick<User, 'email' | 'password'>
+export type AuthCredentials = Pick<User, "email" | "password">

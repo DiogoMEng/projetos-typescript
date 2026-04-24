@@ -1,5 +1,5 @@
-import UserService from '../services/User.service';
-import { Request, Response } from 'express';
+import UserService from "../services/User.service";
+import { Request, Response } from "express";
 
 const userService = new UserService();
 
@@ -8,7 +8,7 @@ class UserController {
     const { name, email, password } = req.body;
     try {
       const user = await userService.create({
-        name, email, password
+        name, email, password,
       });
       res.status(201).json({ name, email });
     } catch (error) {
@@ -47,9 +47,9 @@ class UserController {
     try {
       const updatedRecord = await userService.update(id, dto);
       if (!updatedRecord) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: "User not found" });
       }
-      res.status(200).json({ message: 'User updated successfully' });
+      res.status(200).json({ message: "User updated successfully" });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -61,8 +61,8 @@ class UserController {
     const { id } = req.params;
     try {
       await userService.delete(id);
-      res.status(200).json({ message: 'User deleted successfully' });
-    } catch (error) { 
+      res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       }

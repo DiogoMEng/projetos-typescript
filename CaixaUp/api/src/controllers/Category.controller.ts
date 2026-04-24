@@ -1,5 +1,5 @@
-import CategoryService from '../services/Category.service';
-import { Request, Response } from 'express';
+import CategoryService from "../services/Category.service";
+import { Request, Response } from "express";
 
 const categoryService = new CategoryService();
 
@@ -9,7 +9,7 @@ class CategoryController {
     const { name, type } = req.body;
     try {
       const category = await categoryService.create({
-        name, type, userId
+        name, type, userId,
       });
       res.status(201).json({ message: `Category ${category.name} created successfully.` });
     } catch (error) {
@@ -49,9 +49,9 @@ class CategoryController {
     try {
       const updatedRecord = await categoryService.update(categoryId, dto);
       if (!updatedRecord) {
-        return res.status(404).json({ message: 'Category not found' });
+        return res.status(404).json({ message: "Category not found" });
       }
-      res.status(200).json({ message: 'Category updated successfully' });
+      res.status(200).json({ message: "Category updated successfully" });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
@@ -63,8 +63,8 @@ class CategoryController {
     const { categoryId } = req.params;
     try {
       await categoryService.delete(categoryId);
-      res.status(200).json({ message: 'Category deleted successfully' });
-    } catch (error) { 
+      res.status(200).json({ message: "Category deleted successfully" });
+    } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ message: error.message });
       }

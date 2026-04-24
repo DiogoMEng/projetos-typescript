@@ -1,11 +1,10 @@
-import { RUBBModel } from '../models/RoleUserBoxBottom';
-import { User } from '../../interfaces/user.interface';
-import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
-
+import { RUBBModel } from "../models/RoleUserBoxBottom";
+import { User } from "../../interfaces/user.interface";
+import { Sequelize, DataTypes, Model, Optional } from "sequelize";
 
 export type UserCreationAttributes = Optional<
   User,
-  'userId'
+  "userId"
 >
 
 export class UserModel extends Model< User, UserCreationAttributes > implements User {
@@ -21,19 +20,19 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
 
   static associate(models: any) {
     UserModel.hasMany(models.Categories, {
-      foreignKey: 'userId',
-      as: 'userCategories',
+      foreignKey: "userId",
+      as: "userCategories",
     });
 
     UserModel.hasMany(models.BoxBottoms, {
-      foreignKey: 'userId',
-      as: 'userOwnedBoxex',
-    })
+      foreignKey: "userId",
+      as: "userOwnedBoxex",
+    });
 
     UserModel.hasMany(models.RoleUserBoxBottoms, {
-      foreignKey: 'userId',
-      as: 'userPermissions',
-    })
+      foreignKey: "userId",
+      as: "userPermissions",
+    });
   }
 }
 
@@ -44,30 +43,30 @@ export default function (sequelize: Sequelize): typeof UserModel {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: 'user_id',
+      field: "user_id",
     },
     name: {
       allowNull: false,
       type: DataTypes.STRING,
-      field: 'name',
+      field: "name",
     },
     email: {
       allowNull: false,
       type: DataTypes.STRING,
       unique: true,
-      field: 'email',
+      field: "email",
     },
     password: {
       allowNull: false,
       type: DataTypes.STRING(255),
-      field: 'password',
+      field: "password",
     },
   }, {
-    tableName: 'users',
+    tableName: "users",
     sequelize,
     timestamps: true,
     underscored: true,
   });
 
-  return UserModel
+  return UserModel;
 }

@@ -1,9 +1,9 @@
-import { Transaction } from '../../interfaces/transaction.interface';
-import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
+import { Transaction } from "../../interfaces/transaction.interface";
+import { Sequelize, DataTypes, Model, Optional } from "sequelize";
 
 export type TrasactionCreationAttributes = Optional<
   Transaction,
-  'boxBottomId'
+  "boxBottomId"
 >
 
 export class TransactionModel extends Model< Transaction, TrasactionCreationAttributes > implements Transaction {
@@ -22,17 +22,17 @@ export class TransactionModel extends Model< Transaction, TrasactionCreationAttr
 
   static associate(models: any) {
     TransactionModel.belongsTo(models.BoxBottoms, {
-      foreignKey: 'boxBottomId',
-      as: 'targetBox',
+      foreignKey: "boxBottomId",
+      as: "targetBox",
     });
 
     TransactionModel.belongsTo(models.Categories, {
-      foreignKey: 'categoryId',
-      as: 'transactionCategory',
+      foreignKey: "categoryId",
+      as: "transactionCategory",
     });
   }
 }
-''
+"";
 export default function (sequelize: Sequelize): typeof TransactionModel {
   TransactionModel.init({
     transactionId: {
@@ -40,40 +40,40 @@ export default function (sequelize: Sequelize): typeof TransactionModel {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: 'transaction_id',
+      field: "transaction_id",
     },
     boxBottomId: {
       allowNull: false,
       type: DataTypes.UUID,
-      field: 'box_bottom_id',
+      field: "box_bottom_id",
     },
     categoryId: {
       allowNull: false,
       type: DataTypes.UUID,
-      field: 'category_id',
+      field: "category_id",
     },
     movementType: {
       allowNull: false,
-      type: DataTypes.ENUM('inflow', 'outflow'),
-      field: 'movement_type',
+      type: DataTypes.ENUM("inflow", "outflow"),
+      field: "movement_type",
     },
     value: {
       allowNull: false,
       type: DataTypes.DECIMAL,
-      field: 'value',
+      field: "value",
     },
     transactionDate: {
       allowNull: false,
       type: DataTypes.DATE,
-      field: 'transaction_date',
+      field: "transaction_date",
     },
     description: {
       allowNull: false,
       type: DataTypes.STRING,
-      field: 'description',
+      field: "description",
     },
   }, {
-    tableName: 'transactions',
+    tableName: "transactions",
     sequelize,
     timestamps: true,
   });

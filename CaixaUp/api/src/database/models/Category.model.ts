@@ -1,9 +1,9 @@
-import { Category } from '../../interfaces/category.interface';
-import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
+import { Category } from "../../interfaces/category.interface";
+import { Sequelize, DataTypes, Model, Optional } from "sequelize";
 
 export type CategoryCreationAttributes = Optional<
   Category,
-  'categoryId'
+  "categoryId"
 >
 
 export class CategoryModel extends Model< Category, CategoryCreationAttributes > implements Category {
@@ -19,14 +19,14 @@ export class CategoryModel extends Model< Category, CategoryCreationAttributes >
 
   static associate(models: any) {
     CategoryModel.belongsTo(models.Users, {
-      foreignKey: 'userId',
-      as: 'categoryOwner',
+      foreignKey: "userId",
+      as: "categoryOwner",
     });
 
     CategoryModel.hasMany(models.Transactions, {
-      foreignKey: 'categoryId',
-      as: 'categoryTransactions',
-    })
+      foreignKey: "categoryId",
+      as: "categoryTransactions",
+    });
   }
 }
 
@@ -37,24 +37,24 @@ export default function (sequelize: Sequelize): typeof CategoryModel {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: 'category_id',
+      field: "category_id",
     },
     userId: {
       allowNull: false,
       type: DataTypes.UUID,
-      field: 'user_id',
+      field: "user_id",
     },
     name: {
       allowNull: false,
       type: DataTypes.STRING,
-      field: 'name',
+      field: "name",
     },
     type: {
       allowNull: false,
-      type: DataTypes.ENUM('receita', 'despesa'),
+      type: DataTypes.ENUM("receita", "despesa"),
     },
   }, {
-    tableName: 'categories',
+    tableName: "categories",
     sequelize,
     timestamps: true,
     underscored: true,
