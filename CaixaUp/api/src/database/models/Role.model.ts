@@ -1,9 +1,9 @@
-import { Role } from "../../interfaces/role.interface";
-import { Sequelize, DataTypes, Model, Optional } from "sequelize";
+import { Role } from '../../interfaces/role.interface';
+import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type RoleCreationAttributes = Optional<
   Role,
-  "roleId"
+  'roleId'
 >
 
 export class RoleModel extends Model< Role, RoleCreationAttributes > implements Role {
@@ -18,8 +18,8 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
 
   static associate(models: any) {
     RoleModel.hasMany(models.RoleUserBoxBottoms, {
-      foreignKey: "roleId",
-      as: "roleAssignments",
+      foreignKey: 'roleId',
+      as: 'roleAssignments',
     });
   }
 }
@@ -31,21 +31,21 @@ export default function (sequelize: Sequelize): typeof RoleModel {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: "role_id",
+      field: 'role_id',
     },
     name: {
       allowNull: false,
       type: DataTypes.STRING,
-      field: "name",
+      field: 'name',
     },
     description: {
       allowNull: false,
       type: DataTypes.STRING,
       unique: true,
-      field: "description",
+      field: 'description',
     },
   }, {
-    tableName: "roles",
+    tableName: 'roles',
     sequelize,
     timestamps: true,
   });

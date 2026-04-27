@@ -1,9 +1,9 @@
-import { BoxBottom } from "../../interfaces/boxBottom.interface";
-import { Sequelize, DataTypes, Model, Optional } from "sequelize";
+import { BoxBottom } from '../../interfaces/boxBottom.interface';
+import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type BoxBottomCreationAttributes = Optional<
   BoxBottom,
-  "boxBottomId"
+  'boxBottomId'
 >
 
 export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttributes > implements BoxBottom {
@@ -20,18 +20,18 @@ export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttribute
 
   static associate(models: any) {
     BoxBottomModel.belongsTo(models.Users, {
-      foreignKey: "userId",
-      as: "BoxCreator",
+      foreignKey: 'userId',
+      as: 'BoxCreator',
     });
 
     BoxBottomModel.hasMany(models.Transactions, {
-      foreignKey: "boxBottomId",
-      as: "boxTransactions",
+      foreignKey: 'boxBottomId',
+      as: 'boxTransactions',
     });
 
     BoxBottomModel.hasMany(models.RoleUserBoxBottoms, {
-      foreignKey: "boxBottomId",
-      as: "boxMembers",
+      foreignKey: 'boxBottomId',
+      as: 'boxMembers',
     });
   }
 }
@@ -43,30 +43,30 @@ export default function (sequelize: Sequelize): typeof BoxBottomModel {
       primaryKey: true,
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUID,
-      field: "box_bottom_id",
+      field: 'box_bottom_id',
     },
     userId: {
       allowNull: false,
       type: DataTypes.UUID,
-      field: "user_id",
+      field: 'user_id',
     },
     name: {
       allowNull: false,
       type: DataTypes.STRING,
-      field: "name",
+      field: 'name',
     },
     description: {
       allowNull: false,
       type: DataTypes.STRING,
-      field: "description",
+      field: 'description',
     },
     targetValue: {
       allowNull: false,
       type: DataTypes.NUMBER,
-      field: "target_value",
+      field: 'target_value',
     },
   }, {
-    tableName: "box_bottoms",
+    tableName: 'box_bottoms',
     sequelize,
     timestamps: true,
   });

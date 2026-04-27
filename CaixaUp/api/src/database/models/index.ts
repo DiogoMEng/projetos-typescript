@@ -1,10 +1,10 @@
-import Sequelize from "sequelize";
-import UserModel from "./User.model";
-import RoleModel from "./Role.model";
-import CategoryModel from "./Category.model";
-import BoxBottomModel from "./BoxBottom.model";
-import TransactionModel from "./Transaction.model";
-import RUBBModel from "./RoleUserBoxBottom";
+import Sequelize from 'sequelize';
+import UserModel from './User.model';
+import RoleModel from './Role.model';
+import CategoryModel from './Category.model';
+import BoxBottomModel from './BoxBottom.model';
+import TransactionModel from './Transaction.model';
+import RUBBModel from './RoleUserBoxBottom';
 
 import {
   DB_PORT,
@@ -14,20 +14,20 @@ import {
   DB_HOST,
   NODE_ENV,
   DB_DIALECT,
-} from "../../config";
+} from '../../config';
 
 const sequelize = new Sequelize.Sequelize(
   DB_NAME as string,
   DB_USERNAME as string,
   DB_PASSWORD as string,
   {
-    dialect: (DB_DIALECT as Sequelize.Dialect) || "postgres",
+    dialect: (DB_DIALECT as Sequelize.Dialect) || 'postgres',
     host: DB_HOST,
     port: parseInt(DB_PORT as string, 10),
-    timezone: "+09:00",
+    timezone: '+09:00',
     define: {
-      charset: "utf8mb4",
-      collate: "utf8mb4_general_ci",
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
       underscored: true,
       freezeTableName: true,
     },
@@ -35,7 +35,7 @@ const sequelize = new Sequelize.Sequelize(
       min: 0,
       max: 5,
     },
-    logQueryParameters: NODE_ENV === "development",
+    logQueryParameters: NODE_ENV === 'development',
     benchmark: true,
   },
 );

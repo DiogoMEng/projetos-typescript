@@ -1,18 +1,18 @@
-import { DB } from "../database/models";
-import { RUBB } from "../interfaces/roleUserBoxBottom.interface";
-import { Service } from "./Service";
+import { DB } from '../database/models';
+import { RUBB } from '../interfaces/roleUserBoxBottom.interface';
+import { Service } from './Service';
 
 class RoleUserBoxBottomService extends Service<any, RUBB> {
   constructor() {
-    super(DB.RoleUserBoxBottoms, "roleUserBoxBottomId");
+    super(DB.RoleUserBoxBottoms, 'roleUserBoxBottomId');
   }
 
   async getAllMembers(boxBottomId: string): Promise<RUBB[]> {
     return await super.getAll({
       where: { boxBottomId },
       include: [
-        { model: DB.Users, as: "assignedUser", attributes: ["name", "email"] },
-        { model: DB.Roles, as: "assignedRole", attributes: ["name"] },
+        { model: DB.Users, as: 'assignedUser', attributes: ['name', 'email'] },
+        { model: DB.Roles, as: 'assignedRole', attributes: ['name'] },
       ],
     });
   };
@@ -32,12 +32,12 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
       DB.Roles.findByPk(dto.roleId),
     ]);
 
-    if (!user || !box  || !role) throw new Error("Usuário, Caixa ou Função não encontrados");
+    if (!user || !box  || !role) throw new Error('Usuário, Caixa ou Função não encontrados');
 
     const existingPermission = await DB.RoleUserBoxBottoms.findOne({
       where: { userId: dto.userId, boxBottomId: dto.boxBottomId },
     });
-    if (existingPermission) throw new Error("O usuário já possui permissão nesta caixa.");
+    if (existingPermission) throw new Error('O usuário já possui permissão nesta caixa.');
   }
 }
 

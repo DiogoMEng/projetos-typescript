@@ -1,5 +1,5 @@
-import { config } from "dotenv";
-const envFile = `.env.${process.env.NODE_ENV || "development"}`;
+import { config } from 'dotenv';
+const envFile = `.env.${process.env.NODE_ENV || 'development'}`;
 config ({ path: envFile });
 export const {
   PORT,

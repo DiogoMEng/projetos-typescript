@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
-import { Model, ModelStatic } from "sequelize";
+import { v4 as uuidv4 } from 'uuid';
+import { Model, ModelStatic } from 'sequelize';
 
 export abstract class Service<T extends Model, DTO> {
   protected model: ModelStatic<T>;

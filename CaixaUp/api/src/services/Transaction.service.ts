@@ -1,10 +1,10 @@
-import { DB } from "../database/models";
-import { Transaction } from "../interfaces/transaction.interface";
-import { Service } from "./Service";
+import { DB } from '../database/models';
+import { Transaction } from '../interfaces/transaction.interface';
+import { Service } from './Service';
 
 class TransactionService extends Service<any, Transaction> {
   constructor() {
-    super(DB.Transactions, "transactionId");
+    super(DB.Transactions, 'transactionId');
   }
 
   async getAllTransactionsByUser(userId: string) {
@@ -12,33 +12,33 @@ class TransactionService extends Service<any, Transaction> {
       include: [
         {
           model: DB.BoxBottoms,
-          as: "targetBox",
+          as: 'targetBox',
           where: { userId },
-          attributes: ["name"],
+          attributes: ['name'],
         },
         {
           model: DB.Categories,
-          as: "transactionCategory",
-          attributes: ["name", "type"],
+          as: 'transactionCategory',
+          attributes: ['name', 'type'],
         },
       ],
-      order: [["transactionDate", "DESC"]],
+      order: [['transactionDate', 'DESC']],
       limit: 50,
       attributes: {
-        exclude: ["boxBottomId", "categoryId"],
+        exclude: ['boxBottomId', 'categoryId'],
       },
     });
   }
 
   protected async beforeCreate(dto: Transaction): Promise<void> {
-    if (dto.value <= 0) throw new Error("Valor deve ser maior que zero.");
+    if (dto.value <= 0) throw new Error('Valor deve ser maior que zero.');
 
     const [box, cat] = await Promise.all([
       DB.BoxBottoms.findByPk(dto.boxBottomId),
       DB.Categories.findByPk(dto.categoryId),
     ]);
 
-    if (!box || !cat ) throw new Error("Caixinha ou Categoria não encontrada.");
+    if (!box || !cat ) throw new Error('Caixinha ou Categoria não encontrada.');
   }
 
   protected async afterCreate(record: any): Promise<void> {

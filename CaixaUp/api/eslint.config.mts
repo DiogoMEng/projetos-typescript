@@ -1,13 +1,13 @@
-import globals from "globals"; 
-import pluginJs from "@eslint/js"; 
-import tsParser from "@typescript-eslint/parser"; 
+import globals from "globals";
+import pluginJs from "@eslint/js";
+import tsParser from "@typescript-eslint/parser";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import importX from "eslint-plugin-import-x";
 
-/** @type {import('eslint').Linter.Config[]} */ 
-export default [ 
+/** @type {import('eslint').Linter.Config[]} */
+export default [
   pluginJs.configs.recommended, // Configurações recomendadas do ESLint 
   {
     files: ["**/*.js"],
@@ -19,18 +19,18 @@ export default [
       sourceType: "commonjs",
     }
   },
-  { 
-    files: ["**/*.ts", "**/*.tsx"], // Aplica apenas a arquivos TypeScript 
-    languageOptions: { 
-      globals: globals.node, // Define variáveis globais do Node.js 
-      ecmaVersion: 2021, // Usa ECMAScript 2021 
-      sourceType: "module", // Permite o uso de módulos ES 
-      parser: tsParser, // Usa o parser do TypeScript 
-    }, 
-    plugins: { 
-      "@typescript-eslint": tsPlugin, // Usa o plugin do TypeScript
-      "prettier": prettierPlugin, // Usa o plugin do Prettier
-      "import-x": importX // Usa o plugin do Import-X
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    languageOptions: {
+      globals: globals.node,
+      ecmaVersion: 2021,
+      sourceType: "module",
+      parser: tsParser,
+    },
+    plugins: {
+      "@typescript-eslint": tsPlugin,
+      "prettier": prettierPlugin,
+      "import-x": importX
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
@@ -44,7 +44,7 @@ export default [
         },
       ],
       semi: ["error", "always"],
-      quotes: ["error", "double"],
+      quotes: ["error", "single"],
       indent: ["error", 2],
       "no-trailing-spaces": "error",
       "prefer-const": "error",
@@ -59,5 +59,5 @@ export default [
       "no-var": "error",
       "no-multiple-empty-lines": ["error", { "max": 1 }],
     },
-  }, 
+  },
 ]; 
