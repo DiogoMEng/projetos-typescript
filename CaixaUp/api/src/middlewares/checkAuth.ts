@@ -1,4 +1,4 @@
-import { verify, JwtPayload } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
 import { Request, Response, NextFunction } from 'express';
 import { TokenPayload } from 'interfaces/user.interface';
@@ -21,7 +21,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     req.email = decoded.email;
 
     return next();
-  } catch(error) {
+  } catch (error) {
     return res.status(401).json({ message: 'Token inválido ou expirado' });
   }
 };

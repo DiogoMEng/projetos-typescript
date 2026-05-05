@@ -4,6 +4,6 @@ import RoleController from '../controllers/Role.controller';
 const router = Router();
 
 router
-  .get('/', RoleController.getAllRoles);
+  .get('/', RoleController.getAll);
 
 export default router;

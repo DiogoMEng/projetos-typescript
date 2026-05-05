@@ -10,8 +10,8 @@ router.use(checkAuth);
 router
   .post('/', BoxBottomController.register)
   .get('/', BoxBottomController.getAllBoxBottomsByUser)
-  .get('/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), BoxBottomController.getBoxBottomById)
-  .put('/:boxBottomId', checkRole(['OWNER', 'MANAGER']), BoxBottomController.editBoxBottom)
-  .delete('/:boxBottomId', checkRole(['OWNER']), BoxBottomController.deleteBoxBottom);
+  .get('/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), BoxBottomController.getById)
+  .put('/:boxBottomId', checkRole(['OWNER', 'MANAGER']), BoxBottomController.edit)
+  .delete('/:boxBottomId', checkRole(['OWNER']), BoxBottomController.delete);
 
 export default router;

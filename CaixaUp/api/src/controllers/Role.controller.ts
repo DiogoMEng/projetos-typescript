@@ -1,14 +1,12 @@
-import { catchAsync } from 'utils/catchAsync';
+import { Controller } from './Controller';
 import RoleService from '../services/role.service';
-import { Request, Response } from 'express';
 
-const roleService = new RoleService();
+class RoleController extends Controller {
+  constructor() {
+    super(new RoleService());
+  }
 
-class RoleController {
-  static getAllRoles = catchAsync(async (req: Request, res: Response) => {
-    const roles = await roleService.getAll();
-    res.status(200).json(roles);
-  });
+  protected override getEntityName() { return 'Role'; }
 }
 
-export default RoleController;
+export default new RoleController();

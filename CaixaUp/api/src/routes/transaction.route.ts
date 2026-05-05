@@ -9,8 +9,8 @@ router.use(checkAuth);
 router
   .post('/box-bottom/:boxBottomId/category/:categoryId', checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR']), TransactionController.register)
   .get('/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), TransactionController.getAllTransactions)
-  .get('/:transactionId/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), TransactionController.getTransactionById)
-  .put('/:transactionId/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR']), TransactionController.editTransaction)
-  .delete('/:transactionId/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR']), TransactionController.deleteTransaction);
+  .get('/:transactionId/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), TransactionController.getById)
+  .put('/:transactionId/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR']), TransactionController.edit)
+  .delete('/:transactionId/box-bottom/:boxBottomId', checkRole(['OWNER', 'MANAGER', 'EDITOR']), TransactionController.delete);
 
 export default router;

@@ -1,51 +1,29 @@
-import { catchAsync } from 'utils/catchAsync';
-import TransactionService from '../services/Transaction.service';
 import { Request, Response } from 'express';
+import { Controller } from './Controller';
+import TransactionService from '../services/Transaction.service';
+import { catchAsync } from '../utils/catchAsync';
 
-const transactionService = new TransactionService();
+class TransactionController extends Controller {
+  constructor() {
+    super(new TransactionService());
+  }
 
-class TransactionController {
-  static register = catchAsync(async (req: Request, res: Response) => {
-    const { boxBottomId, categoryId } = req.params;
-    const {
-      movementType, value, transactionDate, description,
-    } = req.body;
-    const transaction = await transactionService.create({
-      boxBottomId, categoryId, movementType, value, transactionDate, description,
-    });
-    res.status(201).json({
-      message: 'Transaction created successfully.',
-      transaction,
-    });
-  });
+  protected override getEntityName() { return 'Transaction'; }
+  protected override getParamIdName() { return 'transactionId'; }
 
-  static getAllTransactions = catchAsync(async (req: Request, res: Response) => {
+  protected override getCreateParams(req: Request) {
+    return {
+      ...req.body,
+      boxBottomId: req.params.boxBottomId,
+      categoryId: req.params.categoryId,
+    };
+  }
+
+  getAllTransactions = catchAsync(async (req: Request, res: Response) => {
     const userId = req.userId as string;
-    const transactions = await transactionService.getAllTransactionsByUser(userId);
+    const transactions = await (this.service as TransactionService).getAllTransactionsByUser(userId);
     res.status(200).json(transactions);
-  });
-
-  static getTransactionById = catchAsync(async (req: Request, res: Response) => {
-    const { transactionId } = req.params;
-    const transaction = await transactionService.getById(transactionId);
-    res.status(200).json(transaction);
-  });
-
-  static editTransaction = catchAsync(async (req: Request, res: Response) => {
-    const { transactionId } = req.params;
-    const dto = req.body;
-    const updatedRecord = await transactionService.update(transactionId, dto);
-    if (!updatedRecord) {
-      return res.status(404).json({ message: 'Transaction not found' });
-    }
-    res.status(200).json({ message: 'Transaction updated successfully' });
-  });
-
-  static deleteTransaction = catchAsync(async (req: Request, res: Response) => {
-    const { transactionId } = req.params;
-    await transactionService.delete(transactionId);
-    res.status(200).json({ message: 'Transaction deleted successfully' });
   });
 }
 
-export default TransactionController;
+export default new TransactionController();

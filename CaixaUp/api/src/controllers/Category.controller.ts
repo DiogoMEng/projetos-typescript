@@ -1,44 +1,33 @@
-import CategoryService from '../services/Category.service';
 import { Request, Response } from 'express';
+import { Controller } from './Controller';
+import CategoryService from '../services/Category.service';
 import { catchAsync } from '../utils/catchAsync';
 
-const categoryService = new CategoryService();
+class CategoryController extends Controller {
+  constructor() {
+    super(new CategoryService());
+  }
 
-class CategoryController {
-  static register = catchAsync(async (req: Request, res: Response) => {
-    const userId = req.userId as string;
-    const { name, type } = req.body;
-    const category = await categoryService.create({ name, type, userId });
-    res.status(201).json({ message: `Category ${category.name} created successfull.` });
-  });
+  protected override getEntityName(): string {
+    return 'Category';
+  }
 
-  static getAllCategoriesByUser = catchAsync(async (req: Request, res: Response) => {
+  protected override getParamIdName(): string {
+    return 'categoryId';
+  }
+
+  protected override getCreateParams(req: Request) {
+    return {
+      ...req.body,
+      userId: req.userId as string,
+    };
+  }
+
+  getAllCategoriesByUser = catchAsync(async (req: Request, res: Response) => {
     const userId = req.userId as string;
-    const categories = await categoryService.getAllCategoriesByUser(userId);
+    const categories = await (this.service as CategoryService).getAllCategoriesByUser(userId);
     res.status(200).json(categories);
-  });
-
-  static getCategoryById = catchAsync(async (req: Request, res: Response) => {
-    const { categoryId } = req.params;
-    const category = await categoryService.getById(categoryId);
-    res.status(200).json(category);
-  });
-
-  static editCategory = catchAsync(async (req: Request, res: Response) => {
-    const { categoryId } = req.params;
-    const dto = req.body;
-    const updatedRecord = await categoryService.update(categoryId, dto);
-    if (!updatedRecord) {
-      return res.status(404).json({ message: 'Category not found' });
-    }
-    res.status(200).json({ message: 'Category updated successfully' });
-  });
-
-  static deleteCategory = catchAsync(async (req: Request, res: Response) => {
-    const { categoryId } = req.params;
-    await categoryService.delete(categoryId);
-    res.status(200).json({ message: 'Category deleted successfully' });
   });
 }
 
-export default CategoryController;
+export default new CategoryController();

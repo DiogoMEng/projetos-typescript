@@ -1,49 +1,33 @@
-import { catchAsync } from 'utils/catchAsync';
-import BoxBottomService from '../services/BoxBottom.service';
 import { Request, Response } from 'express';
+import { Controller } from './Controller';
+import BoxBottomService from '../services/BoxBottom.service';
+import { catchAsync } from '../utils/catchAsync';
 
-const boxBottomService = new BoxBottomService();
+class BoxBottomController extends Controller {
+  constructor() {
+    super(new BoxBottomService());
+  }
 
-class BoxBottomController {
-  static register = catchAsync(async (req: Request, res: Response) => {
+  protected override getEntityName(): string { return 'BoxBottom'; }
+  protected override getParamIdName(): string { return 'boxBottomId'; }
+
+  getAllBoxBottomsByUser = catchAsync(async (req: Request, res: Response) => {
     const userId = req.userId as string;
-    const { name, description, targetValue } = req.body;
-    const boxBottom = await boxBottomService.create({
-      name, description, targetValue, userId,
-    });
-    res.status(201).json({
-      message: `BoxBottom ${boxBottom.name} created successfully.`,
-      boxBottomId: boxBottom.boxBottomId,
-    });
-  });
-
-  static getAllBoxBottomsByUser = catchAsync(async (req: Request, res: Response) => {
-    const userId = req.userId as string;
-    const boxBottoms = await boxBottomService.getAllBoxBottomsByUser(userId);
+    const boxBottoms = await (this.service as BoxBottomService).getAllBoxBottomsByUser(userId);
     res.status(200).json(boxBottoms);
   });
 
-  static getBoxBottomById = catchAsync(async (req: Request, res: Response) => {
-    const { boxBottomId } = req.params;
-    const boxBottom = await boxBottomService.getById(boxBottomId);
-    res.status(200).json(boxBottom);
-  });
-
-  static editBoxBottom = catchAsync(async (req: Request, res: Response) => {
-    const { boxBottomId } = req.params;
-    const dto = req.body;
-    const updatedRecord = await boxBottomService.update(boxBottomId, dto);
-    if (!updatedRecord) {
-      return res.status(404).json({ message: 'BoxBottom not found' });
-    }
-    res.status(200).json({ message: 'BoxBottom updated successfully' });
-  });
-
-  static deleteBoxBottom = catchAsync(async (req: Request, res: Response) => {
-    const { boxBottomId } = req.params;
-    await boxBottomService.delete(boxBottomId);
-    res.status(200).json({ message: 'BoxBottom deleted successfully' });
+  override register = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.userId as string;
+    const { name, description, targetValue } = req.body;
+    const boxBottom = await this.service.create({
+      name, description, targetValue, userId,
+    });
+    res.status(201).json({
+      message: `BoxBottom ${boxBottom.name} created successfully`,
+      boxBottomId: boxBottom.boxBottomId,
+    });
   });
 }
 
-export default BoxBottomController;
+export default new BoxBottomController();

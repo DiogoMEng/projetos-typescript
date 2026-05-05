@@ -8,8 +8,8 @@ router.use(checkAuth);
 router
   .post('/', CategoryController.register)
   .get('/', CategoryController.getAllCategoriesByUser)
-  .get('/:categoryId', CategoryController.getCategoryById)
-  .put('/:categoryId', CategoryController.editCategory)
-  .delete('/:categoryId', CategoryController.deleteCategory);
+  .get('/:categoryId', CategoryController.getById)
+  .put('/:categoryId', CategoryController.edit)
+  .delete('/:categoryId', CategoryController.delete);
 
 export default router;
