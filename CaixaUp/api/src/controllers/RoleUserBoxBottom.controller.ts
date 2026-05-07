@@ -30,8 +30,8 @@ class RoleUserBoxBottomController {
   });
 
   deleteBoxBottom = catchAsync(async (req: Request, res: Response) => {
-    const { userId } = req.params;
-    await roleUserBoxBottomService.delete(userId);
+    const { roleUserBoxBottomId } = req.params;
+    await roleUserBoxBottomService.delete(roleUserBoxBottomId);
     res.status(200).json({ message: 'Membro excluído com sucesso' });
   });
 }
