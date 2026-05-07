@@ -6,7 +6,6 @@ import BoxBottomModel from './BoxBottom.model';
 import TransactionModel from './Transaction.model';
 import RUBBModel from './RoleUserBoxBottom';
 
-
 import {
   DB_PORT,
   DB_USERNAME,
@@ -14,7 +13,7 @@ import {
   DB_NAME,
   DB_HOST,
   NODE_ENV,
-  DB_DIALECT
+  DB_DIALECT,
 } from '../../config';
 
 const sequelize = new Sequelize.Sequelize(
@@ -30,7 +29,7 @@ const sequelize = new Sequelize.Sequelize(
       charset: 'utf8mb4',
       collate: 'utf8mb4_general_ci',
       underscored: true,
-      freezeTableName: true
+      freezeTableName: true,
     },
     pool: {
       min: 0,
@@ -38,7 +37,7 @@ const sequelize = new Sequelize.Sequelize(
     },
     logQueryParameters: NODE_ENV === 'development',
     benchmark: true,
-  }
+  },
 );
 
 sequelize.authenticate();
@@ -51,10 +50,10 @@ export const DB = {
   Transactions: TransactionModel(sequelize),
   RoleUserBoxBottoms: RUBBModel(sequelize),
   sequelize,
-  Sequelize
-}
+  Sequelize,
+};
 
-Object.keys(DB).forEach(modelName => {
+Object.keys(DB).forEach((modelName) => {
   const model = (DB as any)[modelName];
   if (model.associate) {
     model.associate(DB);

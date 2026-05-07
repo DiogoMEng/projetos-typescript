@@ -7,8 +7,8 @@ import { JWT_SECRET } from '../config';
 class AuthService {
   async login (dto: AuthCredentials): Promise<{ accessToken: string }> {
     const user = await DB.Users.findOne({
-      attributes: [ 'userId', 'email', 'password' ],
-      where: { email: dto.email }
+      attributes: ['userId', 'email', 'password'],
+      where: { email: dto.email },
     });
     if (!user) throw new Error('Usuário não encontrado');
     const passwordMatch = await compare(dto.password, user.password);
@@ -16,7 +16,7 @@ class AuthService {
     const accessToken = sign(
       { userId: user.userId, email: user.email },
       JWT_SECRET!,
-      { expiresIn: '5d' }
+      { expiresIn: '5d' },
     );
     return { accessToken };
   }

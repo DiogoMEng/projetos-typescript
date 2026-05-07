@@ -37,14 +37,15 @@ export abstract class Service<T extends Model, DTO> {
 
   async update(id: string, dto: Partial<DTO>): Promise<boolean> {
     const [affectedCount] = await this.model.update(dto as any, {
-      where: { [this.primaryKey]: id } as any
+      where: { [this.primaryKey]: id } as any,
     });
     return affectedCount > 0;
   }
 
   async delete(id: string): Promise<void> {
     await this.model.destroy({
-      where: { [this.primaryKey]: id } as any
+      where: {
+        [this.primaryKey]: id } as any,
     });
   }
 

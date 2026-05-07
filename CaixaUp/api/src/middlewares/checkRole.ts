@@ -1,5 +1,5 @@
-import { DB } from "../database/models";
-import { Request, Response, NextFunction } from "express";
+import { DB } from '../database/models';
+import { Request, Response, NextFunction } from 'express';
 
 const checkRole = (listRoles: string[]) => async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -17,28 +17,28 @@ const checkRole = (listRoles: string[]) => async (req: Request, res: Response, n
             model: DB.Roles,
             as: 'assignedRole',
             attributes: ['name'],
-          }
-        ]
-      }
+          },
+        ],
+      },
     });
 
     if (!user || !user.userPermissions || user.userPermissions.length === 0) {
-      return res.status(403).json({ message: "Acesso negado: Você não faz parte desta caixinha" });
+      return res.status(403).json({ message: 'Acesso negado: Você não faz parte desta caixinha' });
     }
 
     const userRoles: string[] = (user.userPermissions || []).map(
-      (permission: any) => permission.assignedRole.name
+      (permission: any) => permission.assignedRole.name,
     );
-    const hasPermission = listRoles.some(role => userRoles.includes(role));
+    const hasPermission = listRoles.some((role) => userRoles.includes(role));
 
     if (!hasPermission) {
-      return res.status(403).json({ message: "Acesso negado: Permissão insuficiente" });
+      return res.status(403).json({ message: 'Acesso negado: Permissão insuficiente' });
     }
 
     next();
   } catch (error) {
-    return res.status(500).json({ message: "Erro interno do servidor", error });
+    return res.status(500).json({ message: 'Erro interno do servidor', error });
   }
-}
+};
 
 export default checkRole;

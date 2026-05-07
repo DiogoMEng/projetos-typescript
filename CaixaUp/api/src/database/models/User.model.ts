@@ -2,7 +2,6 @@ import { RUBBModel } from '../models/RoleUserBoxBottom';
 import { User } from '../../interfaces/user.interface';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
-
 export type UserCreationAttributes = Optional<
   User,
   'userId'
@@ -28,12 +27,12 @@ export class UserModel extends Model< User, UserCreationAttributes > implements 
     UserModel.hasMany(models.BoxBottoms, {
       foreignKey: 'userId',
       as: 'userOwnedBoxex',
-    })
+    });
 
     UserModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'userId',
       as: 'userPermissions',
-    })
+    });
   }
 }
 
@@ -69,5 +68,5 @@ export default function (sequelize: Sequelize): typeof UserModel {
     underscored: true,
   });
 
-  return UserModel
+  return UserModel;
 }

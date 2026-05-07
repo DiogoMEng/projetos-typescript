@@ -20,7 +20,7 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
     RoleModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'roleId',
       as: 'roleAssignments',
-    })
+    });
   }
 }
 
@@ -50,5 +50,5 @@ export default function (sequelize: Sequelize): typeof RoleModel {
     timestamps: true,
   });
 
-  return RoleModel
+  return RoleModel;
 }

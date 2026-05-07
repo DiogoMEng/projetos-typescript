@@ -32,7 +32,7 @@ export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttribute
     BoxBottomModel.hasMany(models.RoleUserBoxBottoms, {
       foreignKey: 'boxBottomId',
       as: 'boxMembers',
-    })
+    });
   }
 }
 
@@ -64,7 +64,7 @@ export default function (sequelize: Sequelize): typeof BoxBottomModel {
       allowNull: false,
       type: DataTypes.NUMBER,
       field: 'target_value',
-    }
+    },
   }, {
     tableName: 'box_bottoms',
     sequelize,

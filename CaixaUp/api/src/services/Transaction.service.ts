@@ -4,7 +4,7 @@ import { Service } from './Service';
 
 class TransactionService extends Service<any, Transaction> {
   constructor() {
-    super(DB.Transactions, 'transactionId')
+    super(DB.Transactions, 'transactionId');
   }
 
   async getAllTransactionsByUser(userId: string) {
@@ -13,21 +13,21 @@ class TransactionService extends Service<any, Transaction> {
         {
           model: DB.BoxBottoms,
           as: 'targetBox',
-          where: { userId: userId },
-          attributes: [ 'name' ]
+          where: { userId },
+          attributes: ['name'],
         },
         {
           model: DB.Categories,
           as: 'transactionCategory',
-          attributes: [ 'name', 'type' ]
-        }
+          attributes: ['name', 'type'],
+        },
       ],
       order: [['transactionDate', 'DESC']],
       limit: 50,
       attributes: {
-        exclude: ['boxBottomId', 'categoryId']
-      }
-    })
+        exclude: ['boxBottomId', 'categoryId'],
+      },
+    });
   }
 
   protected async beforeCreate(dto: Transaction): Promise<void> {
@@ -35,7 +35,7 @@ class TransactionService extends Service<any, Transaction> {
 
     const [box, cat] = await Promise.all([
       DB.BoxBottoms.findByPk(dto.boxBottomId),
-      DB.Categories.findByPk(dto.categoryId)
+      DB.Categories.findByPk(dto.categoryId),
     ]);
 
     if (!box || !cat ) throw new Error('Caixinha ou Categoria não encontrada.');

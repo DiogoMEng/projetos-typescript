@@ -31,7 +31,7 @@ export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements 
     RUBBModel.belongsTo(models.Roles, {
       foreignKey: 'roleId',
       as: 'assignedRole',
-    })
+    });
   }
 }
 
@@ -58,7 +58,7 @@ export default function (sequelize: Sequelize): typeof RUBBModel {
       allowNull: false,
       type: DataTypes.UUID,
       field: 'role_id',
-    }
+    },
   }, {
     tableName: 'role_user_box_bottoms',
     sequelize,
@@ -66,5 +66,5 @@ export default function (sequelize: Sequelize): typeof RUBBModel {
     underscored: true,
   });
 
-  return RUBBModel
+  return RUBBModel;
 }

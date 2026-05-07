@@ -26,7 +26,7 @@ export class CategoryModel extends Model< Category, CategoryCreationAttributes >
     CategoryModel.hasMany(models.Transactions, {
       foreignKey: 'categoryId',
       as: 'categoryTransactions',
-    })
+    });
   }
 }
 

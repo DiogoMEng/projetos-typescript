@@ -32,7 +32,7 @@ export class TransactionModel extends Model< Transaction, TrasactionCreationAttr
     });
   }
 }
-''
+'';
 export default function (sequelize: Sequelize): typeof TransactionModel {
   TransactionModel.init({
     transactionId: {

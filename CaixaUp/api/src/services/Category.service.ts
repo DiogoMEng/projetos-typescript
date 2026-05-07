@@ -9,7 +9,7 @@ class CategoryService extends Service<any, Category> {
 
   protected async beforeCreate(dto: Category): Promise<void> {
     const categoryExists = await DB.Categories.findOne({
-      where: { name: dto.name, userId: dto.userId }
+      where: { name: dto.name, userId: dto.userId },
     });
     if (categoryExists) throw new Error('Categoria já existe para este usuário.');
   }
@@ -17,7 +17,7 @@ class CategoryService extends Service<any, Category> {
   async getAllCategoriesByUser(userId: string): Promise<Category[]> {
     return await super.getAll({
       where: { userId },
-      include: [{ model: DB.Users, as: 'categoryOwner', attributes: ['name', 'email'] }]
+      include: [{ model: DB.Users, as: 'categoryOwner', attributes: ['name', 'email'] }],
     });
   }
 }
