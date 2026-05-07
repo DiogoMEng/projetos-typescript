@@ -1,119 +1,173 @@
-# 📌 Finances Backend API
+# 📘 CaixaUp - Backend API
 
 > API backend para sistema de gerenciamento financeiro, desenvolvida em Node.js com TypeScript, permitindo o controle de usuários, categorias, caixas e transações.
 
 ---
 
-## 📖 Sumário
-- [Visão Geral](#-visão-geral)
-- [Objetivos](#-objetivos)
-- [Escopo do Projeto](#-escopo-do-projeto)
-- [Arquitetura](#-arquitetura)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Requisitos](#-requisitos)
-- [Instalação](#-instalação)
-- [Configuração](#-configuração)
-- [Execução do Projeto](#-execução-do-projeto)
-- [Estrutura de Pastas](#-estrutura-de-pastas)
-- [Banco de Dados](#-banco-de-dados)
-- [Endpoints da API](#-endpoints-da-api)
-- [Autenticação e Autorização](#-autenticação-e-autorização)
-- [Tratamento de Erros](#-tratamento-de-erros)
-- [Logs e Monitoramento](#-logs-e-monitoramento)
-- [Testes](#-testes)
-- [Boas Práticas](#-boas-práticas)
-- [Segurança](#-segurança)
-- [Deploy](#-deploy)
-- [Versionamento](#-versionamento)
-- [Contribuição](#-contribuição)
-- [Licença](#-licença)
-- [Autores e Contato](#-autores-e-contato)
+## 📖 Índice
+
+1. [Descrição do Projeto](#descrição-do-projeto)
+2. [Tecnologias Utilizadas](#tecnologias-utilizadas)
+3. [Arquitetura do Projeto](#arquitetura-do-projeto)
+4. [Instalação e Configuração](#instalação-e-configuração)
+5. [Scripts de Desenvolvimento](#scripts-de-desenvolvimento)
+6. [Variáveis de Ambiente](#variáveis-de-ambiente)
+7. [Rotas da API](#rotas-da-api)
+8. [Modelos e Banco de Dados](#modelos-e-banco-de-dados)
+9. [Autenticação e Autorização](#autenticação-e-autorização)
+10. [Boas Práticas e Convenções](#boas-práticas-e-convenções)
+11. [Testes](#testes)
+12. [Deploy](#deploy)
+13. [FAQ / Problemas Comuns](#faq--problemas-comuns)
+14. [Licença](#licença)
 
 ---
 
-## 🔍 Visão Geral
-O Finances Backend API é um sistema de gerenciamento financeiro que permite aos usuários controlar suas finanças pessoais ou empresariais. O sistema oferece funcionalidades para cadastro de usuários, criação de categorias de despesas/receitas, gerenciamento de caixas (contas) e registro de transações financeiras. Utiliza uma arquitetura RESTful com autenticação JWT para garantir a segurança dos dados.
+## � Descrição do Projeto
 
----
+O **CaixaUp** é uma API RESTful para gerenciamento financeiro pessoal. O sistema oferece funcionalidades completas para:
 
-## 🎯 Objetivos
-- Fornecer uma API robusta para gerenciamento de finanças pessoais/empresariais
-- Implementar controle de acesso baseado em roles e permissões
-- Garantir integridade e segurança dos dados financeiros
-- Oferecer uma interface programática para integração com aplicações frontend
+- **Cadastro e gerenciamento de usuários** com autenticação segura via JWT
+- **Gerenciamento de categorias** de despesas e receitas
+- **Controle de caixas (contas)** para organizar diferentes fluxos financeiros
+- **Registro e rastreamento de transações** com associação a categorias e caixas
+- **Sistema de roles e permissões** para controle de acesso baseado em papéis
 
----
-
-## 📦 Escopo do Projeto
-### Dentro do Escopo
-- CRUD completo de usuários, categorias, caixas e transações
-- Sistema de roles e permissões (Role-Based Access Control)
-- Autenticação via JWT
-- Validação de dados com Joi
-- Migrações e seeders para banco de dados
-- Containerização com Docker
-
-### Fora do Escopo
-- Interface gráfica (frontend)
-- Aplicativos mobile
-- Relatórios avançados e dashboards
-- Integrações com bancos externos
-- Processamento de pagamentos online
-
----
-
-## 🏗 Arquitetura
-O projeto utiliza uma arquitetura MVC (Model-View-Controller) com separação clara de responsabilidades:
-
-- **Models**: Definem a estrutura dos dados e interações com o banco
-- **Views**: Não aplicável (API REST)
-- **Controllers**: Gerenciam as requisições HTTP e respostas
-- **Services**: Contêm a lógica de negócio
-- **Routes**: Definem os endpoints da API
-- **Interfaces**: Tipagem TypeScript para contratos de dados
-
-### Diagrama Arquitetural
-```
-Cliente HTTP
-    ↓
-Express Router
-    ↓
-Controller → Service → Model → Database
-    ↑
-Response
-```
+O sistema utiliza uma arquitetura RESTful com dados persistidos em PostgreSQL, garantindo segurança e integridade dos dados financeiros.
 
 ---
 
 ## 🧰 Tecnologias Utilizadas
-- **Linguagem**: TypeScript
-- **Framework**: Express.js
-- **Banco de Dados**: PostgreSQL
-- **ORM**: Sequelize
-- **Ferramentas de Build**: TypeScript Compiler
-- **Documentação de API**: Esta documentação
-- **Outras dependências**: bcryptjs (hashing), jsonwebtoken (JWT), joi (validação), cors, express-async-errors
+
+| Tecnologia | Versão | Uso |
+|-----------|--------|-----|
+| **Node.js** | 18+ | Runtime |
+| **TypeScript** | 5.x | Tipagem estática |
+| **Express.js** | 4.19+ | Framework web |
+| **PostgreSQL** | 14+ | Banco de dados relacional |
+| **Sequelize** | 6.37+ | ORM |
+| **JWT** | 9.0+ | Autenticação |
+| **bcryptjs** | 3.0+ | Hash de senhas |
+| **Joi** | 17.13+ | Validação de dados |
+| **Docker** | Latest | Containerização |
 
 ---
 
-## 📋 Requisitos
-### Requisitos Funcionais
-- RF01 - Gerenciar usuários (cadastro, listagem, edição, exclusão)
-- RF02 - Gerenciar categorias de transações
-- RF03 - Gerenciar caixas (contas financeiras)
-- RF04 - Registrar e gerenciar transações
-- RF05 - Controle de permissões baseado em roles
+## 🏗 Arquitetura do Projeto
 
-### Requisitos Não Funcionais
-- RNF01 - Segurança com autenticação JWT
-- RNF02 - Validação de dados de entrada
-- RNF03 - Tratamento adequado de erros
-- RNF04 - Containerização para facilitar deploy
-- RNF05 - Código tipado com TypeScript
+O projeto segue o padrão arquitetural **MVC (Model-View-Controller)** com separação clara de responsabilidades:
+
+### Estrutura em Camadas
+
+```
+┌─────────────────────────────────────────────────┐
+│         Cliente HTTP (Frontend/Postman)         │
+└────────────────────┬────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────┐
+│         Express Router (Rotas)                  │
+│    Mapeia URLs para Controllers                 │
+└────────────────────┬────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────┐
+│      Controllers (Camada de Apresentação)       │
+│  - Recebem requisições HTTP                     │
+│  - Validam dados de entrada                     │
+│  - Chamam services                              │
+│  - Retornam respostas estruturadas              │
+└────────────────────┬────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────┐
+│    Services (Camada de Lógica de Negócio)       │
+│  - Implementam regras de negócio                │
+│  - Interagem com models                         │
+│  - Tratam exceções                              │
+│  - Orquestram operações complexas               │
+└────────────────────┬────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────┐
+│   Models (Camada de Dados/Persistência)         │
+│  - Definem estrutura das tabelas                │
+│  - Relacionamentos entre entidades              │
+│  - Validações no ORM                            │
+└────────────────────┬────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────┐
+│      PostgreSQL Database                        │
+│  - Persistência de dados                        │
+│  - Integridade referencial                      │
+└─────────────────────────────────────────────────┘
+```
+
+### Responsabilidades por Camada
+
+- **Controllers** (`src/controllers/`): Gerenciam requisições HTTP, delegam ao service
+- **Services** (`src/services/`): Contêm regras de negócio, orquestram operações
+- **Models** (`src/database/models/`): Representam tabelas e relacionamentos
+- **Routes** (`src/routes/`): Mapeiam URLs para controladores
+- **Middlewares** (`src/middlewares/`): Autenticação, autorização, tratamento de erros
+- **Interfaces** (`src/interfaces/`): Contratam tipos TypeScript
+
+### Estrutura de Pastas
+
+```
+api/
+├── src/
+│   ├── @types/               # Tipagens customizadas
+│   ├── config/               # Configurações (banco, sequelize)
+│   ├── controllers/          # Controladores HTTP
+│   │   ├── auth.controller.ts
+│   │   ├── user.controller.ts
+│   │   ├── category.controller.ts
+│   │   ├── boxBottom.controller.ts
+│   │   ├── transaction.controller.ts
+│   │   ├── role.controller.ts
+│   │   └── roleUserBoxBottom.controller.ts
+│   ├── database/
+│   │   ├── migrations/       # Scripts de migração do banco
+│   │   ├── models/           # Modelos Sequelize
+│   │   └── seeders/          # Dados de exemplo para desenvolvimento
+│   ├── interfaces/           # Contrato de tipos TypeScript
+│   │   ├── user.interface.ts
+│   │   ├── category.interface.ts
+│   │   ├── boxBottom.interface.ts
+│   │   ├── transaction.interface.ts
+│   │   ├── role.interface.ts
+│   │   └── roleUserBoxBottom.interface.ts
+│   ├── middlewares/          # Middlewares personalizados
+│   │   ├── checkAuth.ts      # Validação de token JWT
+│   │   └── checkRole.ts      # Validação de roles
+│   ├── routes/               # Definições de rotas Express
+│   │   ├── auth.route.ts
+│   │   ├── user.route.ts
+│   │   ├── category.route.ts
+│   │   ├── boxBottom.route.ts
+│   │   ├── transaction.route.ts
+│   │   ├── role.route.ts
+│   │   ├── roleUserBoxBottom.route.ts
+│   │   └── indexRouter.ts    # Agregador de rotas
+│   ├── services/             # Lógica de negócio
+│   │   ├── auth.service.ts
+│   │   ├── User.service.ts
+│   │   ├── Category.service.ts
+│   │   ├── BoxBottom.service.ts
+│   │   ├── Transaction.service.ts
+│   │   ├── role.service.ts
+│   │   └── RoleUserBoxBottom.service.ts
+│   ├── utils/                # Utilitários
+│   │   └── catchAsync.ts     # Wrapper para tratamento de erros
+│   └── server.ts             # Ponto de entrada da aplicação
+├── Dockerfile                # Configuração para containerização
+├── docker-compose.yml        # Orquestração de containers
+├── .sequelizerc              # Configuração Sequelize CLI
+├── package.json              # Dependências e scripts NPM
+├── tsconfig.json             # Configuração TypeScript
+├── .eslintrc                 # Configuração ESLint
+├── .prettierrc.json          # Configuração Prettier
+└── .env.development          # Variáveis de ambiente (dev)
+```
 
 ---
-
-## ⚙️ Instalação
 Passo a passo para instalar o projeto localmente.
 
 ```bash
