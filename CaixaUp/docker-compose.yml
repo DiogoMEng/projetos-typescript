@@ -22,7 +22,7 @@ services:
   test:
     build: .
     container_name: caixaup_api_test
-    command: npm run test
+    command: npm run test:watch
     working_dir: /app
     ports:
       - "4000:4000"

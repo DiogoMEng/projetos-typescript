@@ -141,6 +141,10 @@ docker ps
 docker exec -it <nome_container> /bin/sh
 ```
 
+> ERROR: Network "caixaup_default" needs to be recreated - option "com.docker.network.enable_ipv6" has changed.
+- Solução: `docker network rm caixaup_default` --> `docker-compose --env-file <caminho_arquivo_env> up -d`
+- `--env-file <caminho_arquivo_env>`: o docker compose por padrão procura o .env na raiz do projeto. Desse modo, é necessário indicar o caminho do arquivo .env caso não esteja na raiz.
+
 --- <a href="#sumário">Retornar ao sumário</a> ---
 
 ---
