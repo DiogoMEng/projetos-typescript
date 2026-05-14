@@ -1,19 +1,21 @@
-# Notação de Projeto: Igapó Certo
+# Notação de Projeto: CaixaUp
 
-# <p id="sumario">Sumário</p>
+## <p id="sumario">Sumário</p>
 
-Parte 1: <a href="#docker" style="font-weight: bold">Configuração do Docker</a>
+Parte 1: <a href="#configurando-docker" style="font-weight: bold">Configurando Docker</a>
 - <a href="#dockerfile">DockerFile</a>
 - <a href="#docker-compose">Docker-Compose</a>
 
-Parte 2: <a href="#orm" style="font-weight: bold">Configuração de Conexão do Banco de Dados</a>
+Parte 2: <a href="#configurando-conexao-base-dados" style="font-weight: bold">Configurando Conexão da Base de Dados</a>
 - <a href="#sequelize">Sequelize</a>
+
+Parte 3: <a href="#configurando-ambiente-teste" style="font-weight: bold">Configurando Ambiente de Teste</a>
 
 ---
 
-# <p id="docker">Configuração do Docker</p>
+## <p id="configurando-docker">Configurando Docker</p>
 
-## <p id="dockerfile">DockerFile</p>
+### <p id="dockerfile">DockerFile</p>
 
 Utilizado para buildar a imagem do backend para o container Docker.
 
@@ -43,7 +45,7 @@ USER node
 CMD npm install
 ```
 
-## <p id="docker-compose">Docker-Compose</p>
+### <p id="docker-compose">Docker-Compose</p>
 
 Ferramenta que permite definir e gerenciar vários containers do Docker.
 
@@ -149,9 +151,9 @@ docker exec -it <nome_container> /bin/sh
 
 ---
 
-# <p id="orm" >Configuração de Conexão do Banco de Dados</p>
+## <p id="configurando-conexao-base-dados">Configurando Conexão da Base de Dados</p>
 
-## <p id="sequelize" >Sequelize</p>
+### <p id="sequelize" >Sequelize</p>
 
 ```bash
 # Cria uma configuração padrão dentro do diretório
@@ -209,4 +211,40 @@ expenses_id: {
   onUpdate: "CASCADE",
   onDelete: "CASCADE"
 }
+```
+
+--- <a href="#sumário">Retornar ao sumário</a> ---
+
+---
+
+## <p id="configurando-ambiente-teste">Configurando Ambiente de Teste</p>
+
+```bash
+# INSTALAÇÃO DE DEPENDÊNCIAS
+
+npm install - save-dev jest ts-jest @types/jest @jest/globals supertest @types/supertest
+```
+
+| CONFIGURAÇÃO DO JEST.CONFIG.TS |
+|              :--               |
+
+```typescript
+import type { Config } from 'jest';
+import { createDefaultEsmPreset } from 'ts-jest';
+
+const presetConfig = createDefaultEsmPreset({});
+
+export default {
+  ...presetConfig,
+  testEnvironment: 'node',
+  testMatch: [
+    '**/tests/**/*.test.ts',
+    '**/__tests__/**/*.test.ts',
+    '**/?(*.)+(spec|test).ts',
+  ],
+  moduleNameMapper: { // trata exigências da extensão .js nas importações
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
+  testTimeout: 30000,
+} satisfies Config; // segurança de tipos para configuração do Jest
 ```
