@@ -2,9 +2,10 @@
   "name": "caixa-up-backend",
   "version": "1.0.0",
   "main": "build/server.js",
+  "type": "module",
   "scripts": {
     "start": "node build/server.js",
-    "dev": "nodemon --watch src --exec ts-node src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc && tsc-alias && echo 'Build Finished!'",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watchAll",
@@ -59,6 +60,7 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
+    "tsx": "^4.22.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.58.2"
   },

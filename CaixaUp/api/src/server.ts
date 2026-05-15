@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import router from './routes/indexRouter';
-import { DB } from './database/models/index';
+import router from './routes/indexRouter.js';
+import { DB } from './database/models/index.js';
 import { PORT } from './config';
 
 const appServer = express();
