@@ -1,7 +1,9 @@
 import type { Config } from 'jest';
 import { createDefaultEsmPreset } from 'ts-jest';
 
-const presetConfig = createDefaultEsmPreset({});
+const presetConfig = createDefaultEsmPreset({
+  tsconfig: 'tsconfig.test.json',
+});
 
 export default {
   ...presetConfig,
@@ -16,4 +18,3 @@ export default {
   },
   testTimeout: 30000,
 } satisfies Config;
-

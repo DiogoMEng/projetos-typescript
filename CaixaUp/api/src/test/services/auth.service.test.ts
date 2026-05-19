@@ -1,18 +1,17 @@
 import {
-  describe, expect, it, jest,
+  describe, expect, it, jest, beforeEach,
 } from '@jest/globals';
-import AuthService from '../../services/auth.service';
-import { UserModel } from '../../database/models/User.model';
+import AuthService from '../../services/auth.service.js';
+import { UserModel } from '../../database/models/User.model.js';
 import bcrypt from 'bcryptjs';
-import jwy from 'jsonwebtoken';
-import { beforeEach } from 'node:test';
+import jwt from 'jsonwebtoken';
 
 jest.mock('../../database/models/User.model');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');
 
 describe('Testing the Authentication service', () => {
-  const authService: AuthService;
+  let authService: AuthService;
 
   beforeEach(() => {
     authService = new AuthService();
@@ -33,13 +32,13 @@ describe('Testing the Authentication service', () => {
 
     (UserModel.findOne as jest.Mock).mockResolvedValue(mockUser);
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-    (jwy.sign as jest.Mock).mockReturnValue('mocked_jwt_token');
+    (jwt.sign as jest.Mock).mockReturnValue('mocked_jwt_token');
 
     const result = await authService.login(loginData);
 
     expect(UserModel.findOne).toHaveBeenCalledWith({ where: { email: loginData.email } });
     expect(bcrypt.compare).toHaveBeenCalledWith(loginData.password, mockUser.password);
-    expect(result).toHaveProperty('acessToken', 'mocked_jwt_token');
+    expect(result).toHaveProperty('accessToken', 'mocked_jwt_token');
     expect(result.user).toHaveProperty('email', mockUser.email);
   });
 });
