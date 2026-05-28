@@ -48,7 +48,7 @@ export default function LoginPage() {
       toast.success(isRegister ? "Conta criada com sucesso!" : "Bem-vindo de volta!");
       navigate("/");
     } catch (err: any) {
-      const msg = err.response?.data?.message || "E-mail ou senha incorretos. Tente novamente.";
+      const msg = err.friendlyMessage || err.response?.data?.message || "E-mail ou senha incorretos. Tente novamente.";
       toast.error(msg);
     } finally {
       setIsLoading(false);

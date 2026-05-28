@@ -12,7 +12,7 @@ class AuthService {
       where: { email: dto.email },
     });
     if (!user) throw new Error('Usuário não encontrado');
-    const passwordMatch = await compare(dto.password, user.password);
+    const passwordMatch = await compare(dto.password, user.dataValues.password);
     if (!passwordMatch) throw new Error('Senha incorreta');
     const accessToken = sign(
       { userId: user.userId, email: user.email },

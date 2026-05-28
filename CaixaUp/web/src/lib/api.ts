@@ -46,8 +46,19 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
 
-    const message =
+    let message =
       error.response?.data?.message || "Ocorreu um erro inesperado. Tente novamente.";
+
+    // Sanitize technical backend errors (e.g. bcrypt exceptions) that leak to the frontend
+    if (
+      typeof message === "string" &&
+      (message.includes("Illegal arguments") ||
+        message.includes("undefined") ||
+        message.includes("null") ||
+        message.includes("Cannot read properties"))
+    ) {
+      message = "Ocorreu um erro interno no servidor. Verifique os dados e tente novamente.";
+    }
 
     // Attach a friendly message to the error for consumers
     error.friendlyMessage = message;
@@ -127,6 +138,10 @@ export interface RoleUserBoxBottom {
 // Services
 // ---------------------------------------------------------------------------
 
+import { HttpClientAdapter } from "./HttpAdapter";
+
+const httpAdapter = new HttpClientAdapter(api);
+
 // Auth
 export const authService = {
   login: (email: string, password: string) =>
@@ -139,55 +154,55 @@ export const authService = {
 // Users (public POST, protected GET/PUT/DELETE)
 export const userService = {
   create: (data: { name: string; email: string; password: string }) =>
-    api.post<ApiResponse<User>>(ENDPOINTS.USERS.BASE, data),
+    httpAdapter.post<User>(ENDPOINTS.USERS.BASE, data),
 
   getAll: () =>
-    api.get<ApiResponse<User[]>>(ENDPOINTS.USERS.BASE),
+    httpAdapter.get<User[]>(ENDPOINTS.USERS.BASE),
 
   getById: (userId: string) =>
-    api.get<ApiResponse<User>>(ENDPOINTS.USERS.BY_ID(userId)),
+    httpAdapter.get<User>(ENDPOINTS.USERS.BY_ID(userId)),
 
   update: (userId: string, data: Partial<User>) =>
-    api.put<ApiResponse<User>>(ENDPOINTS.USERS.BY_ID(userId), data),
+    httpAdapter.put<User>(ENDPOINTS.USERS.BY_ID(userId), data),
 
   delete: (userId: string) =>
-    api.delete<ApiResponse<null>>(ENDPOINTS.USERS.BY_ID(userId)),
+    httpAdapter.delete<null>(ENDPOINTS.USERS.BY_ID(userId)),
 };
 
 // Categories
 export const categoryService = {
   create: (data: { name: string; type: "receita" | "despesa" }) =>
-    api.post<ApiResponse<Category>>(ENDPOINTS.CATEGORIES.BASE, data),
+    httpAdapter.post<Category>(ENDPOINTS.CATEGORIES.BASE, data),
 
   getAll: () =>
-    api.get<ApiResponse<Category[]>>(ENDPOINTS.CATEGORIES.BASE),
+    httpAdapter.get<Category[]>(ENDPOINTS.CATEGORIES.BASE),
 
   getById: (categoryId: string) =>
-    api.get<ApiResponse<Category>>(ENDPOINTS.CATEGORIES.BY_ID(categoryId)),
+    httpAdapter.get<Category>(ENDPOINTS.CATEGORIES.BY_ID(categoryId)),
 
   update: (categoryId: string, data: Partial<Category>) =>
-    api.put<ApiResponse<Category>>(ENDPOINTS.CATEGORIES.BY_ID(categoryId), data),
+    httpAdapter.put<Category>(ENDPOINTS.CATEGORIES.BY_ID(categoryId), data),
 
   delete: (categoryId: string) =>
-    api.delete<ApiResponse<null>>(ENDPOINTS.CATEGORIES.BY_ID(categoryId)),
+    httpAdapter.delete<null>(ENDPOINTS.CATEGORIES.BY_ID(categoryId)),
 };
 
 // Box Bottoms / Caixas
 export const boxService = {
   create: (data: { name: string; description: string; targetValue: string }) =>
-    api.post<ApiResponse<Box>>(ENDPOINTS.BOX_BOTTOMS.BASE, data),
+    httpAdapter.post<Box>(ENDPOINTS.BOX_BOTTOMS.BASE, data),
 
   getAll: () =>
-    api.get<ApiResponse<Box[]>>(ENDPOINTS.BOX_BOTTOMS.BASE),
+    httpAdapter.get<Box[]>(ENDPOINTS.BOX_BOTTOMS.BASE),
 
   getById: (boxBottomId: string) =>
-    api.get<ApiResponse<Box>>(ENDPOINTS.BOX_BOTTOMS.BY_ID(boxBottomId)),
+    httpAdapter.get<Box>(ENDPOINTS.BOX_BOTTOMS.BY_ID(boxBottomId)),
 
   update: (boxBottomId: string, data: Partial<Box>) =>
-    api.put<ApiResponse<Box>>(ENDPOINTS.BOX_BOTTOMS.BY_ID(boxBottomId), data),
+    httpAdapter.put<Box>(ENDPOINTS.BOX_BOTTOMS.BY_ID(boxBottomId), data),
 
   delete: (boxBottomId: string) =>
-    api.delete<ApiResponse<null>>(ENDPOINTS.BOX_BOTTOMS.BY_ID(boxBottomId)),
+    httpAdapter.delete<null>(ENDPOINTS.BOX_BOTTOMS.BY_ID(boxBottomId)),
 };
 
 // Transactions — POST uses compound URL: /transactions/box-bottom/:boxBottomId/category/:categoryId
@@ -197,45 +212,45 @@ export const transactionService = {
     categoryId: string,
     data: { movementType: "inflow" | "outflow"; value: number; transactionDate: string; description: string }
   ) =>
-    api.post<ApiResponse<Transaction>>(
+    httpAdapter.post<Transaction>(
       ENDPOINTS.TRANSACTIONS.CREATE(boxBottomId, categoryId),
       data
     ),
 
   getAll: (params?: Record<string, string>) =>
-    api.get<ApiResponse<Transaction[]>>(ENDPOINTS.TRANSACTIONS.BASE, { params }),
+    httpAdapter.get<Transaction[]>(ENDPOINTS.TRANSACTIONS.BASE, { params }),
 
   getById: (transactionId: string) =>
-    api.get<ApiResponse<Transaction>>(ENDPOINTS.TRANSACTIONS.BY_ID(transactionId)),
+    httpAdapter.get<Transaction>(ENDPOINTS.TRANSACTIONS.BY_ID(transactionId)),
 
   update: (transactionId: string, data: Partial<Transaction>) =>
-    api.put<ApiResponse<Transaction>>(ENDPOINTS.TRANSACTIONS.BY_ID(transactionId), data),
+    httpAdapter.put<Transaction>(ENDPOINTS.TRANSACTIONS.BY_ID(transactionId), data),
 
   delete: (transactionId: string) =>
-    api.delete<ApiResponse<null>>(ENDPOINTS.TRANSACTIONS.BY_ID(transactionId)),
+    httpAdapter.delete<null>(ENDPOINTS.TRANSACTIONS.BY_ID(transactionId)),
 };
 
 // Role User Box Bottoms
 export const roleUserBoxBottomService = {
   register: (boxBottomId: string, data: { roleId: string }) =>
-    api.post<ApiResponse<RoleUserBoxBottom>>(
+    httpAdapter.post<RoleUserBoxBottom>(
       ENDPOINTS.ROLE_USER_BOX_BOTTOMS.REGISTER(boxBottomId),
       data
     ),
 
   getByBoxBottom: (boxBottomId: string) =>
-    api.get<ApiResponse<RoleUserBoxBottom[]>>(
+    httpAdapter.get<RoleUserBoxBottom[]>(
       ENDPOINTS.ROLE_USER_BOX_BOTTOMS.BY_BOX_BOTTOM(boxBottomId)
     ),
 
   update: (userId: string, boxBottomId: string, data: Partial<RoleUserBoxBottom>) =>
-    api.put<ApiResponse<RoleUserBoxBottom>>(
+    httpAdapter.put<RoleUserBoxBottom>(
       ENDPOINTS.ROLE_USER_BOX_BOTTOMS.UPDATE(userId, boxBottomId),
       data
     ),
 
   delete: (roleUserBoxBottomId: string) =>
-    api.delete<ApiResponse<null>>(
+    httpAdapter.delete<null>(
       ENDPOINTS.ROLE_USER_BOX_BOTTOMS.DELETE(roleUserBoxBottomId)
     ),
 };
@@ -243,5 +258,5 @@ export const roleUserBoxBottomService = {
 // Roles
 export const roleService = {
   getAll: () =>
-    api.get<ApiResponse<Role[]>>(ENDPOINTS.ROLES.BASE),
+    httpAdapter.get<Role[]>(ENDPOINTS.ROLES.BASE),
 };
