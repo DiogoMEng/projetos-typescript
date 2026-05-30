@@ -1,27 +1,48 @@
 {
 	"compilerOptions": {
-		"target": "es2018",
-		"lib": ["es5", "es6", "ES2018"],
+		"target": "es2022",
+		"lib": [
+			"es5",
+			"es6",
+			"ES2018"
+		],
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
 		"resolveJsonModule": true,
+		"sourceMap": true,
+		"types": [
+			"node",
+			"jest"
+		],
+		"isolatedModules": true,
+		"declaration": false,
+		"removeComments": true,
 		"allowJs": true,
 		"outDir": "./build",
 		"rootDir": "./src",
-		"baseUrl": "./src",
+		"strict": true,
+		// "baseUrl": "./src",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"strict": true,
 		"skipLibCheck": true,
 		"noImplicitAny": true,
 		"strictPropertyInitialization": false,
 		// "typeRoots": ["./@types"]
 	},
-	"include": ["./**/*.ts", "src/database/models/index.ts"],
-	"exclude": ["node_modules"],
+	"include": [
+		"src/**/*",
+		"tests",
+		"src/database/models/index.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"build",
+		"**/*.test.ts",
+		"**/*.spec.ts"
+	],
 	"ts-node": {
-		"files": true
+		"esm": true
 	}
 }

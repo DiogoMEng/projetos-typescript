@@ -1,11 +1,12 @@
 import { compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { DB } from '../database/models';
-import { AuthCredentials } from 'interfaces/user.interface';
+import { AuthCredentials } from '../interfaces/user.interface';
 import { JWT_SECRET } from '../config';
 
 class AuthService {
-  async login (dto: AuthCredentials): Promise<{ accessToken: string }> {
+  async login(dto: AuthCredentials): Promise<{ accessToken: string }> {
+    const { sign } = jwt;
     const user = await DB.Users.findOne({
       attributes: ['userId', 'email', 'password'],
       where: { email: dto.email },

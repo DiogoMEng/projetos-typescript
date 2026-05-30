@@ -1,9 +1,10 @@
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
 import { Request, Response, NextFunction } from 'express';
 import { TokenPayload } from 'interfaces/user.interface';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
+  const { verify } = jwt;
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ message: 'Token de acesso não informado' });
