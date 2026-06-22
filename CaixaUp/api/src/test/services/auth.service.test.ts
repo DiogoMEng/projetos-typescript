@@ -33,16 +33,17 @@ describe('Testing the Authentication service', () => {
   it('should generate a valid JWT token upon receiving correct credentials', async () => {
     const mockUser = {
       userId: '123',
-      email: 'test@gmail.com',
+      email: 'test1@gmail.com',
       password: 'hashed_password',
       name: 'User Test',
+      get: (field: string) => mockUser[field as keyof typeof mockUser],
     };
     const loginData = {
       email: 'test@gmail.com',
       password: 'hashed_password',
     };
 
-    mockFindOne.mockResolvedValue(mockUser);
+    mockFindOne.mockResolvedValue(mockUser  as Partial<UserModel>);
     mockCompare.mockResolvedValue(true);
     mockSign.mockReturnValue('mocked_jwt_token');
 
@@ -65,11 +66,14 @@ describe('Testing the Authentication service', () => {
   });
 
   it('should throw when password does not match', async () => {
-    mockFindOne.mockResolvedValue({
+    const mockUser = {
       userId: '123',
       email: 'test@gmail.com',
       password: 'hashed_password',
-    });
+      get: (field: string) => mockUser[field as keyof typeof mockUser],
+    };
+
+    mockFindOne.mockResolvedValue(mockUser as Partial<UserModel>);
     mockCompare.mockResolvedValue(false);
 
     await expect(
