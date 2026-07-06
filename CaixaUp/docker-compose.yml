@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   dev:
     build: ./api
@@ -18,9 +16,31 @@ services:
       - ./api/:/app:cached
     depends_on:
       - db
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s 
+
+  web:
+    build: ./web
+    container_name: caixaup_web
+    command: npm run dev -- --host 0.0.0.0
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    environment:
+      VITE_API_URL: http://localhost:3000
+    volumes:
+      - ./web/:/app:cached
+      - /app/node_modules
+    depends_on:
+      dev:
+        condition: service_healthy
 
   test:
-    build: .
+    build: ./api
     container_name: caixaup_api_test
     command: npm run test:watch
     working_dir: /app
