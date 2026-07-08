@@ -4,6 +4,30 @@ import { ApiResponse } from './api';
 export class HttpClientAdapter {
   constructor(private client: AxiosInstance) {}
 
+  private mapIds(data: any): any {
+    if (!data) return data;
+    if (Array.isArray(data)) {
+      return data.map((item) => this.mapIds(item));
+    }
+    if (typeof data === 'object') {
+      const mapped = { ...data };
+      if (!mapped.id) {
+        if (mapped.categoryId) mapped.id = mapped.categoryId;
+        else if (mapped.boxBottomId) mapped.id = mapped.boxBottomId;
+        else if (mapped.transactionId) mapped.id = mapped.transactionId;
+        else if (mapped.userId) mapped.id = mapped.userId;
+      }
+      // Recursively map nested objects like category in transaction
+      for (const key in mapped) {
+        if (typeof mapped[key] === 'object' && mapped[key] !== null) {
+          mapped[key] = this.mapIds(mapped[key]);
+        }
+      }
+      return mapped;
+    }
+    return data;
+  }
+
   private normalizeResponse<T>(response: AxiosResponse): AxiosResponse<ApiResponse<T>> {
     const rawData = response.data;
     let normalizedData: ApiResponse<T>;
@@ -51,6 +75,7 @@ export class HttpClientAdapter {
     }
 
     // Mutate the original response to keep status, headers, etc.
+    normalizedData.data = this.mapIds(normalizedData.data);
     response.data = normalizedData;
     return response as AxiosResponse<ApiResponse<T>>;
   }

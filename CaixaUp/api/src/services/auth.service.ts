@@ -15,7 +15,7 @@ class AuthService {
     const passwordMatch = await compare(dto.password, user.get('password'));
     if (!passwordMatch) throw new Error('Senha incorreta');
     const accessToken = sign(
-      { userId: user.userId, email: user.email },
+      { userId: user.get('userId'), email: user.get('email') },
       JWT_SECRET!,
       { expiresIn: '5d' },
     );

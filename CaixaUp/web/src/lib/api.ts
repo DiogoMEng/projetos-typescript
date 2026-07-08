@@ -174,8 +174,8 @@ export const categoryService = {
   create: (data: { name: string; type: "receita" | "despesa" }) =>
     httpAdapter.post<Category>(ENDPOINTS.CATEGORIES.BASE, data),
 
-  getAll: () =>
-    httpAdapter.get<Category[]>(ENDPOINTS.CATEGORIES.BASE),
+  getAll: (params?: Record<string, string>) =>
+    httpAdapter.get<Category[]>(ENDPOINTS.CATEGORIES.BASE, { params }),
 
   getById: (categoryId: string) =>
     httpAdapter.get<Category>(ENDPOINTS.CATEGORIES.BY_ID(categoryId)),
