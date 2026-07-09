@@ -7,15 +7,15 @@ export type CategoryCreationAttributes = Optional<
 >
 
 export class CategoryModel extends Model< Category, CategoryCreationAttributes > implements Category {
-  public categoryId!: string;
-  public userId!: string;
-  public name!: string;
-  public type!: string;
-  public created_at: string | undefined;
-  public updated_at: string | undefined;
+  declare categoryId: string;
+  declare userId: string;
+  declare name: string;
+  declare type: string;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   static associate(models: any) {
     CategoryModel.belongsTo(models.Users, {
@@ -35,13 +35,13 @@ export default function (sequelize: Sequelize): typeof CategoryModel {
     categoryId: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       field: 'category_id',
     },
     userId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       field: 'user_id',
     },
     name: {

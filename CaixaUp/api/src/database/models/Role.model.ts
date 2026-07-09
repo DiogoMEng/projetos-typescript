@@ -7,14 +7,14 @@ export type RoleCreationAttributes = Optional<
 >
 
 export class RoleModel extends Model< Role, RoleCreationAttributes > implements Role {
-  public roleId!: string;
-  public name!: string;
-  public description!: string;
-  public created_at: string | undefined;
-  public updated_at: string | undefined;
+  declare roleId: string;
+  declare name: string;
+  declare description: string;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   static associate(models: any) {
     RoleModel.hasMany(models.RoleUserBoxBottoms, {
@@ -29,8 +29,8 @@ export default function (sequelize: Sequelize): typeof RoleModel {
     roleId: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       field: 'role_id',
     },
     name: {

@@ -7,15 +7,15 @@ export type RUBBCreationAttributes = Optional<
 >
 
 export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements RUBB {
-  public roleUserBoxBottomId!: string;
-  public boxBottomId!: string;
-  public userId!: string;
-  public roleId!: string;
-  public created_at: string | undefined;
-  public updated_at: string | undefined;
+  declare roleUserBoxBottomId: string;
+  declare boxBottomId: string;
+  declare userId: string;
+  declare roleId: string;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   static associate(models: any) {
     RUBBModel.belongsTo(models.Users, {
@@ -40,23 +40,23 @@ export default function (sequelize: Sequelize): typeof RUBBModel {
     roleUserBoxBottomId: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       field: 'role_user_box_bottom_id',
     },
     boxBottomId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       field: 'box_bottom_id',
     },
     userId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       field: 'user_id',
     },
     roleId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       field: 'role_id',
     },
   }, {
