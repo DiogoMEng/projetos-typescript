@@ -21,6 +21,7 @@ export abstract class Service<T extends Model, DTO> {
       await this.afterCreate(record);
       return record;
     } catch (error) {
+      console.log('Erro real', error);
       throw new Error(`Erro ao criar registro em ${this.model.name}`);
     }
   }

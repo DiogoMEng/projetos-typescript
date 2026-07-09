@@ -23,7 +23,7 @@ class BoxBottomController extends Controller {
     const boxBottom = await this.service.create({
       name, description, targetValue, userId,
     });
-    res.status(201).json({
+    return res.status(201).json({
       message: `BoxBottom ${boxBottom.name} created successfully`,
       boxBottomId: boxBottom.boxBottomId,
     });
