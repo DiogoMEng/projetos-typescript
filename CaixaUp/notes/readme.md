@@ -6,8 +6,9 @@ Parte 1: <a href="#configurando-docker" style="font-weight: bold">Configurando D
 - <a href="#dockerfile">DockerFile</a>
 - <a href="#docker-compose">Docker-Compose</a>
 
-Parte 2: <a href="#configurando-conexao-base-dados" style="font-weight: bold">Configurando Conexão da Base de Dados</a>
-- <a href="#sequelize">Sequelize</a>
+Parte 2: <a href="#base-dados-modelo-logico" style="font-weight: bold">Base de Dados e Modelo Lógico</a>
+- <a href="#configurando-sequelize">Configuração do Sequelize</a>
+- <a href="#bug-typescript-sequelize">Bug do TypeScript com Sequelize</a>
 
 Parte 3: <a href="#configurando-ambiente-teste" style="font-weight: bold">Configurando Ambiente de Teste</a>
 
@@ -147,13 +148,38 @@ docker exec -it <nome_container> /bin/sh
 - Solução: `docker network rm caixaup_default` --> `docker-compose --env-file <caminho_arquivo_env> up -d`
 - `--env-file <caminho_arquivo_env>`: o docker compose por padrão procura o .env na raiz do projeto. Desse modo, é necessário indicar o caminho do arquivo .env caso não esteja na raiz.
 
+### <p id="bug-typescript-sequelize">Bug do TypeScript com Sequelize</p>
+
+O Typescript compila os campos `public <nome_atributo>!: type` como propriedades próprias da instância que são criadas depois que o construtor do Model já
+configurou os getters/setters no prototype. Assim, os propriedades contendo `undefined` sobrescreve/esconde o getter que o sequelize define no prototype para aquele atributo.
+
+> Observação: O Model.create() internamente já populou this.dataValues com os valores corretos antes dos campos de classe rodarem por cima. O INSERT usa dataValues, então o banco recebe tudo certinho. Mas quando você lê record.userId depois, o JS está lendo a propriedade própria (sobrescrita = undefined), não o getter que retornaria o valor real de dataValues.
+
+```typescript
+// TROCA `public` por `declare`
+export class BoxBottomModel extends Model<BoxBottom, BoxBottomCreationAttributes> implements BoxBottom {
+  declare boxBottomId: string;
+  declare userId: string;
+  declare name: string;
+  declare description: string;
+  declare targetValue: number;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
+
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+
+  static associate(models: any) { /* ...sem mudanças... */ }
+}
+```
+
 --- <a href="#sumário">Retornar ao sumário</a> ---
 
 ---
 
-## <p id="configurando-conexao-base-dados">Configurando Conexão da Base de Dados</p>
+## <p id="base-dados-modelo-logico">Base de Dados e Modelo Lógico</p>
 
-### <p id="sequelize" >Sequelize</p>
+### <p id="configurando-sequelize">Configuração do Sequelize</p>
 
 ```bash
 # Cria uma configuração padrão dentro do diretório
