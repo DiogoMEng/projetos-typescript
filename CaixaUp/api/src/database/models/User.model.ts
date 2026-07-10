@@ -8,15 +8,15 @@ export type UserCreationAttributes = Optional<
 >
 
 export class UserModel extends Model< User, UserCreationAttributes > implements User {
-  public userId!: string;
-  public email!: string;
-  public name!: string;
-  public password!: string;
+  declare userId: string;
+  declare email: string;
+  declare name: string;
+  declare password: string;
 
-  public userPermissions?: RUBBModel[];
+  declare userPermissions?: RUBBModel[];
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   static associate(models: any) {
     UserModel.hasMany(models.Categories, {
@@ -41,8 +41,8 @@ export default function (sequelize: Sequelize): typeof UserModel {
     userId: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       field: 'user_id',
     },
     name: {

@@ -7,18 +7,18 @@ export type TrasactionCreationAttributes = Optional<
 >
 
 export class TransactionModel extends Model< Transaction, TrasactionCreationAttributes > implements Transaction {
-  public trasactionId!: string;
-  public boxBottomId!: string;
-  public categoryId!: string;
-  public movementType!: string;
-  public value!: number;
-  public transactionDate!: string;
-  public description!: string;
-  public created_at: string | undefined;
-  public updated_at: string | undefined;
+  declare trasactionId: string;
+  declare boxBottomId: string;
+  declare categoryId: string;
+  declare movementType: string;
+  declare value: number;
+  declare transactionDate: string;
+  declare description: string;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   static associate(models: any) {
     TransactionModel.belongsTo(models.BoxBottoms, {
@@ -38,18 +38,18 @@ export default function (sequelize: Sequelize): typeof TransactionModel {
     transactionId: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       field: 'transaction_id',
     },
     boxBottomId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       field: 'box_bottom_id',
     },
     categoryId: {
       allowNull: false,
-      type: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
       field: 'category_id',
     },
     movementType: {

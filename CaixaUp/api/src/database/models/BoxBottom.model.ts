@@ -7,16 +7,16 @@ export type BoxBottomCreationAttributes = Optional<
 >
 
 export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttributes > implements BoxBottom {
-  public boxBottomId!: string;
-  public userId!: string;
-  public name!: string;
-  public description!: string;
-  public targetValue!: number;
-  public created_at: string | undefined;
-  public updated_at: string | undefined;
+  declare boxBottomId: string;
+  declare userId: string;
+  declare name: string;
+  declare description: string;
+  declare targetValue: number;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   static associate(models: any) {
     BoxBottomModel.belongsTo(models.Users, {
@@ -41,8 +41,8 @@ export default function (sequelize: Sequelize): typeof BoxBottomModel {
     boxBottomId: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUID,
+      type: DataTypes.UUIDV4,
+      defaultValue: DataTypes.UUIDV4,
       field: 'box_bottom_id',
     },
     userId: {
