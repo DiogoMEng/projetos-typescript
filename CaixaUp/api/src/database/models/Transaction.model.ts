@@ -31,8 +31,7 @@ export class TransactionModel extends Model< Transaction, TrasactionCreationAttr
       as: 'transactionCategory',
     });
   }
-}
-'';
+};
 export default function (sequelize: Sequelize): typeof TransactionModel {
   TransactionModel.init({
     transactionId: {

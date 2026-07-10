@@ -10,6 +10,7 @@ import DashboardPage from "@/pages/Dashboard";
 import TransactionsPage from "@/pages/Transactions";
 import NewTransactionPage from "@/pages/NewTransaction";
 import BoxesPage from "@/pages/Boxes";
+import BoxDetailsPage from "@/pages/BoxDetails";
 import CategoriesPage from "@/pages/Categories";
 import ProfilePage from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/transactions/new" element={<NewTransactionPage />} />
             <Route path="/boxes" element={<BoxesPage />} />
+            <Route path="/boxes/:id" element={<BoxDetailsPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>

@@ -117,6 +117,14 @@ export interface Box {
   description?: string;
   targetValue?: string;
   balance?: number;
+  // --- New fields for improved UX (might be mocked until backend supports them) ---
+  createdAt?: string;
+  ownerName?: string;
+  totalApplied?: number;
+  accumulatedGains?: number;
+  rentabilityPercentage?: number;
+  participantsCount?: number;
+  status?: "Ativa" | "Concluída" | "Pausada";
 }
 
 export interface Role {
@@ -132,6 +140,18 @@ export interface RoleUserBoxBottom {
   user_id: string;
   box_bottom_id: string;
   role_id: string;
+}
+
+// Extended interface for the Participant listing
+export interface BoxParticipant extends RoleUserBoxBottom {
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  roleName: string; // "Proprietário", "Administrador", "Participante"
+  joinedAt: string;
+  totalApplied: number;
+  participationPercentage?: number;
+  status: "Ativo" | "Removido" | "Pendente";
 }
 
 // ---------------------------------------------------------------------------

@@ -11,6 +11,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, TrendingUp, TrendingDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import React from "react";
 
 export default function BoxesPage() {
   const [boxes, setBoxes] = useState<Box[]>([]);
@@ -21,6 +25,11 @@ export default function BoxesPage() {
   const [newTargetValue, setNewTargetValue] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // Search and Sort State
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<string>("recentes");
+  const navigate = useNavigate();
+
   const fetchBoxes = () => {
     boxService.getAll()
       .then((r) => setBoxes(r.data.data || []))
@@ -29,6 +38,37 @@ export default function BoxesPage() {
   };
 
   useEffect(() => { fetchBoxes(); }, []);
+
+  // Filter and Sort Logic (useMemo for performance)
+  const filteredAndSortedBoxes = React.useMemo(() => {
+    let result = [...boxes];
+
+    // Search by name or description
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(b =>
+        b.name.toLowerCase().includes(q) ||
+        b.description?.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      switch (sortOrder) {
+        case "alfabetica":
+          return a.name.localeCompare(b.name);
+        case "maior_ganho":
+          return (b.accumulatedGains || 0) - (a.accumulatedGains || 0);
+        case "menor_ganho":
+          return (a.accumulatedGains || 0) - (b.accumulatedGains || 0);
+        case "recentes":
+        default:
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      }
+    });
+
+    return result;
+  }, [boxes, search, sortOrder]);
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
@@ -61,42 +101,80 @@ export default function BoxesPage() {
         </MotionButton>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar caixinhas..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Select value={sortOrder} onValueChange={setSortOrder}>
+          <SelectTrigger className="w-full sm:w-[200px]">
+            <SelectValue placeholder="Ordenar por" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="recentes">Mais recentes</SelectItem>
+            <SelectItem value="alfabetica">Ordem Alfabética</SelectItem>
+            <SelectItem value="maior_ganho">Maior Ganho</SelectItem>
+            <SelectItem value="menor_ganho">Menor Ganho</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
         </div>
-      ) : boxes.length === 0 ? (
+      ) : filteredAndSortedBoxes.length === 0 ? (
         <EmptyState
           icon={<BoxIcon />}
-          title="Nenhum caixa ainda"
-          description="Crie seu primeiro caixa para organizar suas finanças."
-          actionLabel="Criar Caixa"
-          onAction={() => setDialogOpen(true)}
+          title={search ? "Nenhuma caixinha encontrada" : "Nenhum caixa ainda"}
+          description={search ? "Tente alterar os termos da busca." : "Crie seu primeiro caixa para organizar suas finanças."}
+          actionLabel={search ? "Limpar Busca" : "Criar Caixa"}
+          onAction={() => search ? setSearch("") : setDialogOpen(true)}
         />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {boxes.map((box, i) => (
+          {filteredAndSortedBoxes.map((box, i) => (
             <motion.div
               key={box.id}
+              onClick={() => navigate(`/boxes/${box.id}`)}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-xl border border-border bg-card p-4 hover:shadow-md transition-shadow"
+              className="group rounded-xl border border-border bg-card p-4 hover:shadow-md transition-shadow cursor-pointer hover:border-primary/50 relative overflow-hidden"
             >
-              <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center gap-3 mb-4">
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <BoxIcon className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate text-foreground">{box.name}</p>
+                  <p className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">{box.name}</p>
                   {box.description && (
                     <p className="text-xs text-muted-foreground truncate">{box.description}</p>
                   )}
                 </div>
               </div>
-              {box.balance !== undefined && (
-                <p className="text-lg font-bold text-foreground mt-2">{formatCurrency(box.balance)}</p>
-              )}
+              <div className="flex items-end justify-between mt-2">
+                <div>
+                  <p className="text-xs text-muted-foreground font-medium mb-1">Saldo Atual</p>
+                  {box.balance !== undefined && (
+                    <p className="text-lg font-bold text-foreground">{formatCurrency(box.balance)}</p>
+                  )}
+                </div>
+
+                {/* Visual gains indicator */}
+                <div className="text-right">
+                  <p className="text-xs text-muted-foreground font-medium mb-1">Ganhos</p>
+                  <p className={`text-sm font-bold flex items-center gap-1 ${(box.accumulatedGains || 0) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                    {(box.accumulatedGains || 0) >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {formatCurrency(box.accumulatedGains || 0)}
+                  </p>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
