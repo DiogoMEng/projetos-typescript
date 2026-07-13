@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
-import { DB } from '../database/models';
-import { BoxBottom } from '../interfaces/boxBottom.interface';
+import { DB } from '#models/index.js';
+import { BoxBottom } from '#interfaces/boxBottom.interface.js';
 import { Service } from './Service';
 import RoleUserBoxBottomService from './RoleUserBoxBottom.service';
 

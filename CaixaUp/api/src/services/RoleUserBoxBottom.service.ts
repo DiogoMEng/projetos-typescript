@@ -1,5 +1,5 @@
-import { DB } from '../database/models';
-import { RUBB } from '../interfaces/roleUserBoxBottom.interface';
+import { DB } from '#models/index.js';
+import { RUBB } from '#interfaces/roleUserBoxBottom.interface.js';
 import { Service } from './Service';
 
 class RoleUserBoxBottomService extends Service<any, RUBB> {

@@ -1,5 +1,5 @@
-import { RUBBModel } from '../models/RoleUserBoxBottom';
-import { User } from '../../interfaces/user.interface';
+import { RUBBModel } from './RoleUserBoxBottom';
+import { User } from '#interfaces/user.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type UserCreationAttributes = Optional<

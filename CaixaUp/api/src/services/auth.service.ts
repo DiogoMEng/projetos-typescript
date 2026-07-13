@@ -1,8 +1,8 @@
 import { compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { DB } from '../database/models';
-import { AuthCredentials } from '../interfaces/user.interface';
-import { JWT_SECRET } from '../config';
+import { DB } from '#models/index.js';
+import { AuthCredentials } from '#interfaces/user.interface.js';
+import { JWT_SECRET } from '#config/index.js';
 
 class AuthService {
   async login(dto: AuthCredentials): Promise<{ accessToken: string }> {

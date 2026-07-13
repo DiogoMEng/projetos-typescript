@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import RoleUserBoxBottomController from '../controllers/RoleUserBoxBottom.controller';
-import checkAuth from '../middlewares/checkAuth';
-import checkRole from '../middlewares/checkRole';
+import RoleUserBoxBottomController from '#controllers/RoleUserBoxBottom.controller.js';
+import checkAuth from '#middlewares/checkAuth.js';
+import checkRole from '#middlewares/checkRole.js';
 
 const router = Router();
 

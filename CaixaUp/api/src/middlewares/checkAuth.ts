@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config';
+import { JWT_SECRET } from '#config/index.js';
 import { Request, Response, NextFunction } from 'express';
-import { TokenPayload } from 'interfaces/user.interface';
+import { TokenPayload } from '#interfaces/user.interface.js';
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   const { verify } = jwt;

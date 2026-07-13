@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import AuthService from '../services/auth.service';
-import { catchAsync } from '../utils/catchAsync';
+import AuthService from '#services/auth.service.js';
+import { catchAsync } from '#utils/catchAsync.js';
 
 const authService = new AuthService();
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import RoleUserBoxBottomService from '../services/RoleUserBoxBottom.service';
-import { catchAsync } from '../utils/catchAsync';
+import RoleUserBoxBottomService from '#services/RoleUserBoxBottom.service.js';
+import { catchAsync } from '#utils/catchAsync.js';
 
 const roleUserBoxBottomService = new RoleUserBoxBottomService();
 

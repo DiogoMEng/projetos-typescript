@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import BoxBottomController from '../controllers/BoxBottom.controller';
-import checkAuth from '../middlewares/checkAuth';
-import checkRole from '../middlewares/checkRole';
+import BoxBottomController from '#controllers/BoxBottom.controller.js';
+import checkAuth from '#middlewares/checkAuth.js';
+import checkRole from '#middlewares/checkRole.js';
 
 const router = Router();
 

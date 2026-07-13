@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Controller } from './Controller';
-import CategoryService from '../services/Category.service';
-import { catchAsync } from '../utils/catchAsync';
+import CategoryService from '#services/Category.service.js';
+import { catchAsync } from '#utils/catchAsync.js';
 
 class CategoryController extends Controller {
   constructor() {

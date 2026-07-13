@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { catchAsync } from '../utils/catchAsync';
-import { Service } from '../interfaces/Service.interface';
+import { catchAsync } from '#utils/catchAsync.js';
+import { Service } from '#interfaces/Service.interface.js';
 
 export abstract class Controller {
   constructor(protected readonly service: Service) { }

@@ -1,5 +1,5 @@
-import { DB } from '../database/models';
-import { Transaction } from '../interfaces/transaction.interface';
+import { DB } from '#models/index.js';
+import { Transaction } from '#interfaces/transaction.interface.js';
 import { Service } from './Service';
 
 class TransactionService extends Service<any, Transaction> {

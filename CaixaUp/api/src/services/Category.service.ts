@@ -1,5 +1,5 @@
-import { DB } from '../database/models';
-import { Category } from '../interfaces/category.interface';
+import { DB } from '#models/index.js';
+import { Category } from '#interfaces/category.interface.js';
 import { Service } from './Service';
 
 class CategoryService extends Service<any, Category> {

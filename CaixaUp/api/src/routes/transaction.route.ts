@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import TransactionController from '../controllers/Transaction.controller';
-import checkAuth from '../middlewares/checkAuth';
-import checkRole from '../middlewares/checkRole';
+import TransactionController from '#controllers/Transaction.controller.js';
+import checkAuth from '#middlewares/checkAuth.js';
+import checkRole from '#middlewares/checkRole.js';
 
 const router = Router();
 

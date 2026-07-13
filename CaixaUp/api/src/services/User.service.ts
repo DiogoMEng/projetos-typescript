@@ -1,6 +1,6 @@
 import { hash } from 'bcryptjs';
-import { DB } from '../database/models';
-import { User } from '../interfaces/user.interface';
+import { DB } from '#models/index.js';
+import { User } from '#interfaces/user.interface.js';
 import { Service } from './Service';
 
 class UserService extends Service<any, User> {
