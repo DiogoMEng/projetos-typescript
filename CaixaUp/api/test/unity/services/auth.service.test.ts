@@ -7,7 +7,7 @@ const mockFindOne = jest.fn<() => Promise<Partial<UserModel> | null>>();
 const mockCompare = jest.fn<() => Promise<boolean>>();
 const mockSign = jest.fn<() => string>();
 
-await jest.unstable_mockModule('../../database/models', () => ({
+await jest.unstable_mockModule('#models/index.js', () => ({
   DB: {
     Users: { findOne: mockFindOne },
   },
@@ -20,7 +20,7 @@ await jest.unstable_mockModule('jsonwebtoken', () => ({
   default: { sign: mockSign },
 }));
 
-const { default: AuthService } = await import('../../services/auth.service.js');
+const { default: AuthService } = await import('#services/auth.service.js');
 
 describe('Testing the Authentication service', () => {
   let authService: InstanceType<typeof AuthService>;

@@ -1,5 +1,6 @@
 import { DB } from '#models/index.js';
 import { Transaction } from '#interfaces/transaction.interface.js';
+import { BadRequestError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 
 class TransactionService extends Service<any, Transaction> {
@@ -31,14 +32,14 @@ class TransactionService extends Service<any, Transaction> {
   }
 
   protected async beforeCreate(dto: Transaction): Promise<void> {
-    if (dto.value <= 0) throw new Error('Valor deve ser maior que zero.');
+    if (dto.value <= 0) throw new BadRequestError('Valor deve ser maior que zero.');
 
     const [box, cat] = await Promise.all([
       DB.BoxBottoms.findByPk(dto.boxBottomId),
       DB.Categories.findByPk(dto.categoryId),
     ]);
 
-    if (!box || !cat ) throw new Error('Caixinha ou Categoria não encontrada.');
+    if (!box || !cat) throw new NotFoundError('Caixinha ou Categoria não encontrada.');
   }
 
   protected async afterCreate(record: any): Promise<void> {

@@ -1,6 +1,7 @@
 import { Op } from 'sequelize';
 import { DB } from '#models/index.js';
 import { BoxBottom } from '#interfaces/boxBottom.interface.js';
+import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 import RoleUserBoxBottomService from './RoleUserBoxBottom.service';
 
@@ -44,12 +45,12 @@ class BoxBottomService extends Service<any, BoxBottom> {
         userId: dto.userId,
       },
     });
-    if (boxExists) throw new Error('Caixinha já existe para este usuário');
+    if (boxExists) throw new ConflictError('Caixinha já existe para este usuário');
   }
 
   protected async afterCreate(record: BoxBottom): Promise<void> {
     const ownerRole = await DB.Roles.findOne({ where: { name: 'OWNER' } });
-    if (!ownerRole) throw new Error('Role OWNER não encontrada');
+    if (!ownerRole) throw new NotFoundError('Role OWNER não encontrada');
 
     await roleUserBoxBottomService.create({
       userId: record.userId,

@@ -1,6 +1,7 @@
 import { hash } from 'bcryptjs';
 import { DB } from '#models/index.js';
 import { User } from '#interfaces/user.interface.js';
+import { ConflictError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 
 class UserService extends Service<any, User> {
@@ -10,7 +11,7 @@ class UserService extends Service<any, User> {
 
   protected async beforeCreate(dto: User): Promise<void> {
     const userExists = await DB.Users.findOne({ where: { email: dto.email } });
-    if (userExists) throw new Error('Usuário já existe');
+    if (userExists) throw new ConflictError('Usuário já existe');
 
     dto.password = await hash(dto.password, 8);
   }

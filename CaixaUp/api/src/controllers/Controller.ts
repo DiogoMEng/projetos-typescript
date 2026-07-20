@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { catchAsync } from '#utils/catchAsync.js';
 import { Service } from '#interfaces/Service.interface.js';
+import { NotFoundError } from '#errors/httpErrors.js';
 
 export abstract class Controller {
   constructor(protected readonly service: Service) { }
@@ -35,6 +36,11 @@ export abstract class Controller {
   getById = catchAsync(async (req: Request, res: Response) => {
     const id = req.params[this.getParamIdName()];
     const record = await this.service.getById(id);
+
+    if (!record) {
+      throw new NotFoundError(`${this.getEntityName()} not found`);
+    }
+
     res.status(200).json(record);
   });
 
@@ -43,14 +49,23 @@ export abstract class Controller {
     const updatedRecord = await this.service.update(id, req.body);
 
     if (!updatedRecord) {
-      return res.status(404).json({ message: `${this.getEntityName()} not found` });
+      throw new NotFoundError(`${this.getEntityName()} not found`);
     }
-    res.status(200).json({ message: `${this.getEntityName()} updated successfully` });
+
+    res.status(200).json({
+      message: `${this.getEntityName()} updated successfully`,
+      data: updatedRecord,
+    });
   });
 
   delete = catchAsync(async (req: Request, res: Response) => {
     const id = req.params[this.getParamIdName()];
-    await this.service.delete(id);
+    const deletedRecord = await this.service.delete(id);
+
+    if (!deletedRecord) {
+      throw new NotFoundError(`${this.getEntityName()} not found`);
+    }
+
     res.status(200).json({ message: `${this.getEntityName()} deleted successfully` });
   });
 }
