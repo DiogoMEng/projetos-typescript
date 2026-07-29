@@ -5,22 +5,21 @@ const commonMessages = {
   'string.empty': '{{#label}} não pode estar vazio.',
   'string.min': '{{#label}} deve ter no mínimo {{#limit}} caracteres.',
   'string.max': '{{#label}} deve ter no máximo {{#limit}} caracteres.',
-  'string.email': 'Informe um e-mail válido.',
   'any.required': '{{#label}} é obrigatório.',
+  'any.only': '{{#label}} deve ser um dos valores permitidos: {{#valids}}.',
   'object.unknown': 'Campo não permitido.',
 };
 
-export const createUserSchema = Joi.object({
+export const createCategorySchema = Joi.object({
   name: Joi.string().trim().min(2).max(100).required().messages(commonMessages).label('nome'),
-  email: Joi.string().trim().email().required().messages(commonMessages).label('e-mail'),
-  password: Joi.string().trim().min(8).required().messages(commonMessages).label('senha'),
+  type: Joi.string().trim().valid('receita', 'despesa').required().messages(commonMessages).label('tipo'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
 
-export const updateUserSchema = Joi.object({
+export const updateCategorySchema = Joi.object({
   name: Joi.string().trim().min(2).max(100).messages(commonMessages).label('nome'),
-  email: Joi.string().trim().email().messages(commonMessages).label('e-mail'),
+  type: Joi.string().trim().valid('receita', 'despesa').messages(commonMessages).label('tipo'),
 })
   .min(1)
   .messages({
