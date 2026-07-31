@@ -1,4 +1,4 @@
-import { BoxBottom } from '../../interfaces/boxBottom.interface';
+import { BoxBottom } from '#interfaces/boxBottom.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type BoxBottomCreationAttributes = Optional<

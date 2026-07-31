@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import RoleUserBoxBottomService from '../services/RoleUserBoxBottom.service';
-import { catchAsync } from '../utils/catchAsync';
+import RoleUserBoxBottomService from '#services/RoleUserBoxBottom.service.js';
+import { catchAsync } from '#utils/catchAsync.js';
+import { BadRequestError, NotFoundError } from '#errors/httpErrors.js';
 
 const roleUserBoxBottomService = new RoleUserBoxBottomService();
 
@@ -9,7 +10,7 @@ class RoleUserBoxBottomController {
     const { boxBottomId } = req.params;
     const { userId, roleId } = req.body;
     if (!userId || !boxBottomId || !roleId) {
-      throw new Error('Campos obrigatórios ausentes: userId, boxBottomId, roleId');
+      throw new BadRequestError('Campos obrigatórios ausentes: userId, boxBottomId, roleId');
     }
     const permission = await roleUserBoxBottomService.create({ userId, boxBottomId, roleId });
     res.status(201).json({ message: 'Permissão registrado com sucesso', data: permission });
@@ -25,7 +26,9 @@ class RoleUserBoxBottomController {
     const { userId, boxBottomId } = req.params;
     const { roleId } = req.body;
     const updatedRecord = await roleUserBoxBottomService.editRole(userId, boxBottomId, roleId);
-    if (!updatedRecord) throw new Error('Não foi encontrado registro de acesso para este usuário no campo especificado.');
+    if (!updatedRecord) {
+      throw new NotFoundError('Registro de acesso para este usuário não encontrado');
+    }
     res.status(200).json({ message: 'Função de usuário atualizada com sucesso' });
   });
 

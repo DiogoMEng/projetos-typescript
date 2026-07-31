@@ -1,4 +1,4 @@
-import { Category } from '../../interfaces/category.interface';
+import { Category } from '#interfaces/category.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type CategoryCreationAttributes = Optional<

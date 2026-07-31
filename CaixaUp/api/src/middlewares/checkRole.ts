@@ -1,4 +1,4 @@
-import { DB } from '../database/models';
+import { DB } from '#models/index.js';
 import { Request, Response, NextFunction } from 'express';
 
 const checkRole = (listRoles: string[]) => async (req: Request, res: Response, next: NextFunction) => {

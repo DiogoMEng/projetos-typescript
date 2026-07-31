@@ -3,6 +3,7 @@ import cors from 'cors';
 import router from './routes/indexRouter.js';
 import { DB } from './database/models/index.js';
 import { PORT } from './config';
+import { errorHandler } from '#middlewares/errorHandler.js';
 
 const appServer = express();
 appServer.use(cors({
@@ -18,6 +19,8 @@ router(appServer);
 appServer.all('*', (req, res) => {
   res.status(404).json({ message: `Route ${req.path} not found.` });
 });
+
+appServer.use(errorHandler);
 
 DB.sequelize
   .authenticate()

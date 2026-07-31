@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Model, ModelStatic } from 'sequelize';
+import { BadRequestError, NotFoundError } from '#errors/httpErrors.js';
 
 export abstract class Service<T extends Model, DTO> {
   protected model: ModelStatic<T>;
@@ -21,8 +22,7 @@ export abstract class Service<T extends Model, DTO> {
       await this.afterCreate(record);
       return record;
     } catch (error) {
-      console.log('Erro real', error);
-      throw new Error(`Erro ao criar registro em ${this.model.name}`);
+      throw new BadRequestError(`Erro ao criar registro em ${this.model.name}`);
     }
   }
 
@@ -32,7 +32,7 @@ export abstract class Service<T extends Model, DTO> {
 
   async getById(id: string, options: object = {}): Promise<T> {
     const record = await this.model.findByPk(id, options);
-    if(!record) throw new Error(`${this.model.name} não encontrado`);
+    if (!record) throw new NotFoundError(`${this.model.name} não encontrado`);
     return record;
   }
 
@@ -43,11 +43,14 @@ export abstract class Service<T extends Model, DTO> {
     return affectedCount > 0;
   }
 
-  async delete(id: string): Promise<void> {
-    await this.model.destroy({
+  async delete(id: string): Promise<boolean> {
+    const deletedCount = await this.model.destroy({
       where: {
-        [this.primaryKey]: id } as any,
+        [this.primaryKey]: id,
+      } as any,
     });
+
+    return deletedCount > 0;
   }
 
   protected async beforeCreate(dto: DTO): Promise<void> { }

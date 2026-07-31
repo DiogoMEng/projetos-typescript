@@ -14,7 +14,7 @@ import {
   DB_HOST,
   NODE_ENV,
   DB_DIALECT,
-} from '../../config';
+} from '#config/index.js';
 
 const sequelize = new Sequelize.Sequelize(
   DB_NAME as string,

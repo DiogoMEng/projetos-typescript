@@ -1,4 +1,4 @@
-import { Transaction } from '../../interfaces/transaction.interface';
+import { Transaction } from '#interfaces/transaction.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type TrasactionCreationAttributes = Optional<
