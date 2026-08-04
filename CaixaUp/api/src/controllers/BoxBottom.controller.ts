@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Controller } from './Controller';
-import BoxBottomService from '../services/BoxBottom.service';
-import { catchAsync } from '../utils/catchAsync';
+import BoxBottomService from '#services/BoxBottom.service.js';
+import { catchAsync } from '#utils/catchAsync.js';
 
 class BoxBottomController extends Controller {
   constructor() {

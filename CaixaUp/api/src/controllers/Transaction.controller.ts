@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Controller } from './Controller';
-import TransactionService from '../services/Transaction.service';
-import { catchAsync } from '../utils/catchAsync';
+import TransactionService from '#services/Transaction.service.js';
+import { catchAsync } from '#utils/catchAsync.js';
 
 class TransactionController extends Controller {
   constructor() {

@@ -1,4 +1,4 @@
-import { Role } from '../../interfaces/role.interface';
+import { Role } from '#interfaces/role.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
 export type RoleCreationAttributes = Optional<

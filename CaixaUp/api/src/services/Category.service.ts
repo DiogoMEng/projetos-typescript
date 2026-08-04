@@ -1,5 +1,6 @@
-import { DB } from '../database/models';
-import { Category } from '../interfaces/category.interface';
+import { DB } from '#models/index.js';
+import { Category } from '#interfaces/category.interface.js';
+import { ConflictError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 
 class CategoryService extends Service<any, Category> {
@@ -11,7 +12,7 @@ class CategoryService extends Service<any, Category> {
     const categoryExists = await DB.Categories.findOne({
       where: { name: dto.name, userId: dto.userId },
     });
-    if (categoryExists) throw new Error('Categoria já existe para este usuário.');
+    if (categoryExists) throw new ConflictError('Categoria já existe para este usuário.');
   }
 
   async getAllCategoriesByUser(userId: string): Promise<Category[]> {

@@ -3,5 +3,5 @@ export interface Service {
   getAll(filter?: any): Promise<any[]>;
   getById(id: string): Promise<any>;
   update(id: string, data: any): Promise<any>;
-  delete(id: string): Promise<void>;
+  delete(id: string): Promise<boolean>;
 }

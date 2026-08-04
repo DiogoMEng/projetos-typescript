@@ -1,5 +1,6 @@
-import { DB } from '../database/models';
-import { RUBB } from '../interfaces/roleUserBoxBottom.interface';
+import { DB } from '#models/index.js';
+import { RUBB } from '#interfaces/roleUserBoxBottom.interface.js';
+import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 
 class RoleUserBoxBottomService extends Service<any, RUBB> {
@@ -32,12 +33,12 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
       DB.Roles.findByPk(dto.roleId),
     ]);
 
-    if (!user || !box  || !role) throw new Error('Usuário, Caixa ou Função não encontrados');
+    if (!user || !box || !role) throw new NotFoundError('Usuário, Caixa ou Função não encontrados');
 
     const existingPermission = await DB.RoleUserBoxBottoms.findOne({
       where: { userId: dto.userId, boxBottomId: dto.boxBottomId },
     });
-    if (existingPermission) throw new Error('O usuário já possui permissão nesta caixa.');
+    if (existingPermission) throw new ConflictError('O usuário já possui permissão nesta caixa.');
   }
 }
 
