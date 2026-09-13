@@ -19,7 +19,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc && tsc-alias && echo 'Build Finished!'",
     "test:unit:all": "node --experimental-vm-modules node_modules/.bin/jest \"test/unity/**/*.test.ts\"",
-    "test:integration:all": "node --experimental-vm-modules node_modules/.bin/jest \"test/integration/**/*.test.ts\"",
+    "test:int:all": "node --experimental-vm-modules node_modules/.bin/jest \"test/integration/**/*.test.ts\"",
     "test:e2e:all": "node --experimental-vm-modules node_modules/.bin/jest \"test/e2e/**/*.test.ts\"",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watchAll",
     "lint": "npx eslint .",
