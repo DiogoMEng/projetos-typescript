@@ -1,6 +1,8 @@
+# PASTAS
 node_modules
-
 dist
 build
+rules
 
+# ARQUIVOS
 package-lock.json

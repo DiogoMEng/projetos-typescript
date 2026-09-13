@@ -34,6 +34,11 @@ class TransactionService extends Service<any, Transaction> {
   protected async beforeCreate(dto: Transaction): Promise<void> {
     if (dto.value <= 0) throw new BadRequestError('Valor deve ser maior que zero.');
 
+    const validMovementTypes = ['inflow', 'outflow'];
+    if (!validMovementTypes.includes(dto.movementType)) {
+      throw new BadRequestError('movementType inválido.');
+    }
+
     const [box, cat] = await Promise.all([
       DB.BoxBottoms.findByPk(dto.boxBottomId),
       DB.Categories.findByPk(dto.categoryId),

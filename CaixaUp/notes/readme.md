@@ -1,44 +1,46 @@
 # Notação de Projeto: CaixaUp
 
-## <p id="sumario">Sumário</p>
+## Sumário
 
-Parte 1: <a href="#configurando-docker" style="font-weight: bold">Configurando Docker</a>
-- <a href="#dockerfile">DockerFile</a>
-- <a href="#docker-compose">Docker-Compose</a>
+Parte 1: [**Configurando Docker**](#configurando-docker)
 
-Parte 2: <a href="#base-dados-modelo-logico" style="font-weight: bold">Base de Dados e Modelo Lógico</a>
-- <a href="#configurando-sequelize">Configuração do Sequelize</a>
-- <a href="#bug-typescript-sequelize">Bug do TypeScript com Sequelize</a>
+- [DockerFile](#dockerfile)
+- [Docker-Compose](#docker-compose)
 
-Parte 3: <a href="#configurando-ambiente-teste" style="font-weight: bold">Configurando Ambiente de Teste</a>
+Parte 2: [**Base de Dados e Modelo Lógico**](#base-de-dados-e-modelo-lógico)
+
+- [Configuração do Sequelize](#configuração-do-sequelize)
+- [Bug do TypeScript com Sequelize](#bug-do-typescript-com-sequelize)
+
+Parte 3: [**Configurando Ambiente de Teste**](#configurando-ambiente-de-teste)
 
 ---
 
-## <p id="configurando-docker">Configurando Docker</p>
+## Configurando Docker
 
-### <p id="dockerfile">DockerFile</p>
+### DockerFile
 
 Utilizado para buildar a imagem do backend para o container Docker.
 
 ```dockerfile
 # Define a imagem base como Node.js v18 sobre Alpine Linux
-# --> Alpine é uma distro minimalista, o que reduz o tamanho 
+# --> Alpine é uma distro minimalista, o que reduz o tamanho
 #     da imagem e melhora o    tempo de pull/push.
 FROM node:18-alpine
 
-# Copia todo o contexto de build (diretório atual) para /app 
+# Copia todo o contexto de build (diretório atual) para /app
 # dentro da imagem.
 ADD . /app
 
-# Define /app como diretório de trabalho padrão para os 
+# Define /app como diretório de trabalho padrão para os
 # próximos comandos e para o processo final.
 WORKDIR /app
 
-# Instala o pacote sqlite (cliente/CLI e libs) usando 
+# Instala o pacote sqlite (cliente/CLI e libs) usando
 # o gerenciador de pacotes do Alpine (apk).
 RUN apk add --update-cache sqlite
 
-# Troca o usuário para node (não-root), que já existe 
+# Troca o usuário para node (não-root), que já existe
 # na imagem oficial do Node.
 USER node
 
@@ -46,7 +48,7 @@ USER node
 CMD npm install
 ```
 
-### <p id="docker-compose">Docker-Compose</p>
+### Docker-Compose
 
 Ferramenta que permite definir e gerenciar vários containers do Docker.
 
@@ -56,7 +58,7 @@ Ferramenta que permite definir e gerenciar vários containers do Docker.
 # Inclui serviços de desenvolvimento, teste e banco de dados.
 
 # Versão do formato do Docker Compose (opcional, mas boa prática)
-version: '3.8'
+version: "3.8"
 
 # Seção de serviços: Define os contêineres que compõem a aplicação
 services:
@@ -75,11 +77,11 @@ services:
       - "3000:3000"
     # Variáveis de ambiente para a aplicação
     environment:
-      - DB_USER=postgres          # Nome de usuário do banco de dados
-      - DB_PASS=admin123          # Senha do banco de dados
-      - DB_NAME=finances_db       # Nome do banco de dados
-      - DB_HOST=db                # Host do banco de dados (refere-se ao serviço db)
-      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS  # Chave secreta para tokens JWT
+      - DB_USER=postgres # Nome de usuário do banco de dados
+      - DB_PASS=admin123 # Senha do banco de dados
+      - DB_NAME=finances_db # Nome do banco de dados
+      - DB_HOST=db # Host do banco de dados (refere-se ao serviço db)
+      - JWT_SECRET=c03a21ed65f4dsfd1aAD21F3ASF5AS # Chave secreta para tokens JWT
     # Volumes: Monta o diretório local ./api em /app no contêiner com cache
     volumes:
       - ./api/:/app:cached
@@ -112,15 +114,15 @@ services:
     container_name: finances_db
     # Variáveis de ambiente para PostgreSQL
     environment:
-      - POSTGRES_USER=postgres      # Nome de usuário superusuário padrão
-      - POSTGRES_PASSWORD=admin123  # Senha para o superusuário
-      - POSTGRES_DB=finances_db     # Nome do banco de dados padrão a ser criado
+      - POSTGRES_USER=postgres # Nome de usuário superusuário padrão
+      - POSTGRES_PASSWORD=admin123 # Senha para o superusuário
+      - POSTGRES_DB=finances_db # Nome do banco de dados padrão a ser criado
     # Mapeamento de portas: porta do host 5432 para porta do contêiner 5432
     ports:
       - "5432:5432"
     # Volumes: Volume nomeado 'database' montado no diretório de dados do PostgreSQL
     volumes:
-      - database:/var/lib/postgresql/data  # Nota: Caminho corrigido para /var/lib/postgresql/data
+      - database:/var/lib/postgresql/data # Nota: Caminho corrigido para /var/lib/postgresql/data
 
 # Seção de volumes: Define volumes nomeados para dados persistentes
 volumes:
@@ -145,10 +147,11 @@ docker exec -it <nome_container> /bin/sh
 ```
 
 > ERROR: Network "caixaup_default" needs to be recreated - option "com.docker.network.enable_ipv6" has changed.
+
 - Solução: `docker network rm caixaup_default` --> `docker-compose --env-file <caminho_arquivo_env> up -d`
 - `--env-file <caminho_arquivo_env>`: o docker compose por padrão procura o .env na raiz do projeto. Desse modo, é necessário indicar o caminho do arquivo .env caso não esteja na raiz.
 
-### <p id="bug-typescript-sequelize">Bug do TypeScript com Sequelize</p>
+### Bug do TypeScript com Sequelize
 
 O Typescript compila os campos `public <nome_atributo>!: type` como propriedades próprias da instância que são criadas depois que o construtor do Model já
 configurou os getters/setters no prototype. Assim, os propriedades contendo `undefined` sobrescreve/esconde o getter que o sequelize define no prototype para aquele atributo.
@@ -157,7 +160,10 @@ configurou os getters/setters no prototype. Assim, os propriedades contendo `und
 
 ```typescript
 // TROCA `public` por `declare`
-export class BoxBottomModel extends Model<BoxBottom, BoxBottomCreationAttributes> implements BoxBottom {
+export class BoxBottomModel
+  extends Model<BoxBottom, BoxBottomCreationAttributes>
+  implements BoxBottom
+{
   declare boxBottomId: string;
   declare userId: string;
   declare name: string;
@@ -169,17 +175,19 @@ export class BoxBottomModel extends Model<BoxBottom, BoxBottomCreationAttributes
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 
-  static associate(models: any) { /* ...sem mudanças... */ }
+  static associate(models: any) {
+    /* ...sem mudanças... */
+  }
 }
 ```
 
---- <a href="#sumário">Retornar ao sumário</a> ---
+[Retornar ao sumário](#sumario)
 
 ---
 
-## <p id="base-dados-modelo-logico">Base de Dados e Modelo Lógico</p>
+## Base de Dados e Modelo Lógico
 
-### <p id="configurando-sequelize">Configuração do Sequelize</p>
+### Configuração do Sequelize
 
 ```bash
 # Cria uma configuração padrão dentro do diretório
@@ -194,11 +202,11 @@ npx sequelize init
 // O local para config e models-path aponta para pasta build que é compilada em js
 // As demais pastas já estarão em js
 module.exports = {
-  "config": path.resolve(__dirname, "build", "database", "config", "database.js"),
+  config: path.resolve(__dirname, "build", "database", "config", "database.js"),
   "models-path": path.resolve(__dirname, "build", "database", "models"),
   "migrations-path": path.resolve(__dirname, "src", "database", "migrations"),
   "seeders-path": path.resolve(__dirname, "src", "database", "models"),
-}
+};
 ```
 
 _Nota: como as variáveis de ambiente foram definidas dentro do container, os comandos referentes ao banco deve ser feito dentro do container._
@@ -239,11 +247,11 @@ expenses_id: {
 }
 ```
 
---- <a href="#sumário">Retornar ao sumário</a> ---
+[Retornar ao sumário](#sumario)
 
 ---
 
-## <p id="configurando-ambiente-teste">Configurando Ambiente de Teste</p>
+## Configurando Ambiente de Teste
 
 ```bash
 # INSTALAÇÃO DE DEPENDÊNCIAS
@@ -252,24 +260,25 @@ npm install - save-dev jest ts-jest @types/jest @jest/globals supertest @types/s
 ```
 
 | CONFIGURAÇÃO DO JEST.CONFIG.TS |
-|              :--               |
+| :----------------------------- |
 
 ```typescript
-import type { Config } from 'jest';
-import { createDefaultEsmPreset } from 'ts-jest';
+import type { Config } from "jest";
+import { createDefaultEsmPreset } from "ts-jest";
 
 const presetConfig = createDefaultEsmPreset({});
 
 export default {
   ...presetConfig,
-  testEnvironment: 'node',
+  testEnvironment: "node",
   testMatch: [
-    '**/tests/**/*.test.ts',
-    '**/__tests__/**/*.test.ts',
-    '**/?(*.)+(spec|test).ts',
+    "**/tests/**/*.test.ts",
+    "**/__tests__/**/*.test.ts",
+    "**/?(*.)+(spec|test).ts",
   ],
-  moduleNameMapper: { // trata exigências da extensão .js nas importações
-    '^(\\.{1,2}/.*)\\.js$': '$1',
+  moduleNameMapper: {
+    // trata exigências da extensão .js nas importações
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   testTimeout: 30000,
 } satisfies Config; // segurança de tipos para configuração do Jest

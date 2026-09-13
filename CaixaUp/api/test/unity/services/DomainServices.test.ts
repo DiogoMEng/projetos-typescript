@@ -102,6 +102,7 @@ describe('Domain services unit tests', () => {
     await service.create({
       boxBottomId: 'route-box',
       categoryId: 'route-cat',
+      movementType: 'inflow',
       value: 100,
       transactionDate: '2024-01-01',
       description: 'salario',
@@ -128,6 +129,7 @@ describe('Domain services unit tests', () => {
 
   it('U27 - RoleService rejeita criação de role com nome duplicado', async () => {
     const service = new RoleService();
+    mockDb.Roles.findOne.mockResolvedValue({ roleId: 'existing-role' });
 
     await expect(service.create({ name: 'OWNER' } as any)).rejects.toThrow();
   });

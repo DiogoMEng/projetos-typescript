@@ -17,13 +17,17 @@ export abstract class Service<T extends Model, DTO> {
       ...dto as any,
       [this.primaryKey]: uuidv4(),
     };
+
+    let record: T;
+
     try {
-      const record = await this.model.create(data);
-      await this.afterCreate(record);
-      return record;
+      record = await this.model.create(data);
     } catch (error) {
       throw new BadRequestError(`Erro ao criar registro em ${this.model.name}`);
     }
+
+    await this.afterCreate(record);
+    return record;
   }
 
   async getAll(options: object = {}): Promise<T[]> {

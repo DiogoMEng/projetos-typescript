@@ -1,6 +1,6 @@
 import { DB } from '#models/index.js';
 import { Category } from '#interfaces/category.interface.js';
-import { ConflictError } from '#errors/httpErrors.js';
+import { BadRequestError, ConflictError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 
 class CategoryService extends Service<any, Category> {
@@ -9,6 +9,12 @@ class CategoryService extends Service<any, Category> {
   }
 
   protected async beforeCreate(dto: Category): Promise<void> {
+    const validTypes = ['receita', 'despesa'];
+
+    if (!validTypes.includes(dto.type)) {
+      throw new BadRequestError('Tipo de categoria inválido.');
+    }
+
     const categoryExists = await DB.Categories.findOne({
       where: { name: dto.name, userId: dto.userId },
     });
