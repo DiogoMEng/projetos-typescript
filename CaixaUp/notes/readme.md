@@ -2,23 +2,27 @@
 
 ## Sumário
 
-Parte 1: [**Configurando Docker**](#configurando-docker)
+Parte 1: [**Configurando Infraestrutura no Container**](#configurando-infraestrutura-no-container)
 
-- [DockerFile](#dockerfile)
-- [Docker-Compose](#docker-compose)
+- [Configuração Dockerfile Backend](#configuração-dockerfile-backend)
+- [Orquestrando Containers do Projeto](#orquestrando-containers-do-projeto)
+- [Erros/Bugs Identificados - Configuração Infraestrutura](#)
 
-Parte 2: [**Base de Dados e Modelo Lógico**](#base-de-dados-e-modelo-lógico)
+Parte 2: [**Configuração da Base de Dados**](#configuração-da-base-de-dados)
 
-- [Configuração do Sequelize](#configuração-do-sequelize)
-- [Bug do TypeScript com Sequelize](#bug-do-typescript-com-sequelize)
+- [Sequelize](#sequelize)
+- [Erros/Bugs Identificados - Configuração Base de Dados](#errosbugs-identificados---configuração-base-de-dados)
+  - [Bug do TypeScript com o Sequelize](#bug-do-typescript-com-sequelize)
 
 Parte 3: [**Configurando Ambiente de Teste**](#configurando-ambiente-de-teste)
 
+- [Configuração do Jest](#configuração-do-jest)
+
 ---
 
-## Configurando Docker
+## Configurando Infraestrutura no Container
 
-### DockerFile
+### Configuração Dockerfile Backend
 
 Utilizado para buildar a imagem do backend para o container Docker.
 
@@ -48,7 +52,7 @@ USER node
 CMD npm install
 ```
 
-### Docker-Compose
+### Orquestrando Containers do Projeto
 
 Ferramenta que permite definir e gerenciar vários containers do Docker.
 
@@ -151,43 +155,94 @@ docker exec -it <nome_container> /bin/sh
 - Solução: `docker network rm caixaup_default` --> `docker-compose --env-file <caminho_arquivo_env> up -d`
 - `--env-file <caminho_arquivo_env>`: o docker compose por padrão procura o .env na raiz do projeto. Desse modo, é necessário indicar o caminho do arquivo .env caso não esteja na raiz.
 
-### Bug do TypeScript com Sequelize
+### Erros/Bugs Identificados - Configuração Infraestrutura
 
-O Typescript compila os campos `public <nome_atributo>!: type` como propriedades próprias da instância que são criadas depois que o construtor do Model já
-configurou os getters/setters no prototype. Assim, os propriedades contendo `undefined` sobrescreve/esconde o getter que o sequelize define no prototype para aquele atributo.
+#### Erro do esbuild ao subir o container no Windows
 
-> Observação: O Model.create() internamente já populou this.dataValues com os valores corretos antes dos campos de classe rodarem por cima. O INSERT usa dataValues, então o banco recebe tudo certinho. Mas quando você lê record.userId depois, o JS está lendo a propriedade própria (sobrescrita = undefined), não o getter que retornaria o valor real de dataValues.
+| Item           | Detalhe                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| **Projeto**    | caixaup (API Node.js + PostgreSQL)                                                                |
+| **Contexto**   | Projeto desenvolvido no Ubuntu, agora executado com Docker no Windows                             |
+| **Sintoma**    | O container `caixaup_dev` falha ao iniciar com `TransformError` do esbuild                        |
+| **Causa raiz** | O `node_modules` do Windows foi parar dentro do container Linux                                   |
+| **Solução**    | Instalar as dependências dentro do container e impedir que o `node_modules` do host o sobrescreva |
 
-```typescript
-// TROCA `public` por `declare`
-export class BoxBottomModel
-  extends Model<BoxBottom, BoxBottomCreationAttributes>
-  implements BoxBottom
-{
-  declare boxBottomId: string;
-  declare userId: string;
-  declare name: string;
-  declare description: string;
-  declare targetValue: number;
-  declare created_at: string | undefined;
-  declare updated_at: string | undefined;
+Ao executar `npm run dev`, o container encerra com esta mensagem:
 
-  declare readonly createdAt: Date;
-  declare readonly updatedAt: Date;
-
-  static associate(models: any) {
-    /* ...sem mudanças... */
-  }
-}
 ```
+Specifically the "@esbuild/win32-x64" package is present but this platform
+needs the "@esbuild/linux-x64" package instead.
+...
+name: 'TransformError'
+```
+
+O esbuild (usado pelo `npm run dev`) distribui um **binário nativo diferente para cada plataforma**. O `npm install` baixa apenas o binário do sistema em que roda:
+
+- No Windows: `@esbuild/win32-x64`
+- No container (Alpine Linux): `@esbuild/linux-x64`
+  Dois pontos da configuração original faziam o `node_modules` do Windows chegar ao container:
+
+1. **Bind mount no `docker-compose.yml`:** a linha `./api/:/app` substitui todo o `/app` do container pelos arquivos do host, incluindo o `node_modules` instalado no Windows.
+2. **`Dockerfile`:** o `ADD . /app` copiava o `node_modules` do host para a imagem, e o `CMD npm install` não instalava nada durante o build. Ele era apenas o comando padrão e acabava sobrescrito pelo `command: npm run dev` do compose.
+   No Ubuntu o problema não aparecia porque host e container eram Linux, então os binários eram compatíveis.
+
+| **CORREÇÃO APLICADA** |
+| :-------------------- |
+
+```
+<!-- CRIAÇÃO DE UM DOCKERFILE -->
+node_modules
+npm-debug.log
+.git
+.env
+
+<!-- impede que o `node_modules` do host seja copiado para a imagem durante o build. O `.env` também fica de fora para não embutir segredos na imagem, já que as variáveis chegam pelo compose. -->
+```
+
+```dockerfile
+# REESCREVE O DOCKERFILE
+FROM node:18-alpine
+
+RUN apk add --no-cache sqlite
+
+WORKDIR /app
+RUN chown node:node /app
+USER node
+
+COPY --chown=node:node package*.json ./
+RUN npm ci
+
+COPY --chown=node:node . .
+```
+
+| Mudança                                          | Motivo                                                                                                                                                                 |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RUN npm ci` durante o build                     | Instala as dependências no Linux, gerando o binário `@esbuild/linux-x64` correto. `npm ci` segue exatamente o `package-lock.json`, o que garante builds reproduzíveis. |
+| `COPY package*.json` antes do restante do código | Aproveita o cache de camadas: se só o código mudar, o Docker não reinstala as dependências.                                                                            |
+| `COPY` no lugar de `ADD`                         | `ADD` tem comportamentos extras (extrai arquivos e aceita URLs). `COPY` é a opção recomendada para cópia simples.                                                      |
+| `chown node:node /app` e `--chown`               | O `WORKDIR` é criado como `root`. Como o processo roda como `USER node`, sem isso o `npm` não teria permissão de escrita.                                              |
+| `apk add --no-cache`                             | Não guarda o cache de pacotes na imagem, deixando-a menor.                                                                                                             |
+
+```yml
+    volumes:
+      - ./api/:/app
+      - api_node_modules:/app/node_modules
+
+volumes:
+  database:
+  api_node_modules:
+
+```
+
+o bind mount `./api/:/app` continua necessário para editar o código no host e ver as mudanças no container. O volume nomeado `api_node_modules`, montado por cima de `/app/node_modules`, **esconde o `node_modules` do Windows** e mantém o que foi instalado na imagem. Na primeira execução, o Docker popula esse volume com o conteúdo da imagem, que é a versão Linux.
 
 [Retornar ao sumário](#sumario)
 
 ---
 
-## Base de Dados e Modelo Lógico
+## Configuração da Base de Dados
 
-### Configuração do Sequelize
+### Sequelize
 
 ```bash
 # Cria uma configuração padrão dentro do diretório
@@ -247,11 +302,45 @@ expenses_id: {
 }
 ```
 
+### Erros/Bugs Identificados - Configuração Base de Dados
+
+#### Bug do TypeScript com Sequelize
+
+O Typescript compila os campos `public <nome_atributo>!: type` como propriedades próprias da instância que são criadas depois que o construtor do Model já
+configurou os getters/setters no prototype. Assim, os propriedades contendo `undefined` sobrescreve/esconde o getter que o sequelize define no prototype para aquele atributo.
+
+> Observação: O Model.create() internamente já populou this.dataValues com os valores corretos antes dos campos de classe rodarem por cima. O INSERT usa dataValues, então o banco recebe tudo certinho. Mas quando você lê record.userId depois, o JS está lendo a propriedade própria (sobrescrita = undefined), não o getter que retornaria o valor real de dataValues.
+
+```typescript
+// TROCA `public` por `declare`
+export class BoxBottomModel
+  extends Model<BoxBottom, BoxBottomCreationAttributes>
+  implements BoxBottom
+{
+  declare boxBottomId: string;
+  declare userId: string;
+  declare name: string;
+  declare description: string;
+  declare targetValue: number;
+  declare created_at: string | undefined;
+  declare updated_at: string | undefined;
+
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
+
+  static associate(models: any) {
+    /* ...sem mudanças... */
+  }
+}
+```
+
 [Retornar ao sumário](#sumario)
 
 ---
 
 ## Configurando Ambiente de Teste
+
+### Configuração do Jest
 
 ```bash
 # INSTALAÇÃO DE DEPENDÊNCIAS
