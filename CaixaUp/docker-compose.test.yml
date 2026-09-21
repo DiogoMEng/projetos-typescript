@@ -1,0 +1,12 @@
+services:
+  db-test:
+    image: postgres:16
+    container_name: caixaup_db_test
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: caixaup_db_test
+    ports:
+      - '5433:5432'
+    tmpfs:
+      - /var/lib/postgresql/data
