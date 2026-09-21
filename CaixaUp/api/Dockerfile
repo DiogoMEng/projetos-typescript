@@ -1,6 +1,12 @@
 FROM node:18-alpine
-ADD . /app
+
+RUN apk add --no-cache sqlite
+
 WORKDIR /app
-RUN apk add --update-cache sqlite
+RUN chown node:node /app
 USER node
-CMD npm install
+
+COPY --chown=node:node package*.json ./
+RUN npm ci
+
+COPY --chown=node:node . .
