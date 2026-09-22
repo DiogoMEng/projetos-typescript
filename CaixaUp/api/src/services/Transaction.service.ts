@@ -31,8 +31,16 @@ class TransactionService extends Service<any, Transaction> {
     });
   }
 
+  async getAllTransactionsByBox(boxBottomId: string) {
+    return super.getAll({
+      where: { boxBottomId },
+      order: [['transactionDate', 'DESC']],
+    });
+  }
+
   protected async beforeCreate(dto: Transaction): Promise<void> {
-    if (dto.value <= 0) throw new BadRequestError('Valor deve ser maior que zero.');
+    if (dto.value <= 0)
+      throw new BadRequestError('Valor deve ser maior que zero.');
 
     const validMovementTypes = ['inflow', 'outflow'];
     if (!validMovementTypes.includes(dto.movementType)) {
@@ -44,7 +52,8 @@ class TransactionService extends Service<any, Transaction> {
       DB.Categories.findByPk(dto.categoryId),
     ]);
 
-    if (!box || !cat) throw new NotFoundError('Caixinha ou Categoria não encontrada.');
+    if (!box || !cat)
+      throw new NotFoundError('Caixinha ou Categoria não encontrada.');
   }
 
   protected async afterCreate(record: any): Promise<void> {

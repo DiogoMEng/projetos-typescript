@@ -8,16 +8,58 @@ import {
   updateTransactionSchema,
   createTransactionParamsSchema,
   transactionParamsSchema,
+  transactionBoxParamSchema,
 } from '#validations/Transaction.validation.js';
 
 const router = Router();
 
 router.use(checkAuth);
 router
-  .post('/box-bottom/:boxBottomId/category/:categoryId', validateRequest(createTransactionParamsSchema, 'params'), checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR']), validateRequest(createTransactionSchema, 'body'), TransactionController.register)
-  .get('/box-bottom/:boxBottomId', validateRequest(createTransactionParamsSchema, 'params'), checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), TransactionController.getAllTransactions)
-  .get('/:transactionId/box-bottom/:boxBottomId', validateRequest(transactionParamsSchema, 'params'), checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR', 'ANALYST', 'VIEWER']), TransactionController.getById)
-  .put('/:transactionId/box-bottom/:boxBottomId', validateRequest(transactionParamsSchema, 'params'), checkRole(['OWNER', 'MANAGER', 'EDITOR']), validateRequest(updateTransactionSchema, 'body'), TransactionController.edit)
-  .delete('/:transactionId/box-bottom/:boxBottomId', validateRequest(transactionParamsSchema, 'params'), checkRole(['OWNER', 'MANAGER', 'EDITOR']), TransactionController.delete);
+  .post(
+    '/box-bottom/:boxBottomId/category/:categoryId',
+    validateRequest(createTransactionParamsSchema, 'params'),
+    checkRole(['OWNER', 'MANAGER', 'EDITOR', 'CONTRIBUTOR']),
+    validateRequest(createTransactionSchema, 'body'),
+    TransactionController.register,
+  )
+  .get(
+    '/box-bottom/:boxBottomId',
+    validateRequest(transactionBoxParamSchema, 'params'),
+    checkRole([
+      'OWNER',
+      'MANAGER',
+      'EDITOR',
+      'CONTRIBUTOR',
+      'ANALYST',
+      'VIEWER',
+    ]),
+    TransactionController.getAllTransactions,
+  )
+  .get(
+    '/:transactionId/box-bottom/:boxBottomId',
+    validateRequest(transactionParamsSchema, 'params'),
+    checkRole([
+      'OWNER',
+      'MANAGER',
+      'EDITOR',
+      'CONTRIBUTOR',
+      'ANALYST',
+      'VIEWER',
+    ]),
+    TransactionController.getById,
+  )
+  .put(
+    '/:transactionId/box-bottom/:boxBottomId',
+    validateRequest(transactionParamsSchema, 'params'),
+    checkRole(['OWNER', 'MANAGER', 'EDITOR']),
+    validateRequest(updateTransactionSchema, 'body'),
+    TransactionController.edit,
+  )
+  .delete(
+    '/:transactionId/box-bottom/:boxBottomId',
+    validateRequest(transactionParamsSchema, 'params'),
+    checkRole(['OWNER', 'MANAGER', 'EDITOR']),
+    TransactionController.delete,
+  );
 
 export default router;

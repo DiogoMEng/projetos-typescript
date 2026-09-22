@@ -86,37 +86,43 @@ describe("Users - integração", () => {
     expect(response.status).toBe(422);
   });
 
-  it("I8 - evidencia que GET users atualmente expõe password", async () => {
+  it("I8 - GET users não expõe password", async () => {
     const user = await createUser();
     const response = await request(app)
       .get("/users")
       .set(authHeader(tokenFor(user)));
     expect(response.status).toBe(200);
-    expect(response.body[0]).toHaveProperty("password");
+    expect(response.body[0]).not.toHaveProperty("password");
   });
 
-  it("I9 - rejeita UUID no parâmetro incompatível com a validação atual", async () => {
+  it("I9 - busca usuário por UUID", async () => {
     const user = await createUser();
     const response = await request(app)
       .get(`/users/${user.userId}`)
       .set(authHeader(tokenFor(user)));
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(200);
+    expect(response.body.userId).toBe(user.userId);
+    expect(response.body).not.toHaveProperty("password");
   });
 
-  it("I10 - PUT de usuário com UUID é rejeitado pela validação atual", async () => {
+  it("I10 - PUT de usuário atualiza os dados", async () => {
     const user = await createUser();
     const response = await request(app)
       .put(`/users/${user.userId}`)
       .set(authHeader(tokenFor(user)))
       .send({ name: "Nome Atualizado" });
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(200);
+    expect((await DB.Users.findByPk(user.userId))?.name).toBe(
+      "Nome Atualizado",
+    );
   });
 
-  it("I11 - DELETE de usuário com UUID é rejeitado pela validação atual", async () => {
+  it("I11 - DELETE remove o usuário", async () => {
     const user = await createUser();
     const response = await request(app)
       .delete(`/users/${user.userId}`)
       .set(authHeader(tokenFor(user)));
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(200);
+    expect(await DB.Users.findByPk(user.userId)).toBeNull();
   });
 });

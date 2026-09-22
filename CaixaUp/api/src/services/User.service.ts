@@ -19,6 +19,14 @@ class UserService extends Service<any, User> {
   async getAllUsers(): Promise<User[]> {
     return super.getAll({ attributes: { exclude: ['password'] } });
   }
+
+  override async getAll(): Promise<User[]> {
+    return this.getAllUsers();
+  }
+
+  async getByIdWithoutPassword(userId: string): Promise<User> {
+    return super.getById(userId, { attributes: { exclude: ['password'] } });
+  }
 }
 
 export default UserService;

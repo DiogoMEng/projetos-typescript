@@ -49,17 +49,17 @@ describe("Categories - integração", () => {
     expect(response.body[0].userId).toBe(first.userId);
   });
 
-  it("I16 - demonstra que GET individual de categoria de outro usuário não é bloqueado", async () => {
+  it("I16 - bloqueia GET individual de categoria de outro usuário", async () => {
     const owner = await createUser();
     const other = await createUser();
     const category = await createCategory(owner.userId);
     const response = await request(app)
       .get(`/categories/${category.categoryId}`)
       .set(authHeader(tokenFor(other)));
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(404);
   });
 
-  it("I17 - demonstra que PUT/DELETE de categoria de outro usuário não são bloqueados", async () => {
+  it("I17 - bloqueia PUT/DELETE de categoria de outro usuário", async () => {
     const owner = await createUser();
     const other = await createUser();
     const category = await createCategory(owner.userId);
@@ -70,8 +70,8 @@ describe("Categories - integração", () => {
     const deletion = await request(app)
       .delete(`/categories/${category.categoryId}`)
       .set(authHeader(tokenFor(other)));
-    expect(update.status).toBe(200);
-    expect(deletion.status).toBe(200);
-    expect(await DB.Categories.findByPk(category.categoryId)).toBeNull();
+    expect(update.status).toBe(404);
+    expect(deletion.status).toBe(404);
+    expect(await DB.Categories.findByPk(category.categoryId)).not.toBeNull();
   });
 });

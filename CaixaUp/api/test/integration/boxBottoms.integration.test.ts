@@ -56,13 +56,13 @@ describe("BoxBottoms - integração", () => {
     );
   });
 
-  it("I21 - revela caixa órfã quando OWNER não existe", async () => {
+  it("I21 - reverte caixa quando OWNER não existe", async () => {
     await DB.Roles.destroy({ where: { name: "OWNER" } });
     const user = await createUser();
     const response = await createBoxThroughApi(user.userId, tokenFor(user));
     expect(response.status).toBe(404);
     expect(await DB.BoxBottoms.count({ where: { userId: user.userId } })).toBe(
-      1,
+      0,
     );
     expect(await DB.RoleUserBoxBottoms.count()).toBe(0);
   });

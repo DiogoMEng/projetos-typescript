@@ -2,6 +2,7 @@ import { DB } from '#models/index.js';
 import { RUBB } from '#interfaces/roleUserBoxBottom.interface.js';
 import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
+import { Transaction } from 'sequelize';
 
 class RoleUserBoxBottomService extends Service<any, RUBB> {
   constructor() {
@@ -16,9 +17,13 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
         { model: DB.Roles, as: 'assignedRole', attributes: ['name'] },
       ],
     });
-  };
+  }
 
-  async editRole(userId: string, boxBottomId: string, roleId: string): Promise<boolean> {
+  async editRole(
+    userId: string,
+    boxBottomId: string,
+    roleId: string,
+  ): Promise<boolean> {
     const [affectedRows] = await DB.RoleUserBoxBottoms.update(
       { roleId },
       { where: { userId, boxBottomId } },
@@ -26,19 +31,25 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
     return affectedRows > 0;
   }
 
-  protected async beforeCreate(dto: RUBB): Promise<void> {
+  protected async beforeCreate(
+    dto: RUBB,
+    transaction?: Transaction,
+  ): Promise<void> {
     const [user, box, role] = await Promise.all([
-      DB.Users.findByPk(dto.userId),
-      DB.BoxBottoms.findByPk(dto.boxBottomId),
-      DB.Roles.findByPk(dto.roleId),
+      DB.Users.findByPk(dto.userId, { transaction }),
+      DB.BoxBottoms.findByPk(dto.boxBottomId, { transaction }),
+      DB.Roles.findByPk(dto.roleId, { transaction }),
     ]);
 
-    if (!user || !box || !role) throw new NotFoundError('Usuário, Caixa ou Função não encontrados');
+    if (!user || !box || !role)
+      throw new NotFoundError('Usuário, Caixa ou Função não encontrados');
 
     const existingPermission = await DB.RoleUserBoxBottoms.findOne({
       where: { userId: dto.userId, boxBottomId: dto.boxBottomId },
+      transaction,
     });
-    if (existingPermission) throw new ConflictError('O usuário já possui permissão nesta caixa.');
+    if (existingPermission)
+      throw new ConflictError('O usuário já possui permissão nesta caixa.');
   }
 }
 

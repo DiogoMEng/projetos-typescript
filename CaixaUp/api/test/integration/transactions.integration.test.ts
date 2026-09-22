@@ -92,7 +92,7 @@ describe("Transactions - integração", () => {
     expect(response.status).toBe(422);
   });
 
-  it("I32 - evidencia que o GET real exige categoryId indevidamente", async () => {
+  it("I32 - lista transações da caixinha", async () => {
     const fixture = await ownedFixture();
     await createTransaction(
       fixture.box.boxBottomId,
@@ -101,7 +101,9 @@ describe("Transactions - integração", () => {
     const response = await request(app)
       .get(`/transactions/box-bottom/${fixture.box.boxBottomId}`)
       .set(authHeader(fixture.token));
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(1);
+    expect(response.body[0].boxBottomId).toBe(fixture.box.boxBottomId);
   });
 
   it("I33 - edita e remove transação pelo caminho real", async () => {

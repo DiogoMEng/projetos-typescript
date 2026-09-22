@@ -16,15 +16,14 @@ import { useDatabaseHooks } from "./helpers/hooks.js";
 useDatabaseHooks();
 
 describe("Integridade referencial - integração", () => {
-  it("I40 - demonstra a validação quebrada da remoção de User e valida cascata no model", async () => {
+  it("I40 - remove User e recursos relacionados em cascata", async () => {
     const user = await createUser();
     const box = await createBox(user.userId);
     await createCategory(user.userId);
     const response = await request(app)
       .delete(`/users/${user.userId}`)
       .set(authHeader(tokenFor(user)));
-    expect(response.status).toBe(422);
-    await DB.Users.destroy({ where: { userId: user.userId } });
+    expect(response.status).toBe(200);
     expect(await DB.BoxBottoms.findByPk(box.boxBottomId)).toBeNull();
     expect(
       await DB.RoleUserBoxBottoms.count({ where: { userId: user.userId } }),

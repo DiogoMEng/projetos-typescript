@@ -8,8 +8,12 @@ class TransactionController extends Controller {
     super(new TransactionService());
   }
 
-  protected override getEntityName() { return 'Transaction'; }
-  protected override getParamIdName() { return 'transactionId'; }
+  protected override getEntityName() {
+    return 'Transaction';
+  }
+  protected override getParamIdName() {
+    return 'transactionId';
+  }
 
   protected override getCreateParams(req: Request) {
     return {
@@ -20,8 +24,9 @@ class TransactionController extends Controller {
   }
 
   getAllTransactions = catchAsync(async (req: Request, res: Response) => {
-    const userId = req.userId as string;
-    const transactions = await (this.service as TransactionService).getAllTransactionsByUser(userId);
+    const transactions = await (
+      this.service as TransactionService
+    ).getAllTransactionsByBox(req.params.boxBottomId);
     res.status(200).json(transactions);
   });
 }

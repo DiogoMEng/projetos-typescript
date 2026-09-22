@@ -14,18 +14,19 @@ import { useDatabaseHooks } from "./helpers/hooks.js";
 useDatabaseHooks();
 
 describe("Roles e permissões - integração", () => {
-  it("I34 - registra que POST /roles/register não existe", async () => {
+  it("I34 - registra role nova", async () => {
     const response = await request(app)
       .post("/roles/register")
       .send({ name: "NEW", description: "Nova" });
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(201);
+    expect(response.body.data.name).toBe("NEW");
   });
 
-  it("I35 - registra que criação de role duplicada não é exposta pela API", async () => {
+  it("I35 - rejeita role duplicada", async () => {
     const response = await request(app)
       .post("/roles/register")
       .send({ name: "OWNER", description: "Owner role" });
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(409);
   });
 
   it("I36 - cria associação válida pelo endpoint real", async () => {

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Model, ModelStatic } from 'sequelize';
+import { Model, ModelStatic, Transaction } from 'sequelize';
 import { BadRequestError, NotFoundError } from '#errors/httpErrors.js';
 
 export abstract class Service<T extends Model, DTO> {
@@ -11,22 +11,27 @@ export abstract class Service<T extends Model, DTO> {
     this.primaryKey = primaryKey;
   }
 
-  async create(dto: DTO): Promise<T> {
-    await this.beforeCreate(dto);
+  async create(
+    dto: DTO,
+    options: { transaction?: Transaction } = {},
+  ): Promise<T> {
+    await this.beforeCreate(dto, options.transaction);
     const data = {
-      ...dto as any,
+      ...(dto as any),
       [this.primaryKey]: uuidv4(),
     };
 
     let record: T;
 
     try {
-      record = await this.model.create(data);
+      record = options.transaction
+        ? await this.model.create(data, options)
+        : await this.model.create(data);
     } catch (error) {
       throw new BadRequestError(`Erro ao criar registro em ${this.model.name}`);
     }
 
-    await this.afterCreate(record);
+    await this.afterCreate(record, options.transaction);
     return record;
   }
 
@@ -57,6 +62,12 @@ export abstract class Service<T extends Model, DTO> {
     return deletedCount > 0;
   }
 
-  protected async beforeCreate(dto: DTO): Promise<void> { }
-  protected async afterCreate(record: T): Promise<void> { }
+  protected async beforeCreate(
+    dto: DTO,
+    transaction?: Transaction,
+  ): Promise<void> {}
+  protected async afterCreate(
+    record: T,
+    transaction?: Transaction,
+  ): Promise<void> {}
 }

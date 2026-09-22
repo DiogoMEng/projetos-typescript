@@ -1,5 +1,5 @@
 export interface Service {
-  create(data: any): Promise<any>;
+  create(data: any, options?: any): Promise<any>;
   getAll(filter?: any): Promise<any[]>;
   getById(id: string): Promise<any>;
   update(id: string, data: any): Promise<any>;
