@@ -64,6 +64,7 @@ describe('Users - integração', () => {
     });
     expect(saved?.password).not.toBe('SenhaSegura123');
     expect(response.body.data.userId).toBe(saved?.userId);
+    expect(response.body.data.password).toBe(saved?.password);
   });
 
   it('I6 - rejeita email duplicado', async () => {
@@ -95,7 +96,15 @@ describe('Users - integração', () => {
     expect(response.body[0]).not.toHaveProperty('password');
   });
 
-  it('I9 - busca usuário por UUID', async () => {
+  it('I9 - retorna 404 para usuário inexistente', async () => {
+    const user = await createUser();
+    const response = await request(app)
+      .get('/users/00000000-0000-0000-0000-000000000000')
+      .set(authHeader(tokenFor(user)));
+    expect(response.status).toBe(404);
+  });
+
+  it('busca usuário existente por UUID sem expor password', async () => {
     const user = await createUser();
     const response = await request(app)
       .get(`/users/${user.userId}`)

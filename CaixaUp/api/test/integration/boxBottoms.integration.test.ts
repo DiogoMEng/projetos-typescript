@@ -83,8 +83,10 @@ describe('BoxBottoms - integração', () => {
     const withMember = await request(app)
       .get('/box-bottoms')
       .set(authHeader(tokenFor(member)));
-    expect(withMember.body.map((item: any) => item.boxBottomId)).toContain(
-      box.boxBottomId,
+    expect(withMember.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ boxBottomId: box.boxBottomId }),
+      ]),
     );
   });
 

@@ -53,9 +53,14 @@ describe('Categories - integração', () => {
     const owner = await createUser();
     const other = await createUser();
     const category = await createCategory(owner.userId);
+    const ownerResponse = await request(app)
+      .get(`/categories/${category.categoryId}`)
+      .set(authHeader(tokenFor(owner)));
     const response = await request(app)
       .get(`/categories/${category.categoryId}`)
       .set(authHeader(tokenFor(other)));
+    expect(ownerResponse.status).toBe(200);
+    expect(ownerResponse.body.categoryId).toBe(category.categoryId);
     expect(response.status).toBe(404);
   });
 
@@ -73,5 +78,22 @@ describe('Categories - integração', () => {
     expect(update.status).toBe(404);
     expect(deletion.status).toBe(404);
     expect(await DB.Categories.findByPk(category.categoryId)).not.toBeNull();
+
+    const ownerHeader = authHeader(tokenFor(owner));
+    const ownerUpdate = await request(app)
+      .put(`/categories/${category.categoryId}`)
+      .set(ownerHeader)
+      .send({ name: 'Atualizada' });
+    expect(ownerUpdate.status).toBe(200);
+    expect((await DB.Categories.findByPk(category.categoryId))?.name).toBe(
+      'Atualizada',
+    );
+    expect(
+      (
+        await request(app)
+          .delete(`/categories/${category.categoryId}`)
+          .set(ownerHeader)
+      ).status,
+    ).toBe(200);
   });
 });

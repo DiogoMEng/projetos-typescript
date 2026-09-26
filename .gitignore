@@ -2,7 +2,7 @@
 node_modules
 dist
 build
-rules
+notes
 
 # ARQUIVOS
 package-lock.json

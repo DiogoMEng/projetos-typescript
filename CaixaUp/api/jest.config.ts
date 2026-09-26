@@ -5,9 +5,64 @@ const presetConfig = createDefaultEsmPreset({
   tsconfig: 'tsconfig.test.json',
 });
 
+const isIntegration = process.env.CAIXAUP_INTEGRATION === 'true';
+const integrationCoverageThreshold: Config['coverageThreshold'] = {
+  global: {
+    statements: 98,
+    branches: 90,
+    functions: 98,
+    lines: 98,
+  },
+};
+const integrationReporters: Config['reporters'] = [
+  'default',
+  [
+    'jest-html-reporters',
+    {
+      publicPath: 'coverage/integration/results',
+      filename: 'index.html',
+      pageTitle: 'CaixaUp Integration Test Results',
+      expand: true,
+      includeFailureMsg: true,
+    },
+  ],
+];
+const integrationConfig: Partial<Config> = {};
+
+if (isIntegration) {
+  integrationConfig.globalSetup = '<rootDir>/test/integration/globalSetup.cjs';
+  integrationConfig.maxWorkers = 1;
+  integrationConfig.collectCoverage = true;
+  integrationConfig.setupFilesAfterEnv = [
+    '<rootDir>/test/integration/setup.ts',
+  ];
+  integrationConfig.coverageThreshold = integrationCoverageThreshold;
+  integrationConfig.reporters = integrationReporters;
+}
+
 export default {
   ...presetConfig,
+  ...integrationConfig,
   testEnvironment: 'node',
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/@types/**',
+    '!src/interfaces/**',
+    '!src/server.ts',
+    '!src/database/migrations/**',
+    '!src/database/seeders/**',
+    '!src/config/sequelize_cli.js',
+  ],
+  coverageDirectory: '<rootDir>/coverage/integration',
+  coverageReporters: [
+    'text',
+    'text-summary',
+    'html',
+    'lcov',
+    'json',
+    'json-summary',
+  ],
   testMatch: [
     '**/tests/**/*.test.ts',
     '**/__tests__/**/*.test.ts',

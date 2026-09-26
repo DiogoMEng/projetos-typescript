@@ -10,7 +10,7 @@ import importX from "eslint-plugin-import-x";
 export default [
   pluginJs.configs.recommended, // Configurações recomendadas do ESLint 
   {
-    files: ["**/*.js"],
+    files: ["**/*.js", "**/*.cjs"],
     languageOptions: {
       globals: {
         ...globals.node,

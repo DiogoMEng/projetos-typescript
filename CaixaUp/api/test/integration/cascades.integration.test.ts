@@ -3,6 +3,7 @@ import { describe, expect, it } from '@jest/globals';
 import app from '../../src/app.js';
 import { DB } from '#models/index.js';
 import {
+  assignRole,
   authHeader,
   createBox,
   createCategory,
@@ -19,18 +20,28 @@ describe('Integridade referencial - integração', () => {
   it('I40 - remove User e recursos relacionados em cascata', async () => {
     const user = await createUser();
     const box = await createBox(user.userId);
-    await createCategory(user.userId);
+    const category = await createCategory(user.userId);
+    const transaction = await createTransaction(
+      box.boxBottomId,
+      category.categoryId,
+    );
+    const ownerRole = await createRole('OWNER');
+    await assignRole(user.userId, box.boxBottomId, ownerRole!.roleId);
     const response = await request(app)
       .delete(`/users/${user.userId}`)
       .set(authHeader(tokenFor(user)));
     expect(response.status).toBe(200);
     expect(await DB.BoxBottoms.findByPk(box.boxBottomId)).toBeNull();
+    expect(await DB.Categories.findByPk(category.categoryId)).toBeNull();
+    expect(
+      await DB.Transactions.findByPk(transaction.transactionId),
+    ).toBeNull();
     expect(
       await DB.RoleUserBoxBottoms.count({ where: { userId: user.userId } }),
     ).toBe(0);
   });
 
-  it('I41 - remover category remove transações relacionadas por cascade', async () => {
+  it('I41 - remover category pela API remove transações por cascade', async () => {
     const user = await createUser();
     const box = await createBox(user.userId);
     const category = await createCategory(user.userId);
@@ -38,7 +49,10 @@ describe('Integridade referencial - integração', () => {
       box.boxBottomId,
       category.categoryId,
     );
-    await DB.Categories.destroy({ where: { categoryId: category.categoryId } });
+    const response = await request(app)
+      .delete(`/categories/${category.categoryId}`)
+      .set(authHeader(tokenFor(user)));
+    expect(response.status).toBe(200);
     expect(
       await DB.Transactions.findByPk(transaction.transactionId),
     ).toBeNull();
@@ -53,12 +67,11 @@ describe('Integridade referencial - integração', () => {
       category.categoryId,
     );
     const role = await createRole('OWNER');
-    await DB.RoleUserBoxBottoms.create({
-      userId: user.userId,
-      boxBottomId: box.boxBottomId,
-      roleId: role!.roleId,
-    });
-    await DB.BoxBottoms.destroy({ where: { boxBottomId: box.boxBottomId } });
+    await assignRole(user.userId, box.boxBottomId, role!.roleId);
+    const response = await request(app)
+      .delete(`/box-bottoms/${box.boxBottomId}`)
+      .set(authHeader(tokenFor(user)));
+    expect(response.status).toBe(200);
     expect(
       await DB.Transactions.findByPk(transaction.transactionId),
     ).toBeNull();

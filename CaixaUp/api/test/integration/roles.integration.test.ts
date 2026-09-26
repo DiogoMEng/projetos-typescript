@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it } from '@jest/globals';
 import app from '../../src/app.js';
+import { DB } from '#models/index.js';
 import {
   assignRole,
   authHeader,
@@ -22,10 +23,20 @@ describe('Roles e permissões - integração', () => {
     expect(response.body.data.name).toBe('NEW');
   });
 
-  it('I35 - rejeita role duplicada', async () => {
+  it('I35 - evidencia que description duplicada não é rejeitada pelo schema real', async () => {
     const response = await request(app)
       .post('/roles/register')
-      .send({ name: 'OWNER', description: 'Owner role' });
+      .send({ name: 'NEW_OWNER_NAME', description: 'Owner role' });
+    expect(response.status).toBe(201);
+    expect(await DB.Roles.count({ where: { description: 'Owner role' } })).toBe(
+      2,
+    );
+  });
+
+  it('rejeita nome de role duplicado pela validação do service', async () => {
+    const response = await request(app)
+      .post('/roles/register')
+      .send({ name: 'OWNER', description: 'Outra descrição' });
     expect(response.status).toBe(409);
   });
 
