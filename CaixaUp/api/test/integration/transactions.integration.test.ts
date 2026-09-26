@@ -1,7 +1,7 @@
-import request from "supertest";
-import { describe, expect, it } from "@jest/globals";
-import app from "../../src/app.js";
-import { DB } from "#models/index.js";
+import request from 'supertest';
+import { describe, expect, it } from '@jest/globals';
+import app from '../../src/app.js';
+import { DB } from '#models/index.js';
 import {
   assignRole,
   authHeader,
@@ -11,29 +11,29 @@ import {
   createTransaction,
   createUser,
   tokenFor,
-} from "./helpers/factories.js";
-import { useDatabaseHooks } from "./helpers/hooks.js";
+} from './helpers/factories.js';
+import { useDatabaseHooks } from './helpers/hooks.js';
 
 useDatabaseHooks();
 
 async function ownedFixture() {
   const user = await createUser();
   const box = await createBox(user.userId);
-  const role = await createRole("OWNER");
+  const role = await createRole('OWNER');
   await assignRole(user.userId, box.boxBottomId, role!.roleId);
   const category = await createCategory(user.userId);
   return { user, box, category, token: tokenFor(user) };
 }
 
 const transactionBody = {
-  movementType: "inflow",
+  movementType: 'inflow',
   value: 20,
-  transactionDate: "2026-01-01",
-  description: "Entrada",
+  transactionDate: '2026-01-01',
+  description: 'Entrada',
 };
 
-describe("Transactions - integração", () => {
-  it("I27 - cria transação com IDs das URLs", async () => {
+describe('Transactions - integração', () => {
+  it('I27 - cria transação com IDs das URLs', async () => {
     const fixture = await ownedFixture();
     const response = await request(app)
       .post(
@@ -46,7 +46,7 @@ describe("Transactions - integração", () => {
     expect(response.body.data.categoryId).toBe(fixture.category.categoryId);
   });
 
-  it("I28 - rejeita box inexistente", async () => {
+  it('I28 - rejeita box inexistente', async () => {
     const fixture = await ownedFixture();
     const response = await request(app)
       .post(
@@ -57,7 +57,7 @@ describe("Transactions - integração", () => {
     expect(response.status).toBe(403);
   });
 
-  it("I29 - rejeita categoria inexistente", async () => {
+  it('I29 - rejeita categoria inexistente', async () => {
     const fixture = await ownedFixture();
     const response = await request(app)
       .post(
@@ -68,7 +68,7 @@ describe("Transactions - integração", () => {
     expect(response.status).toBe(404);
   });
 
-  it("I30 - bloqueia transação em box de outro usuário", async () => {
+  it('I30 - bloqueia transação em box de outro usuário', async () => {
     const owner = await ownedFixture();
     const other = await createUser();
     const category = await createCategory(other.userId);
@@ -81,18 +81,18 @@ describe("Transactions - integração", () => {
     expect(response.status).toBe(403);
   });
 
-  it("I31 - rejeita movementType inválido", async () => {
+  it('I31 - rejeita movementType inválido', async () => {
     const fixture = await ownedFixture();
     const response = await request(app)
       .post(
         `/transactions/box-bottom/${fixture.box.boxBottomId}/category/${fixture.category.categoryId}`,
       )
       .set(authHeader(fixture.token))
-      .send({ ...transactionBody, movementType: "invalid" });
+      .send({ ...transactionBody, movementType: 'invalid' });
     expect(response.status).toBe(422);
   });
 
-  it("I32 - lista transações da caixinha", async () => {
+  it('I32 - lista transações da caixinha', async () => {
     const fixture = await ownedFixture();
     await createTransaction(
       fixture.box.boxBottomId,
@@ -106,7 +106,7 @@ describe("Transactions - integração", () => {
     expect(response.body[0].boxBottomId).toBe(fixture.box.boxBottomId);
   });
 
-  it("I33 - edita e remove transação pelo caminho real", async () => {
+  it('I33 - edita e remove transação pelo caminho real', async () => {
     const fixture = await ownedFixture();
     const transaction = await createTransaction(
       fixture.box.boxBottomId,
@@ -118,7 +118,7 @@ describe("Transactions - integração", () => {
         await request(app)
           .put(path)
           .set(authHeader(fixture.token))
-          .send({ description: "Editada" })
+          .send({ description: 'Editada' })
       ).status,
     ).toBe(200);
     expect(

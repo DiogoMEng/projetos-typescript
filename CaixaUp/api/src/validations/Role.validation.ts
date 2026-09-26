@@ -1,4 +1,4 @@
-import Joi from "joi";
+import Joi from 'joi';
 
 const roleSchema = {
   name: Joi.string().trim().min(2).max(100).required(),
@@ -6,5 +6,5 @@ const roleSchema = {
 };
 
 export const createRoleSchema = Joi.object(roleSchema)
-  .messages({ "object.unknown": "Campo não permitido." })
+  .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
