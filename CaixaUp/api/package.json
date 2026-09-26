@@ -19,7 +19,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc && tsc-alias && echo 'Build Finished!'",
     "test:unit:all": "cross-env NODE_OPTIONS=--experimental-vm-modules jest \"test/unity\"",
-    "test:int:all": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest \"test/integration\"",
+    "test:int:all": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules npx jest \"test/integration\"",
     "test:e2e:all": "cross-env NODE_OPTIONS=--experimental-vm-modules jest \"test/e2e\"",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watchAll",
     "lint": "npx eslint .",
