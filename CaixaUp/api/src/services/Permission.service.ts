@@ -1,15 +1,15 @@
 import { DB } from '#models/index.js';
-import { RUBB } from '#interfaces/roleUserBoxBottom.interface.js';
+import { Permission } from '#interfaces/permission.interface.js';
 import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 import { Transaction } from 'sequelize';
 
-class RoleUserBoxBottomService extends Service<any, RUBB> {
+class PermissionService extends Service<any, Permission> {
   constructor() {
-    super(DB.RoleUserBoxBottoms, 'roleUserBoxBottomId');
+    super(DB.Permissions, 'PermissionId');
   }
 
-  async getAllMembers(boxBottomId: string): Promise<RUBB[]> {
+  async getAllMembers(boxBottomId: string): Promise<Permission[]> {
     return await super.getAll({
       where: { boxBottomId },
       include: [
@@ -24,7 +24,7 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
     boxBottomId: string,
     roleId: string,
   ): Promise<boolean> {
-    const [affectedRows] = await DB.RoleUserBoxBottoms.update(
+    const [affectedRows] = await DB.Permissions.update(
       { roleId },
       { where: { userId, boxBottomId } },
     );
@@ -32,7 +32,7 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
   }
 
   protected async beforeCreate(
-    dto: RUBB,
+    dto: Permission,
     transaction?: Transaction,
   ): Promise<void> {
     const [user, box, role] = await Promise.all([
@@ -44,7 +44,7 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
     if (!user || !box || !role)
       throw new NotFoundError('Usuário, Caixa ou Função não encontrados');
 
-    const existingPermission = await DB.RoleUserBoxBottoms.findOne({
+    const existingPermission = await DB.Permissions.findOne({
       where: { userId: dto.userId, boxBottomId: dto.boxBottomId },
       transaction,
     });
@@ -53,4 +53,4 @@ class RoleUserBoxBottomService extends Service<any, RUBB> {
   }
 }
 
-export default RoleUserBoxBottomService;
+export default PermissionService;

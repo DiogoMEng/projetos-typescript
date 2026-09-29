@@ -2,7 +2,8 @@
 node_modules
 dist
 build
-notes
+.vscode
+coverage
 
 # ARQUIVOS
 package-lock.json

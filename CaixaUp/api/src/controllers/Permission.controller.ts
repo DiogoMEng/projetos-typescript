@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import RoleUserBoxBottomService from '#services/RoleUserBoxBottom.service.js';
+import PermissionService from '#services/Permission.service.js';
 import { catchAsync } from '#utils/catchAsync.js';
 import { BadRequestError, NotFoundError } from '#errors/httpErrors.js';
 
-const roleUserBoxBottomService = new RoleUserBoxBottomService();
+const permissionService = new PermissionService();
 
 class RoleUserBoxBottomController {
   register = catchAsync(async (req: Request, res: Response) => {
@@ -12,20 +12,20 @@ class RoleUserBoxBottomController {
     if (!userId || !boxBottomId || !roleId) {
       throw new BadRequestError('Campos obrigatórios ausentes: userId, boxBottomId, roleId');
     }
-    const permission = await roleUserBoxBottomService.create({ userId, boxBottomId, roleId });
+    const permission = await permissionService.create({ userId, boxBottomId, roleId });
     res.status(201).json({ message: 'Permissão registrado com sucesso', data: permission });
   });
 
   getAllMembers = catchAsync(async (req: Request, res: Response) => {
     const { boxBottomId } = req.params;
-    const members = await roleUserBoxBottomService.getAllMembers(boxBottomId);
+    const members = await permissionService.getAllMembers(boxBottomId);
     res.status(200).json(members);
   });
 
   editRole = catchAsync(async (req: Request, res: Response) => {
     const { userId, boxBottomId } = req.params;
     const { roleId } = req.body;
-    const updatedRecord = await roleUserBoxBottomService.editRole(userId, boxBottomId, roleId);
+    const updatedRecord = await permissionService.editRole(userId, boxBottomId, roleId);
     if (!updatedRecord) {
       throw new NotFoundError('Registro de acesso para este usuário não encontrado');
     }
@@ -34,7 +34,7 @@ class RoleUserBoxBottomController {
 
   deleteBoxBottom = catchAsync(async (req: Request, res: Response) => {
     const { roleUserBoxBottomId } = req.params;
-    await roleUserBoxBottomService.delete(roleUserBoxBottomId);
+    await permissionService.delete(roleUserBoxBottomId);
     res.status(200).json({ message: 'Membro excluído com sucesso' });
   });
 }

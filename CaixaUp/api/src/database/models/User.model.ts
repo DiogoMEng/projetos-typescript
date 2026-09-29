@@ -1,4 +1,4 @@
-import { RUBBModel } from './RoleUserBoxBottom';
+import { RUBBModel } from './permission';
 import { User } from '#interfaces/user.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 

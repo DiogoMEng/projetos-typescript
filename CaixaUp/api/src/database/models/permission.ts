@@ -1,13 +1,13 @@
-import { RUBB } from '#interfaces/roleUserBoxBottom.interface.js';
+import { Permission } from '#interfaces/permission.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
-export type RUBBCreationAttributes = Optional<
-  RUBB,
+export type PermissionCreationAttributes = Optional<
+  Permission,
   'boxBottomId' | 'userId' | 'roleId'
 >
 
-export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements RUBB {
-  declare roleUserBoxBottomId: string;
+export class PermissionModel extends Model< Permission, PermissionCreationAttributes > implements Permission {
+  declare PermissionId: string;
   declare boxBottomId: string;
   declare userId: string;
   declare roleId: string;
@@ -18,31 +18,31 @@ export class RUBBModel extends Model< RUBB, RUBBCreationAttributes > implements 
   declare readonly updatedAt: Date;
 
   static associate(models: any) {
-    RUBBModel.belongsTo(models.Users, {
+    PermissionModel.belongsTo(models.Users, {
       foreignKey: 'userId',
       as: 'assignedUser',
     });
 
-    RUBBModel.belongsTo(models.BoxBottoms, {
+    PermissionModel.belongsTo(models.BoxBottoms, {
       foreignKey: 'boxBottomId',
       as: 'assignedBox',
     });
 
-    RUBBModel.belongsTo(models.Roles, {
+    PermissionModel.belongsTo(models.Roles, {
       foreignKey: 'roleId',
       as: 'assignedRole',
     });
   }
 }
 
-export default function (sequelize: Sequelize): typeof RUBBModel {
-  RUBBModel.init({
-    roleUserBoxBottomId: {
+export default function (sequelize: Sequelize): typeof PermissionModel {
+  PermissionModel.init({
+    PermissionId: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.UUIDV4,
       defaultValue: DataTypes.UUIDV4,
-      field: 'role_user_box_bottom_id',
+      field: 'permission_id',
     },
     boxBottomId: {
       allowNull: false,
@@ -60,11 +60,11 @@ export default function (sequelize: Sequelize): typeof RUBBModel {
       field: 'role_id',
     },
   }, {
-    tableName: 'role_user_box_bottoms',
+    tableName: 'Permissions',
     sequelize,
     timestamps: true,
     underscored: true,
   });
 
-  return RUBBModel;
+  return PermissionModel;
 }
