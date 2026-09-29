@@ -1,5 +1,5 @@
-export interface RUBB {
-  roleUserBoxBottomId?: string;
+export interface Permission {
+  PermissionId?: string;
   boxBottomId?: string;
   userId?: string;
   roleId?: string;

@@ -4,7 +4,7 @@ import RoleModel from './Role.model';
 import CategoryModel from './Category.model';
 import BoxBottomModel from './BoxBottom.model';
 import TransactionModel from './Transaction.model';
-import RUBBModel from './RoleUserBoxBottom';
+import PermissionModel from './permission';
 
 import {
   DB_PORT,
@@ -48,7 +48,7 @@ export const DB = {
   Categories: CategoryModel(sequelize),
   BoxBottoms: BoxBottomModel(sequelize),
   Transactions: TransactionModel(sequelize),
-  RoleUserBoxBottoms: RUBBModel(sequelize),
+  Permissions: PermissionModel(sequelize),
   sequelize,
   Sequelize,
 };

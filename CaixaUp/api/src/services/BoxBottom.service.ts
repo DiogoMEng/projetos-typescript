@@ -3,7 +3,7 @@ import { DB } from '#models/index.js';
 import { BoxBottom } from '#interfaces/boxBottom.interface.js';
 import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
-import RoleUserBoxBottomService from './RoleUserBoxBottom.service';
+import RoleUserBoxBottomService from './Permission.service';
 
 const roleUserBoxBottomService = new RoleUserBoxBottomService();
 
