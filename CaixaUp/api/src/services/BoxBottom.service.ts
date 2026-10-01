@@ -1,5 +1,6 @@
 import { Op, Transaction } from 'sequelize';
 import { DB } from '#models/index.js';
+import { BoxBottomModel } from '#models/BoxBottom.model.js';
 import { BoxBottom } from '#interfaces/boxBottom.interface.js';
 import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
@@ -7,7 +8,7 @@ import RoleUserBoxBottomService from './Permission.service';
 
 const roleUserBoxBottomService = new RoleUserBoxBottomService();
 
-class BoxBottomService extends Service<any, BoxBottom> {
+class BoxBottomService extends Service<BoxBottomModel, BoxBottom> {
   constructor() {
     super(DB.BoxBottoms, 'boxBottomId');
   }
@@ -15,7 +16,7 @@ class BoxBottomService extends Service<any, BoxBottom> {
   override async create(
     dto: BoxBottom,
     options: { transaction?: Transaction } = {},
-  ): Promise<any> {
+  ): Promise<BoxBottomModel> {
     if (options.transaction) return super.create(dto, options);
 
     const transaction = await DB.sequelize.transaction();
@@ -36,7 +37,7 @@ class BoxBottomService extends Service<any, BoxBottom> {
       },
       include: [
         {
-          model: DB.RoleUserBoxBottoms,
+          model: DB.Permissions,
           as: 'boxMembers',
           attributes: ['roleId'],
           required: false,

@@ -3,7 +3,7 @@ import { DB } from '#models/index.js';
 import type { User } from '#interfaces/user.interface.js';
 import BoxBottomService from '#services/BoxBottom.service.js';
 import CategoryService from '#services/Category.service.js';
-import RoleUserBoxBottomService from '#services/RoleUserBoxBottom.service.js';
+import PermissionService from '#services/Permission.service.js';
 import { Service } from '#services/Service.js';
 import TransactionService from '#services/Transaction.service.js';
 import {
@@ -56,7 +56,7 @@ describe('Services - integração e bordas', () => {
       }
     ).afterCreate(rawBox);
     expect(
-      await DB.RoleUserBoxBottoms.count({
+      await DB.Permissions.count({
         where: { boxBottomId: rawBox.boxBottomId },
       }),
     ).toBe(1);
@@ -151,7 +151,7 @@ describe('Services - integração e bordas', () => {
     const user = await createUser();
     const box = await createBox(user.userId);
     const role = await createRole('OWNER');
-    const service = new RoleUserBoxBottomService();
+    const service = new PermissionService();
 
     await expect(
       service.create({

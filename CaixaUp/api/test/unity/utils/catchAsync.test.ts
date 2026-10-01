@@ -69,9 +69,11 @@ describe('catchAsync utility unit tests', () => {
     const handler = jest.fn().mockRejectedValue(new Error('boom'));
     const wrapped = catchAsync(handler);
 
-    await expect(new Promise((resolve) => {
-      wrapped(req, res, next);
-      setTimeout(resolve, 0);
-    })).resolves.toBeUndefined();
+    await expect(
+      new Promise((resolve) => {
+        wrapped(req, res, next);
+        setTimeout(resolve, 0);
+      }),
+    ).resolves.toBeUndefined();
   });
 });

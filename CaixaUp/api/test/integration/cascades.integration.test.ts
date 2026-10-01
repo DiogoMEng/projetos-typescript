@@ -36,9 +36,9 @@ describe('Integridade referencial - integração', () => {
     expect(
       await DB.Transactions.findByPk(transaction.transactionId),
     ).toBeNull();
-    expect(
-      await DB.RoleUserBoxBottoms.count({ where: { userId: user.userId } }),
-    ).toBe(0);
+    expect(await DB.Permissions.count({ where: { userId: user.userId } })).toBe(
+      0,
+    );
   });
 
   it('I41 - remover category pela API remove transações por cascade', async () => {
@@ -76,7 +76,7 @@ describe('Integridade referencial - integração', () => {
       await DB.Transactions.findByPk(transaction.transactionId),
     ).toBeNull();
     expect(
-      await DB.RoleUserBoxBottoms.count({
+      await DB.Permissions.count({
         where: { boxBottomId: box.boxBottomId },
       }),
     ).toBe(0);

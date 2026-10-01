@@ -18,12 +18,12 @@ const mockDb = {
     destroy: jest.fn(),
     name: 'Roles',
   },
-  RoleUserBoxBottoms: {
+  Permissions: {
     create: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
-    name: 'RoleUserBoxBottoms',
+    name: 'Permissions',
   },
   Users: {
     findOne: jest.fn(),
@@ -34,16 +34,17 @@ const mockDb = {
   },
 };
 
-const mockRoleUserBoxBottomService = {
+const mockPermissionService = {
   create: jest.fn(),
 };
 
 jest.unstable_mockModule('#models/index.js', () => ({ DB: mockDb }));
-jest.unstable_mockModule('#services/RoleUserBoxBottom.service.js', () => ({
-  default: jest.fn().mockImplementation(() => mockRoleUserBoxBottomService),
+jest.unstable_mockModule('#services/Permission.service.js', () => ({
+  default: jest.fn().mockImplementation(() => mockPermissionService),
 }));
 
-const { default: BoxBottomService } = await import('#services/BoxBottom.service.js');
+const { default: BoxBottomService } =
+  await import('#services/BoxBottom.service.js');
 
 describe('BoxBottomService unit tests', () => {
   beforeEach(() => {
@@ -54,25 +55,31 @@ describe('BoxBottomService unit tests', () => {
     mockDb.BoxBottoms.findOne.mockResolvedValue({ boxBottomId: 'existing' });
     const service = new BoxBottomService() as any;
 
-    await expect(service.beforeCreate({ name: 'Caixinha', userId: 'u1' })).rejects.toThrow('Caixinha já existe para este usuário');
+    await expect(
+      service.beforeCreate({ name: 'Caixinha', userId: 'u1' }),
+    ).rejects.toThrow('Caixinha já existe para este usuário');
   });
 
   it('U14 - beforeCreate não lança erro quando não há conflito', async () => {
     mockDb.BoxBottoms.findOne.mockResolvedValue(null);
     const service = new BoxBottomService() as any;
 
-    await expect(service.beforeCreate({ name: 'Nova', userId: 'u1' })).resolves.toBeUndefined();
+    await expect(
+      service.beforeCreate({ name: 'Nova', userId: 'u1' }),
+    ).resolves.toBeUndefined();
   });
 
   it('U15 - afterCreate busca a role OWNER e cria o vínculo correto', async () => {
     mockDb.Roles.findOne.mockResolvedValue({ roleId: 'owner-role' });
-    mockRoleUserBoxBottomService.create.mockResolvedValue(undefined);
+    mockPermissionService.create.mockResolvedValue(undefined);
     const service = new BoxBottomService() as any;
 
     await service.afterCreate({ userId: 'u1', boxBottomId: 'b1' });
 
-    expect(mockDb.Roles.findOne).toHaveBeenCalledWith({ where: { name: 'OWNER' } });
-    expect(mockRoleUserBoxBottomService.create).toHaveBeenCalledWith({
+    expect(mockDb.Roles.findOne).toHaveBeenCalledWith({
+      where: { name: 'OWNER' },
+    });
+    expect(mockPermissionService.create).toHaveBeenCalledWith({
       userId: 'u1',
       boxBottomId: 'b1',
       roleId: 'owner-role',
@@ -83,34 +90,39 @@ describe('BoxBottomService unit tests', () => {
     mockDb.Roles.findOne.mockResolvedValue(null);
     const service = new BoxBottomService() as any;
 
-    await expect(service.afterCreate({ userId: 'u1', boxBottomId: 'b1' })).rejects.toThrow('Role OWNER não encontrada');
+    await expect(
+      service.afterCreate({ userId: 'u1', boxBottomId: 'b1' }),
+    ).rejects.toThrow('Role OWNER não encontrada');
   });
 
   it('U17 - afterCreate acessa userId e boxBottomId do registro criado', async () => {
     mockDb.Roles.findOne.mockResolvedValue({ roleId: 'owner-role' });
-    mockRoleUserBoxBottomService.create.mockResolvedValue(undefined);
+    mockPermissionService.create.mockResolvedValue(undefined);
     const service = new BoxBottomService() as any;
 
-    await expect(service.afterCreate({ userId: 'u1', boxBottomId: 'b1' })).resolves.toBeUndefined();
+    await expect(
+      service.afterCreate({ userId: 'u1', boxBottomId: 'b1' }),
+    ).resolves.toBeUndefined();
   });
 
   it('U18 - getAllBoxBottomsByUser monta o where com Op.or e os includes corretos', async () => {
-    const getAllSpy = jest.spyOn(Service.prototype as any, 'getAll').mockResolvedValue([]);
+    const getAllSpy = jest
+      .spyOn(Service.prototype as any, 'getAll')
+      .mockResolvedValue([]);
     const service = new BoxBottomService();
 
     await service.getAllBoxBottomsByUser('u1');
 
-    expect(getAllSpy).toHaveBeenCalledWith(expect.objectContaining({
-      where: expect.objectContaining({
-        [Op.or]: [
-          { userId: 'u1' },
-          { '$boxMembers.user_id$': 'u1' },
-        ],
+    expect(getAllSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          [Op.or]: [{ userId: 'u1' }, { '$boxMembers.user_id$': 'u1' }],
+        }),
+        include: expect.any(Array),
+        distinct: true,
+        subQuery: false,
       }),
-      include: expect.any(Array),
-      distinct: true,
-      subQuery: false,
-    }));
+    );
 
     getAllSpy.mockRestore();
   });

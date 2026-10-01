@@ -9,40 +9,85 @@ const commonMessages = {
 };
 
 export const createRoleUserBoxBottomSchema = Joi.object({
-  userId: Joi.string().trim().uuid().required().messages(commonMessages).label('id do usuário'),
-  roleId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da função'),
+  userId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id do usuário'),
+  roleId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da função'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
 
 export const editRoleUserBoxBottomSchema = Joi.object({
-  roleId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da função'),
+  roleId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da função'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
 
 export const roleUserBoxBottomCreateParamsSchema = Joi.object({
-  boxBottomId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da caixa'),
+  boxBottomId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da caixa'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
 
 export const roleUserBoxBottomGetParamsSchema = Joi.object({
-  boxBottomId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da caixa'),
+  boxBottomId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da caixa'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
 
 export const roleUserBoxBottomEditParamsSchema = Joi.object({
-  userId: Joi.string().trim().uuid().required().messages(commonMessages).label('id do usuário'),
-  boxBottomId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da caixa'),
+  userId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id do usuário'),
+  boxBottomId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da caixa'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);
 
 export const roleUserBoxBottomDeleteParamsSchema = Joi.object({
-  roleUserBoxBottomId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da associação'),
-  boxBottomId: Joi.string().trim().uuid().required().messages(commonMessages).label('id da caixa'),
+  permissionId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da associação'),
+  boxBottomId: Joi.string()
+    .trim()
+    .uuid()
+    .required()
+    .messages(commonMessages)
+    .label('id da caixa'),
 })
   .messages({ 'object.unknown': 'Campo não permitido.' })
   .unknown(false);

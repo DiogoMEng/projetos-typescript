@@ -44,7 +44,7 @@ export async function assignRole(
   boxBottomId: string,
   roleId: string,
 ) {
-  return DB.RoleUserBoxBottoms.create({ userId, boxBottomId, roleId });
+  return DB.Permissions.create({ userId, boxBottomId, roleId });
 }
 
 export async function createTransaction(

@@ -1,12 +1,12 @@
 import { Role } from '#interfaces/role.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
-export type RoleCreationAttributes = Optional<
-  Role,
-  'roleId'
->
+export type RoleCreationAttributes = Optional<Role, 'roleId'>;
 
-export class RoleModel extends Model< Role, RoleCreationAttributes > implements Role {
+export class RoleModel
+  extends Model<Role, RoleCreationAttributes>
+  implements Role
+{
   declare roleId: string;
   declare name: string;
   declare description: string;
@@ -17,7 +17,7 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
   declare readonly updatedAt: Date;
 
   static associate(models: any) {
-    RoleModel.hasMany(models.RoleUserBoxBottoms, {
+    RoleModel.hasMany(models.Permissions, {
       foreignKey: 'roleId',
       as: 'roleAssignments',
     });
@@ -25,30 +25,33 @@ export class RoleModel extends Model< Role, RoleCreationAttributes > implements 
 }
 
 export default function (sequelize: Sequelize): typeof RoleModel {
-  RoleModel.init({
-    roleId: {
-      allowNull: false,
-      primaryKey: true,
-      type: DataTypes.UUIDV4,
-      defaultValue: DataTypes.UUIDV4,
-      field: 'role_id',
+  RoleModel.init(
+    {
+      roleId: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUIDV4,
+        defaultValue: DataTypes.UUIDV4,
+        field: 'role_id',
+      },
+      name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        field: 'name',
+      },
+      description: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        unique: true,
+        field: 'description',
+      },
     },
-    name: {
-      allowNull: false,
-      type: DataTypes.STRING,
-      field: 'name',
+    {
+      tableName: 'roles',
+      sequelize,
+      timestamps: true,
     },
-    description: {
-      allowNull: false,
-      type: DataTypes.STRING,
-      unique: true,
-      field: 'description',
-    },
-  }, {
-    tableName: 'roles',
-    sequelize,
-    timestamps: true,
-  });
+  );
 
   return RoleModel;
 }

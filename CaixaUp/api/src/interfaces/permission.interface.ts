@@ -1,5 +1,5 @@
 export interface Permission {
-  PermissionId?: string;
+  permissionId?: string;
   boxBottomId?: string;
   userId?: string;
   roleId?: string;

@@ -6,6 +6,8 @@ const presetConfig = createDefaultEsmPreset({
 });
 
 const isIntegration = process.env.CAIXAUP_INTEGRATION === 'true';
+const isE2e = process.env.CAIXAUP_E2E === 'true';
+const isDatabaseSuite = isIntegration || isE2e;
 const integrationCoverageThreshold: Config['coverageThreshold'] = {
   global: {
     statements: 98,
@@ -29,15 +31,35 @@ const integrationReporters: Config['reporters'] = [
 ];
 const integrationConfig: Partial<Config> = {};
 
-if (isIntegration) {
+if (isDatabaseSuite) {
   integrationConfig.globalSetup = '<rootDir>/test/integration/globalSetup.cjs';
   integrationConfig.maxWorkers = 1;
+}
+
+if (isIntegration) {
   integrationConfig.collectCoverage = true;
   integrationConfig.setupFilesAfterEnv = [
     '<rootDir>/test/integration/setup.ts',
   ];
   integrationConfig.coverageThreshold = integrationCoverageThreshold;
   integrationConfig.reporters = integrationReporters;
+}
+
+if (isE2e) {
+  integrationConfig.setupFilesAfterEnv = ['<rootDir>/test/e2e/setup.ts'];
+  integrationConfig.reporters = [
+    'default',
+    [
+      'jest-html-reporters',
+      {
+        publicPath: 'coverage/e2e/results',
+        filename: 'index.html',
+        pageTitle: 'CaixaUp E2E Results',
+        expand: true,
+        includeFailureMsg: true,
+      },
+    ],
+  ];
 }
 
 export default {

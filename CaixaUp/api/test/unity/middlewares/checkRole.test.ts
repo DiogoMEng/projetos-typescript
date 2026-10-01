@@ -4,7 +4,7 @@ const mockDb = {
   Users: {
     findOne: jest.fn(),
   },
-  RoleUserBoxBottoms: {},
+  Permissions: {},
   Roles: {},
 };
 

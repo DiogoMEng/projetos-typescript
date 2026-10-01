@@ -8,6 +8,17 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
+  void next;
+
+  if (
+    err &&
+    typeof err === 'object' &&
+    'type' in err &&
+    err.type === 'entity.parse.failed'
+  ) {
+    return res.status(400).json({ message: 'JSON inválido' });
+  }
+
   if (err instanceof ValidationError) {
     return res.status(err.statusCode).json({
       message: err.message,

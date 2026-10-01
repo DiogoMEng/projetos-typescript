@@ -40,8 +40,6 @@ const sequelize = new Sequelize.Sequelize(
   },
 );
 
-sequelize.authenticate();
-
 export const DB = {
   Users: UserModel(sequelize),
   Roles: RoleModel(sequelize),

@@ -51,7 +51,7 @@ describe('Roles e permissões - integração', () => {
       (await createRole('OWNER'))!.roleId,
     );
     const response = await request(app)
-      .post(`/role-user-box-bottoms/box-bottom/${box.boxBottomId}/register/`)
+      .post(`/permissions/box-bottom/${box.boxBottomId}/register/`)
       .set(authHeader(tokenFor(owner)))
       .send({ userId: member.userId, roleId: manager!.roleId });
     expect(response.status).toBe(201);
@@ -67,7 +67,7 @@ describe('Roles e permissões - integração', () => {
       (await createRole('OWNER'))!.roleId,
     );
     const response = await request(app)
-      .post(`/role-user-box-bottoms/box-bottom/${box.boxBottomId}/register/`)
+      .post(`/permissions/box-bottom/${box.boxBottomId}/register/`)
       .set(authHeader(tokenFor(owner)))
       .send({
         userId: '00000000-0000-0000-0000-000000000000',
@@ -85,7 +85,7 @@ describe('Roles e permissões - integração', () => {
       (await createRole('OWNER'))!.roleId,
     );
     const response = await request(app)
-      .get(`/role-user-box-bottoms/box-bottom/${box.boxBottomId}`)
+      .get(`/permissions/box-bottom/${box.boxBottomId}`)
       .set(authHeader(tokenFor(owner)));
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
@@ -105,20 +105,18 @@ describe('Roles e permissões - integração', () => {
     );
     const permission = await (
       await import('#models/index.js')
-    ).DB.RoleUserBoxBottoms.create({
+    ).DB.Permissions.create({
       userId: member.userId,
       boxBottomId: box.boxBottomId,
       roleId: viewer!.roleId,
     });
     const edit = await request(app)
-      .put(
-        `/role-user-box-bottoms/box-bottom/${member.userId}/${box.boxBottomId}`,
-      )
+      .put(`/permissions/box-bottom/${member.userId}/${box.boxBottomId}`)
       .set(authHeader(tokenFor(owner)))
       .send({ roleId: manager!.roleId });
     const deletion = await request(app)
       .delete(
-        `/role-user-box-bottoms/${permission.roleUserBoxBottomId}/box-bottom/${box.boxBottomId}`,
+        `/permissions/${permission.permissionId}/box-bottom/${box.boxBottomId}`,
       )
       .set(authHeader(tokenFor(owner)));
     expect(edit.status).toBe(200);

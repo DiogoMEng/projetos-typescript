@@ -1,12 +1,13 @@
 import { DB } from '#models/index.js';
+import { PermissionModel } from '#models/permission.js';
 import { Permission } from '#interfaces/permission.interface.js';
 import { ConflictError, NotFoundError } from '#errors/httpErrors.js';
 import { Service } from './Service';
 import { Transaction } from 'sequelize';
 
-class PermissionService extends Service<any, Permission> {
+class PermissionService extends Service<PermissionModel, Permission> {
   constructor() {
-    super(DB.Permissions, 'PermissionId');
+    super(DB.Permissions, 'permissionId');
   }
 
   async getAllMembers(boxBottomId: string): Promise<Permission[]> {
