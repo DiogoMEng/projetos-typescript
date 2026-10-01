@@ -1,12 +1,12 @@
 import { BoxBottom } from '#interfaces/boxBottom.interface.js';
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
 
-export type BoxBottomCreationAttributes = Optional<
-  BoxBottom,
-  'boxBottomId'
->
+export type BoxBottomCreationAttributes = Optional<BoxBottom, 'boxBottomId'>;
 
-export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttributes > implements BoxBottom {
+export class BoxBottomModel
+  extends Model<BoxBottom, BoxBottomCreationAttributes>
+  implements BoxBottom
+{
   declare boxBottomId: string;
   declare userId: string;
   declare name: string;
@@ -29,7 +29,7 @@ export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttribute
       as: 'boxTransactions',
     });
 
-    BoxBottomModel.hasMany(models.RoleUserBoxBottoms, {
+    BoxBottomModel.hasMany(models.Permissions, {
       foreignKey: 'boxBottomId',
       as: 'boxMembers',
     });
@@ -37,39 +37,42 @@ export class BoxBottomModel extends Model< BoxBottom, BoxBottomCreationAttribute
 }
 
 export default function (sequelize: Sequelize): typeof BoxBottomModel {
-  BoxBottomModel.init({
-    boxBottomId: {
-      allowNull: false,
-      primaryKey: true,
-      type: DataTypes.UUIDV4,
-      defaultValue: DataTypes.UUIDV4,
-      field: 'box_bottom_id',
+  BoxBottomModel.init(
+    {
+      boxBottomId: {
+        allowNull: false,
+        primaryKey: true,
+        type: DataTypes.UUIDV4,
+        defaultValue: DataTypes.UUIDV4,
+        field: 'box_bottom_id',
+      },
+      userId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        field: 'user_id',
+      },
+      name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        field: 'name',
+      },
+      description: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        field: 'description',
+      },
+      targetValue: {
+        allowNull: false,
+        type: DataTypes.NUMBER,
+        field: 'target_value',
+      },
     },
-    userId: {
-      allowNull: false,
-      type: DataTypes.UUID,
-      field: 'user_id',
+    {
+      tableName: 'box_bottoms',
+      sequelize,
+      timestamps: true,
     },
-    name: {
-      allowNull: false,
-      type: DataTypes.STRING,
-      field: 'name',
-    },
-    description: {
-      allowNull: false,
-      type: DataTypes.STRING,
-      field: 'description',
-    },
-    targetValue: {
-      allowNull: false,
-      type: DataTypes.NUMBER,
-      field: 'target_value',
-    },
-  }, {
-    tableName: 'box_bottoms',
-    sequelize,
-    timestamps: true,
-  });
+  );
 
   return BoxBottomModel;
 }

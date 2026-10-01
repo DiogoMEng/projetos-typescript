@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import jwt from 'jsonwebtoken';
 
-jest.unstable_mockModule('#config/index.js', () => ({ JWT_SECRET: 'test-secret' }));
+jest.unstable_mockModule('#config/index.js', () => ({
+  JWT_SECRET: 'test-secret',
+}));
 
 const { default: checkAuth } = await import('#middlewares/checkAuth.js');
 
@@ -35,7 +37,11 @@ describe('checkAuth middleware unit tests', () => {
   });
 
   it('U30 - retorna 401 quando o token expirou', async () => {
-    const expiredToken = jwt.sign({ userId: 'u1', email: 'ana@test.com' }, 'test-secret', { expiresIn: -1 });
+    const expiredToken = jwt.sign(
+      { userId: 'u1', email: 'ana@test.com' },
+      'test-secret',
+      { expiresIn: -1 },
+    );
     req.headers.authorization = `Bearer ${expiredToken}`;
 
     await checkAuth(req, res, next);
@@ -44,7 +50,10 @@ describe('checkAuth middleware unit tests', () => {
   });
 
   it('U31 - define req.userId e chama next quando o token é válido', async () => {
-    const token = jwt.sign({ userId: 'u1', email: 'ana@test.com' }, 'test-secret');
+    const token = jwt.sign(
+      { userId: 'u1', email: 'ana@test.com' },
+      'test-secret',
+    );
     req.headers.authorization = `Bearer ${token}`;
 
     await checkAuth(req, res, next);
@@ -55,7 +64,10 @@ describe('checkAuth middleware unit tests', () => {
   });
 
   it('U32 - retorna 401 quando o token é assinado com segredo diferente', async () => {
-    const token = jwt.sign({ userId: 'u1', email: 'ana@test.com' }, 'other-secret');
+    const token = jwt.sign(
+      { userId: 'u1', email: 'ana@test.com' },
+      'other-secret',
+    );
     req.headers.authorization = `Bearer ${token}`;
 
     await checkAuth(req, res, next);

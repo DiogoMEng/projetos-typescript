@@ -38,7 +38,7 @@ describe('BoxBottoms - integração', () => {
   it('I19 - cria vínculo OWNER para o criador', async () => {
     const user = await createUser();
     const response = await createBoxThroughApi(user.userId, tokenFor(user));
-    const permission = await DB.RoleUserBoxBottoms.findOne({
+    const permission = await DB.Permissions.findOne({
       where: { userId: user.userId, boxBottomId: response.body.boxBottomId },
       include: [{ model: DB.Roles, as: 'assignedRole' }],
     });
@@ -64,7 +64,7 @@ describe('BoxBottoms - integração', () => {
     expect(await DB.BoxBottoms.count({ where: { userId: user.userId } })).toBe(
       0,
     );
-    expect(await DB.RoleUserBoxBottoms.count()).toBe(0);
+    expect(await DB.Permissions.count()).toBe(0);
   });
 
   it('I22 - lista caixinhas do dono ou de membro', async () => {
@@ -134,7 +134,7 @@ describe('BoxBottoms - integração', () => {
     expect(response.status).toBe(200);
     expect(await DB.BoxBottoms.findByPk(created.body.boxBottomId)).toBeNull();
     expect(
-      await DB.RoleUserBoxBottoms.count({
+      await DB.Permissions.count({
         where: { boxBottomId: created.body.boxBottomId },
       }),
     ).toBe(0);

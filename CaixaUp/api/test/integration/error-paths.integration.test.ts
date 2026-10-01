@@ -6,7 +6,7 @@ import request from 'supertest';
 import { JWT_SECRET } from '#config/index.js';
 import { Controller } from '#controllers/Controller.js';
 import AuthController from '#controllers/auth.controller.js';
-import RoleUserBoxBottomController from '#controllers/RoleUserBoxBottom.controller.js';
+import RoleUserBoxBottomController from '#controllers/Permission.controller.js';
 import {
   BadRequestError,
   ConflictError,
@@ -57,7 +57,7 @@ describe('Integration edge paths', () => {
       '/categories',
       '/box-bottoms',
       `/transactions/box-bottom/${INVALID_UUID}`,
-      `/role-user-box-bottoms/box-bottom/${INVALID_UUID}`,
+      `/permissions/box-bottom/${INVALID_UUID}`,
     ];
 
     for (const path of protectedPaths) {
@@ -109,7 +109,7 @@ describe('Integration edge paths', () => {
     const viewerRole = await createRole('VIEWER');
     await assignRole(owner.userId, box.boxBottomId, ownerRole!.roleId);
     const payload = { userId: member.userId, roleId: viewerRole!.roleId };
-    const path = `/role-user-box-bottoms/box-bottom/${box.boxBottomId}/register/`;
+    const path = `/permissions/box-bottom/${box.boxBottomId}/register/`;
     const header = authHeader(tokenFor(owner));
     await request(app).post(path).set(header).send(payload).expect(201);
     await request(app).post(path).set(header).send(payload).expect(409);
@@ -122,9 +122,7 @@ describe('Integration edge paths', () => {
     const replacementRole = await createRole('MANAGER');
     await assignRole(owner.userId, box.boxBottomId, ownerRole!.roleId);
     const response = await request(app)
-      .put(
-        `/role-user-box-bottoms/box-bottom/${INVALID_UUID}/${box.boxBottomId}`,
-      )
+      .put(`/permissions/box-bottom/${INVALID_UUID}/${box.boxBottomId}`)
       .set(authHeader(tokenFor(owner)))
       .send({ roleId: replacementRole!.roleId });
     expect(response.status).toBe(404);

@@ -10,10 +10,18 @@ class RoleUserBoxBottomController {
     const { boxBottomId } = req.params;
     const { userId, roleId } = req.body;
     if (!userId || !boxBottomId || !roleId) {
-      throw new BadRequestError('Campos obrigatórios ausentes: userId, boxBottomId, roleId');
+      throw new BadRequestError(
+        'Campos obrigatórios ausentes: userId, boxBottomId, roleId',
+      );
     }
-    const permission = await permissionService.create({ userId, boxBottomId, roleId });
-    res.status(201).json({ message: 'Permissão registrado com sucesso', data: permission });
+    const permission = await permissionService.create({
+      userId,
+      boxBottomId,
+      roleId,
+    });
+    res
+      .status(201)
+      .json({ message: 'Permissão registrado com sucesso', data: permission });
   });
 
   getAllMembers = catchAsync(async (req: Request, res: Response) => {
@@ -25,16 +33,24 @@ class RoleUserBoxBottomController {
   editRole = catchAsync(async (req: Request, res: Response) => {
     const { userId, boxBottomId } = req.params;
     const { roleId } = req.body;
-    const updatedRecord = await permissionService.editRole(userId, boxBottomId, roleId);
+    const updatedRecord = await permissionService.editRole(
+      userId,
+      boxBottomId,
+      roleId,
+    );
     if (!updatedRecord) {
-      throw new NotFoundError('Registro de acesso para este usuário não encontrado');
+      throw new NotFoundError(
+        'Registro de acesso para este usuário não encontrado',
+      );
     }
-    res.status(200).json({ message: 'Função de usuário atualizada com sucesso' });
+    res
+      .status(200)
+      .json({ message: 'Função de usuário atualizada com sucesso' });
   });
 
   deleteBoxBottom = catchAsync(async (req: Request, res: Response) => {
-    const { roleUserBoxBottomId } = req.params;
-    await permissionService.delete(roleUserBoxBottomId);
+    const { permissionId } = req.params;
+    await permissionService.delete(permissionId);
     res.status(200).json({ message: 'Membro excluído com sucesso' });
   });
 }

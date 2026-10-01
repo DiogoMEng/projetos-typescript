@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 
 const mockDb = {
-  RoleUserBoxBottoms: {
+  Permissions: {
     create: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
-    name: 'RoleUserBoxBottoms',
+    name: 'Permissions',
   },
   Users: {
     findByPk: jest.fn(),
@@ -35,9 +35,10 @@ const mockDb = {
 
 jest.unstable_mockModule('#models/index.js', () => ({ DB: mockDb }));
 
-const { default: RoleUserBoxBottomService } = await import('#services/RoleUserBoxBottom.service.js');
+const { default: PermissionService } =
+  await import('#services/Permission.service.js');
 
-describe('RoleUserBoxBottomService unit tests', () => {
+describe('PermissionService unit tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -46,46 +47,56 @@ describe('RoleUserBoxBottomService unit tests', () => {
     mockDb.Users.findByPk.mockResolvedValue(null);
     mockDb.BoxBottoms.findByPk.mockResolvedValue({ boxBottomId: 'b1' });
     mockDb.Roles.findByPk.mockResolvedValue({ roleId: 'r1' });
-    const service = new RoleUserBoxBottomService() as any;
+    const service = new PermissionService() as any;
 
-    await expect(service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' })).rejects.toThrow('Usuário, Caixa ou Função não encontrados');
+    await expect(
+      service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' }),
+    ).rejects.toThrow('Usuário, Caixa ou Função não encontrados');
   });
 
   it('U19 - beforeCreate lança erro quando a caixa não existe', async () => {
     mockDb.Users.findByPk.mockResolvedValue({ userId: 'u1' });
     mockDb.BoxBottoms.findByPk.mockResolvedValue(null);
     mockDb.Roles.findByPk.mockResolvedValue({ roleId: 'r1' });
-    const service = new RoleUserBoxBottomService() as any;
+    const service = new PermissionService() as any;
 
-    await expect(service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' })).rejects.toThrow('Usuário, Caixa ou Função não encontrados');
+    await expect(
+      service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' }),
+    ).rejects.toThrow('Usuário, Caixa ou Função não encontrados');
   });
 
   it('U19 - beforeCreate lança erro quando a função não existe', async () => {
     mockDb.Users.findByPk.mockResolvedValue({ userId: 'u1' });
     mockDb.BoxBottoms.findByPk.mockResolvedValue({ boxBottomId: 'b1' });
     mockDb.Roles.findByPk.mockResolvedValue(null);
-    const service = new RoleUserBoxBottomService() as any;
+    const service = new PermissionService() as any;
 
-    await expect(service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' })).rejects.toThrow('Usuário, Caixa ou Função não encontrados');
+    await expect(
+      service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' }),
+    ).rejects.toThrow('Usuário, Caixa ou Função não encontrados');
   });
 
   it('U20 - beforeCreate não lança erro quando usuário, caixa e função existem', async () => {
     mockDb.Users.findByPk.mockResolvedValue({ userId: 'u1' });
     mockDb.BoxBottoms.findByPk.mockResolvedValue({ boxBottomId: 'b1' });
     mockDb.Roles.findByPk.mockResolvedValue({ roleId: 'r1' });
-    mockDb.RoleUserBoxBottoms.findOne.mockResolvedValue(null);
-    const service = new RoleUserBoxBottomService() as any;
+    mockDb.Permissions.findOne.mockResolvedValue(null);
+    const service = new PermissionService() as any;
 
-    await expect(service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' })).resolves.toBeUndefined();
+    await expect(
+      service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' }),
+    ).resolves.toBeUndefined();
   });
 
   it('U21 - beforeCreate impede duplicar o vínculo quando já existe permissão', async () => {
     mockDb.Users.findByPk.mockResolvedValue({ userId: 'u1' });
     mockDb.BoxBottoms.findByPk.mockResolvedValue({ boxBottomId: 'b1' });
     mockDb.Roles.findByPk.mockResolvedValue({ roleId: 'r1' });
-    mockDb.RoleUserBoxBottoms.findOne.mockResolvedValue({ roleUserBoxBottomId: 'existing' });
-    const service = new RoleUserBoxBottomService() as any;
+    mockDb.Permissions.findOne.mockResolvedValue({ permissionId: 'existing' });
+    const service = new PermissionService() as any;
 
-    await expect(service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' })).rejects.toThrow('O usuário já possui permissão nesta caixa.');
+    await expect(
+      service.beforeCreate({ userId: 'u1', boxBottomId: 'b1', roleId: 'r1' }),
+    ).rejects.toThrow('O usuário já possui permissão nesta caixa.');
   });
 });

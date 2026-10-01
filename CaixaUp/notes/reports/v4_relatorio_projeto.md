@@ -4,12 +4,12 @@
 
 A suíte de integração foi refatorada em configuração, execução e visualização. O baseline foi medido antes das alterações, e a suíte final cobre os 42 itens I1-I42 do plano, além de 18 testes/casos de borda complementares: passou de 42 para 60 testes e de 6 para 8 arquivos.
 
-| Métrica | Baseline | Resultado final | Threshold configurado |
-| --- | ---: | ---: | ---: |
-| Statements | 90,37% | **99,73%** (373/374) | 98% |
-| Branches | 61,76% | **95,58%** (65/68) | 90% |
-| Functions | 90,83% | **99,08%** (108/109) | 98% |
-| Lines | 90,58% | **99,72%** (360/361) | 98% |
+| Métrica    | Baseline |      Resultado final | Threshold configurado |
+| ---------- | -------: | -------------------: | --------------------: |
+| Statements |   90,37% | **99,73%** (373/374) |                   98% |
+| Branches   |   61,76% |   **95,58%** (65/68) |                   90% |
+| Functions  |   90,83% | **99,08%** (108/109) |                   98% |
+| Lines      |   90,58% | **99,72%** (360/361) |                   98% |
 
 O baseline terminou em 18,8 s com 42 testes. As duas execuções finais terminaram em 11,75 s e 12,78 s (média **12,27 s**) com 60 testes — redução de aproximadamente 35% apesar do aumento de 18 testes. Todas as 8 suítes passaram em ambas as rodadas. Nenhuma regressão foi detectada.
 
@@ -78,17 +78,17 @@ Comparativo observado:
 
 Os cenários I1-I42 foram mantidos e ampliados com testes de tokens expirados/adulterados em rotas protegidas, falhas de middleware, queries por usuário, duplicidades, serviços com banco real, transactions e branches genéricas de controller/error handler.
 
-| Módulo de produção | Baseline S/B/F/L | Final S/B/F/L | Ganho principal |
-| --- | --- | --- | --- |
-| App/HTTP Express | 87,50/100/0/87,50 | 100/100/100/100 | rota não encontrada e composição `app` |
-| Controllers | 85,04/53,84/89,47/84,76 | 99,06/100/97,36/99,04 | defaults e branches não encontrado; categoria própria e falhas de associação |
-| Models | 100/66,66/100/100 | 100/66,66/100/100 | cascatas, associações e persistência real; branch restante no registry de associações |
-| Errors | 83,33/14,28/71,42/83,33 | 100/100/100/100 | todos os construtores e error handler genérico |
-| Middlewares | 89,13/80/100/88,37 | 100/93,33/100/100 | token ausente, malformado, expirado, assinado errado e erro real no `checkRole` |
-| Routes | 100/100/100/100 | 100/100/100/100 | endpoints felizes, erros e 404 |
-| Services | 89/67,85/94,44/90,21 | 100/100/100/100 | branches de validação, transaction/rollback, persistência e cascata |
-| Validations | 96,77/100/50/96,77 | 100/100/100/100 | alvo body default e ObjectId/UUID |
-| Utils | 100/100/100/100 | 100/100/100/100 | `catchAsync` exercitado pelos endpoints reais |
+| Módulo de produção | Baseline S/B/F/L        | Final S/B/F/L         | Ganho principal                                                                       |
+| ------------------ | ----------------------- | --------------------- | ------------------------------------------------------------------------------------- |
+| App/HTTP Express   | 87,50/100/0/87,50       | 100/100/100/100       | rota não encontrada e composição `app`                                                |
+| Controllers        | 85,04/53,84/89,47/84,76 | 99,06/100/97,36/99,04 | defaults e branches não encontrado; categoria própria e falhas de associação          |
+| Models             | 100/66,66/100/100       | 100/66,66/100/100     | cascatas, associações e persistência real; branch restante no registry de associações |
+| Errors             | 83,33/14,28/71,42/83,33 | 100/100/100/100       | todos os construtores e error handler genérico                                        |
+| Middlewares        | 89,13/80/100/88,37      | 100/93,33/100/100     | token ausente, malformado, expirado, assinado errado e erro real no `checkRole`       |
+| Routes             | 100/100/100/100         | 100/100/100/100       | endpoints felizes, erros e 404                                                        |
+| Services           | 89/67,85/94,44/90,21    | 100/100/100/100       | branches de validação, transaction/rollback, persistência e cascata                   |
+| Validations        | 96,77/100/50/96,77      | 100/100/100/100       | alvo body default e ObjectId/UUID                                                     |
+| Utils              | 100/100/100/100         | 100/100/100/100       | `catchAsync` exercitado pelos endpoints reais                                         |
 
 S/B/F/L = statements/branches/functions/lines. Cobertura por arquivo também está navegável no HTML.
 
@@ -126,49 +126,49 @@ Essas lacunas correspondem ao delta entre o resultado e 100%; não são cenário
 
 ## Checklist de cobertura do plano I1-I42
 
-| Item | Status final | Cobertura do módulo | Arquivo | Observação |
-| --- | --- | --- | --- | --- |
-| I1 — Login com credenciais válidas | ✅ Passando | Auth/controller 100%; services 100% | `auth-users.integration.test.ts` | JWT verificado e decodificado; resposta usa `accessToken`. |
-| I2 — Email inexistente no login | ✅ Passando, divergência | Auth 100% | `auth-users.integration.test.ts` | Retorna 404 e revela que o usuário não existe. |
-| I3 — Senha incorreta | ✅ Passando | Auth 100% | `auth-users.integration.test.ts` | Status real 401. |
-| I4 — Body de login inválido | ✅ Passando, divergência | Auth/validation 100% | `auth-users.integration.test.ts` | Joi responde 422 em vez do 400 sugerido. |
-| I5 — Cadastro e hash bcrypt | ✅ Passando, divergência | User service 100%; controllers 99,06% | `auth-users.integration.test.ts` | Hash verificado em DB e na resposta; hash é exposto pelo POST. |
-| I6 — Email duplicado | ✅ Passando | User service 100% | `auth-users.integration.test.ts` | 409 e apenas um registro persistido. |
-| I7 — Campos de usuário ausentes | ✅ Passando, divergência | User validation 100% | `auth-users.integration.test.ts` | Resposta Joi real 422. |
-| I8 — GET users sem password | ✅ Passando | User service/controller 100% | `auth-users.integration.test.ts` | Cada item não contém `password`. |
-| I9 — GET usuário por ID inexistente | ✅ Passando | User service/controller 100% | `auth-users.integration.test.ts` | UUID válido inexistente retorna 404; busca de UUID existente é coberta em teste complementar. |
-| I10 — PUT usuário | ✅ Passando | User service/controller 100% | `auth-users.integration.test.ts` | Persistência confirmada. |
-| I11 — DELETE usuário | ✅ Passando | User service/controller 100% | `auth-users.integration.test.ts` | Registro ausente após resposta 200. |
-| I12 — Categoria sem token | ✅ Passando | Auth middleware 100% | `categories.integration.test.ts` | 401. |
-| I13 — Criar categoria com token | ✅ Passando | Category service 100% | `categories.integration.test.ts` | `userId` vem do token. |
-| I14 — Tipo de categoria inválido | ✅ Passando, divergência | Category validation/service 100% | `categories.integration.test.ts`; `services.integration.test.ts` | HTTP 422; service também exercitado diretamente com DB real. |
-| I15 — Listagem isolada | ✅ Passando | Category service 100% | `categories.integration.test.ts` | Outra conta não aparece. |
-| I16 — GET categoria de outro usuário | ✅ Passando | Category controller 95,23% S / 100% B | `categories.integration.test.ts` | Dono recebe 200; outro usuário recebe 404. |
-| I17 — PUT/DELETE categoria alheia | ✅ Passando | Category service 100% | `categories.integration.test.ts` | Não dono recebe 404; dono altera e remove. |
-| I18 — Criar caixinha | ✅ Passando | BoxBottom controller/service 100% | `boxBottoms.integration.test.ts` | 201, ID e nome corretos. |
-| I19 — Associação OWNER | ✅ Passando | BoxBottom/RUBB services 100% | `boxBottoms.integration.test.ts` | Query direta confirma relação OWNER. |
-| I20 — Caixinha duplicada | ✅ Passando | BoxBottom service 100% | `boxBottoms.integration.test.ts` | 409, sem nova row. |
-| I21 — Falha ao vincular OWNER | ✅ Passando | BoxBottom service 100% | `boxBottoms.integration.test.ts` | Transaction reverte a caixinha; não deixa órfã. |
-| I22 — Dono ou membro vê caixa | ✅ Passando | BoxBottom service 100% | `boxBottoms.integration.test.ts` | Owner/membro e ausência antes da associação verificados. |
-| I23 — Acesso sem vínculo | ✅ Passando | `checkRole` 85,71% branches | `boxBottoms.integration.test.ts` | Resposta real 403. |
-| I24 — PUT caixinha | ✅ Passando | BoxBottom controller/service 100% | `boxBottoms.integration.test.ts` | Owner edita e DB reflete alteração. |
-| I25 — DELETE caixinha/cascade | ✅ Passando | BoxBottom service/model 100% | `boxBottoms.integration.test.ts` | Associação removida por cascata. |
-| I26 — Escrita sem role suficiente | ✅ Passando | `checkRole` 85,71% branches | `boxBottoms.integration.test.ts` | Viewer não edita nem remove. |
-| I27 — POST transação com IDs da URL | ✅ Passando | Transaction controller/service 100% | `transactions.integration.test.ts` | IDs persistidos correspondem aos params reais. |
-| I28 — Box inexistente | ✅ Passando, divergência | Transaction/checkRole 100% statements | `transactions.integration.test.ts` | `checkRole` retorna 403 antes do service (não 404). |
-| I29 — Categoria inexistente | ✅ Passando | Transaction service 100% | `transactions.integration.test.ts` | 404. |
-| I30 — Caixa de outro usuário | ✅ Passando | Transaction/checkRole | `transactions.integration.test.ts` | 403. |
-| I31 — movementType inválido | ✅ Passando, divergência | Transaction service/validation 100% | `transactions.integration.test.ts`; `services.integration.test.ts` | HTTP 422; validação de serviço também testada com banco real. |
-| I32 — Listar transações por caixa | ✅ Passando | Transaction controller/service 100% | `transactions.integration.test.ts` | Endpoint real `/transactions/box-bottom/:boxBottomId`; filtro por caixa verificado. |
-| I33 — PUT/DELETE transação | ✅ Passando | Transaction controller/service 100% | `transactions.integration.test.ts` | Atualização e remoção confirmadas no DB. |
-| I34 — POST nova role | ✅ Passando | Role service/controller 100% | `roles.integration.test.ts` | Criação responde 201. |
-| I35 — Description duplicada | ⚠️ Divergência caracterizada, teste passando | Role service 100% após teste complementar | `roles.integration.test.ts` | Nova role com outro nome e descrição OWNER é aceita; migration sem UNIQUE. |
-| I36 — Associação válida | ✅ Passando | RUBB controller/service 100% | `roles.integration.test.ts` | Owner associa membro no caminho real. |
-| I37 — ID de associação inexistente | ✅ Passando | RUBB service 100% | `roles.integration.test.ts`; `services.integration.test.ts` | Missing user/box/role exercitados; API retorna 404. |
-| I38 — GET associações | ✅ Passando | RUBB service/controller 100% | `roles.integration.test.ts` | Lista inclui vínculo OWNER. |
-| I39 — PUT/DELETE associação | ✅ Passando | RUBB service/controller 100% | `roles.integration.test.ts`; `error-paths.integration.test.ts` | Update/delete reais; atualização de membro inexistente retorna 404. |
-| I40 — DELETE user com recursos | ✅ Passando | User/service/models 100% statements | `cascades.integration.test.ts` | API remove user, caixa, categoria, transaction e associação OWNER. |
-| I41 — DELETE category referenciada | ✅ Passando | Category service/model 100% | `cascades.integration.test.ts` | DELETE HTTP do dono remove transaction por cascade. |
-| I42 — DELETE box referenciada | ✅ Passando | BoxBottom service/model 100% | `cascades.integration.test.ts` | DELETE HTTP do owner remove transaction e associação. |
+| Item                                 | Status final                                | Cobertura do módulo                       | Arquivo                                                            | Observação                                                                                    |
+| ------------------------------------ | ------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| I1 — Login com credenciais válidas   | ✅ Passando                                  | Auth/controller 100%; services 100%       | `auth-users.integration.test.ts`                                   | JWT verificado e decodificado; resposta usa `accessToken`.                                    |
+| I2 — Email inexistente no login      | ✅ Passando, divergência                     | Auth 100%                                 | `auth-users.integration.test.ts`                                   | Retorna 404 e revela que o usuário não existe.                                                |
+| I3 — Senha incorreta                 | ✅ Passando                                  | Auth 100%                                 | `auth-users.integration.test.ts`                                   | Status real 401.                                                                              |
+| I4 — Body de login inválido          | ✅ Passando, divergência                     | Auth/validation 100%                      | `auth-users.integration.test.ts`                                   | Joi responde 422 em vez do 400 sugerido.                                                      |
+| I5 — Cadastro e hash bcrypt          | ✅ Passando, divergência                     | User service 100%; controllers 99,06%     | `auth-users.integration.test.ts`                                   | Hash verificado em DB e na resposta; hash é exposto pelo POST.                                |
+| I6 — Email duplicado                 | ✅ Passando                                  | User service 100%                         | `auth-users.integration.test.ts`                                   | 409 e apenas um registro persistido.                                                          |
+| I7 — Campos de usuário ausentes      | ✅ Passando, divergência                     | User validation 100%                      | `auth-users.integration.test.ts`                                   | Resposta Joi real 422.                                                                        |
+| I8 — GET users sem password          | ✅ Passando                                  | User service/controller 100%              | `auth-users.integration.test.ts`                                   | Cada item não contém `password`.                                                              |
+| I9 — GET usuário por ID inexistente  | ✅ Passando                                  | User service/controller 100%              | `auth-users.integration.test.ts`                                   | UUID válido inexistente retorna 404; busca de UUID existente é coberta em teste complementar. |
+| I10 — PUT usuário                    | ✅ Passando                                  | User service/controller 100%              | `auth-users.integration.test.ts`                                   | Persistência confirmada.                                                                      |
+| I11 — DELETE usuário                 | ✅ Passando                                  | User service/controller 100%              | `auth-users.integration.test.ts`                                   | Registro ausente após resposta 200.                                                           |
+| I12 — Categoria sem token            | ✅ Passando                                  | Auth middleware 100%                      | `categories.integration.test.ts`                                   | 401.                                                                                          |
+| I13 — Criar categoria com token      | ✅ Passando                                  | Category service 100%                     | `categories.integration.test.ts`                                   | `userId` vem do token.                                                                        |
+| I14 — Tipo de categoria inválido     | ✅ Passando, divergência                     | Category validation/service 100%          | `categories.integration.test.ts`; `services.integration.test.ts`   | HTTP 422; service também exercitado diretamente com DB real.                                  |
+| I15 — Listagem isolada               | ✅ Passando                                  | Category service 100%                     | `categories.integration.test.ts`                                   | Outra conta não aparece.                                                                      |
+| I16 — GET categoria de outro usuário | ✅ Passando                                  | Category controller 95,23% S / 100% B     | `categories.integration.test.ts`                                   | Dono recebe 200; outro usuário recebe 404.                                                    |
+| I17 — PUT/DELETE categoria alheia    | ✅ Passando                                  | Category service 100%                     | `categories.integration.test.ts`                                   | Não dono recebe 404; dono altera e remove.                                                    |
+| I18 — Criar caixinha                 | ✅ Passando                                  | BoxBottom controller/service 100%         | `boxBottoms.integration.test.ts`                                   | 201, ID e nome corretos.                                                                      |
+| I19 — Associação OWNER               | ✅ Passando                                  | BoxBottom/RUBB services 100%              | `boxBottoms.integration.test.ts`                                   | Query direta confirma relação OWNER.                                                          |
+| I20 — Caixinha duplicada             | ✅ Passando                                  | BoxBottom service 100%                    | `boxBottoms.integration.test.ts`                                   | 409, sem nova row.                                                                            |
+| I21 — Falha ao vincular OWNER        | ✅ Passando                                  | BoxBottom service 100%                    | `boxBottoms.integration.test.ts`                                   | Transaction reverte a caixinha; não deixa órfã.                                               |
+| I22 — Dono ou membro vê caixa        | ✅ Passando                                  | BoxBottom service 100%                    | `boxBottoms.integration.test.ts`                                   | Owner/membro e ausência antes da associação verificados.                                      |
+| I23 — Acesso sem vínculo             | ✅ Passando                                  | `checkRole` 85,71% branches               | `boxBottoms.integration.test.ts`                                   | Resposta real 403.                                                                            |
+| I24 — PUT caixinha                   | ✅ Passando                                  | BoxBottom controller/service 100%         | `boxBottoms.integration.test.ts`                                   | Owner edita e DB reflete alteração.                                                           |
+| I25 — DELETE caixinha/cascade        | ✅ Passando                                  | BoxBottom service/model 100%              | `boxBottoms.integration.test.ts`                                   | Associação removida por cascata.                                                              |
+| I26 — Escrita sem role suficiente    | ✅ Passando                                  | `checkRole` 85,71% branches               | `boxBottoms.integration.test.ts`                                   | Viewer não edita nem remove.                                                                  |
+| I27 — POST transação com IDs da URL  | ✅ Passando                                  | Transaction controller/service 100%       | `transactions.integration.test.ts`                                 | IDs persistidos correspondem aos params reais.                                                |
+| I28 — Box inexistente                | ✅ Passando, divergência                     | Transaction/checkRole 100% statements     | `transactions.integration.test.ts`                                 | `checkRole` retorna 403 antes do service (não 404).                                           |
+| I29 — Categoria inexistente          | ✅ Passando                                  | Transaction service 100%                  | `transactions.integration.test.ts`                                 | 404.                                                                                          |
+| I30 — Caixa de outro usuário         | ✅ Passando                                  | Transaction/checkRole                     | `transactions.integration.test.ts`                                 | 403.                                                                                          |
+| I31 — movementType inválido          | ✅ Passando, divergência                     | Transaction service/validation 100%       | `transactions.integration.test.ts`; `services.integration.test.ts` | HTTP 422; validação de serviço também testada com banco real.                                 |
+| I32 — Listar transações por caixa    | ✅ Passando                                  | Transaction controller/service 100%       | `transactions.integration.test.ts`                                 | Endpoint real `/transactions/box-bottom/:boxBottomId`; filtro por caixa verificado.           |
+| I33 — PUT/DELETE transação           | ✅ Passando                                  | Transaction controller/service 100%       | `transactions.integration.test.ts`                                 | Atualização e remoção confirmadas no DB.                                                      |
+| I34 — POST nova role                 | ✅ Passando                                  | Role service/controller 100%              | `roles.integration.test.ts`                                        | Criação responde 201.                                                                         |
+| I35 — Description duplicada          | ⚠️ Divergência caracterizada, teste passando | Role service 100% após teste complementar | `roles.integration.test.ts`                                        | Nova role com outro nome e descrição OWNER é aceita; migration sem UNIQUE.                    |
+| I36 — Associação válida              | ✅ Passando                                  | RUBB controller/service 100%              | `roles.integration.test.ts`                                        | Owner associa membro no caminho real.                                                         |
+| I37 — ID de associação inexistente   | ✅ Passando                                  | RUBB service 100%                         | `roles.integration.test.ts`; `services.integration.test.ts`        | Missing user/box/role exercitados; API retorna 404.                                           |
+| I38 — GET associações                | ✅ Passando                                  | RUBB service/controller 100%              | `roles.integration.test.ts`                                        | Lista inclui vínculo OWNER.                                                                   |
+| I39 — PUT/DELETE associação          | ✅ Passando                                  | RUBB service/controller 100%              | `roles.integration.test.ts`; `error-paths.integration.test.ts`     | Update/delete reais; atualização de membro inexistente retorna 404.                           |
+| I40 — DELETE user com recursos       | ✅ Passando                                  | User/service/models 100% statements       | `cascades.integration.test.ts`                                     | API remove user, caixa, categoria, transaction e associação OWNER.                            |
+| I41 — DELETE category referenciada   | ✅ Passando                                  | Category service/model 100%               | `cascades.integration.test.ts`                                     | DELETE HTTP do dono remove transaction por cascade.                                           |
+| I42 — DELETE box referenciada        | ✅ Passando                                  | BoxBottom service/model 100%              | `cascades.integration.test.ts`                                     | DELETE HTTP do owner remove transaction e associação.                                         |
 
 **Cobertura funcional dos itens I1-I42: 100% (todos exercitados).** I35 é o único caso em que o teste passa ao registrar explicitamente uma divergência do comportamento esperado; não há cenário omitido.

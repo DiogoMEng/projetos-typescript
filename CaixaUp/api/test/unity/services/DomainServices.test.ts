@@ -42,12 +42,12 @@ const mockDb = {
     destroy: jest.fn(),
     name: 'Roles',
   },
-  RoleUserBoxBottoms: {
+  Permissions: {
     create: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     destroy: jest.fn(),
-    name: 'RoleUserBoxBottoms',
+    name: 'Permissions',
   },
 };
 
@@ -57,8 +57,10 @@ jest.unstable_mockModule('#models/index.js', () => ({ DB: mockDb }));
 jest.unstable_mockModule('bcryptjs', () => ({ hash: mockHash }));
 
 const { default: UserService } = await import('#services/User.service.js');
-const { default: CategoryService } = await import('#services/Category.service.js');
-const { default: TransactionService } = await import('#services/Transaction.service.js');
+const { default: CategoryService } =
+  await import('#services/Category.service.js');
+const { default: TransactionService } =
+  await import('#services/Transaction.service.js');
 const { default: RoleService } = await import('#services/role.service.js');
 
 describe('Domain services unit tests', () => {
@@ -72,10 +74,16 @@ describe('Domain services unit tests', () => {
     mockDb.Users.create.mockResolvedValue({ userId: 'u1' });
 
     const service = new UserService();
-    await service.create({ name: 'Ana', email: 'ana@test.com', password: '12345678' } as any);
+    await service.create({
+      name: 'Ana',
+      email: 'ana@test.com',
+      password: '12345678',
+    } as any);
 
     expect(mockHash).toHaveBeenCalledWith('12345678', 8);
-    expect(mockDb.Users.create).toHaveBeenCalledWith(expect.objectContaining({ password: 'hashed-password' }));
+    expect(mockDb.Users.create).toHaveBeenCalledWith(
+      expect.objectContaining({ password: 'hashed-password' }),
+    );
   });
 
   it('U23 - getAllUsers nunca inclui o campo password', async () => {
@@ -84,13 +92,17 @@ describe('Domain services unit tests', () => {
     mockDb.Users.findAll.mockResolvedValue(users);
 
     await expect(service.getAllUsers()).resolves.toBe(users);
-    expect(mockDb.Users.findAll).toHaveBeenCalledWith({ attributes: { exclude: ['password'] } });
+    expect(mockDb.Users.findAll).toHaveBeenCalledWith({
+      attributes: { exclude: ['password'] },
+    });
   });
 
   it('U24 - CategoryService rejeita tipo inválido fora do enum', async () => {
     const service = new CategoryService();
 
-    await expect(service.create({ name: 'Salário', type: 'outro', userId: 'u1' } as any)).rejects.toThrow();
+    await expect(
+      service.create({ name: 'Salário', type: 'outro', userId: 'u1' } as any),
+    ).rejects.toThrow();
   });
 
   it('U25 - TransactionService persiste os IDs da transação corretamente', async () => {
@@ -108,23 +120,27 @@ describe('Domain services unit tests', () => {
       description: 'salario',
     } as any);
 
-    expect(mockDb.Transactions.create).toHaveBeenCalledWith(expect.objectContaining({
-      boxBottomId: 'route-box',
-      categoryId: 'route-cat',
-    }));
+    expect(mockDb.Transactions.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        boxBottomId: 'route-box',
+        categoryId: 'route-cat',
+      }),
+    );
   });
 
   it('U26 - TransactionService rejeita movementType inválido', async () => {
     const service = new TransactionService();
 
-    await expect(service.create({
-      boxBottomId: 'route-box',
-      categoryId: 'route-cat',
-      movementType: 'invalid',
-      value: 100,
-      transactionDate: '2024-01-01',
-      description: 'erro',
-    } as any)).rejects.toThrow();
+    await expect(
+      service.create({
+        boxBottomId: 'route-box',
+        categoryId: 'route-cat',
+        movementType: 'invalid',
+        value: 100,
+        transactionDate: '2024-01-01',
+        description: 'erro',
+      } as any),
+    ).rejects.toThrow();
   });
 
   it('U27 - RoleService rejeita criação de role com nome duplicado', async () => {

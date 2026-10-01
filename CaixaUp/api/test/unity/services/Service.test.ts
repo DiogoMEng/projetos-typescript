@@ -87,14 +87,20 @@ describe('Service base class unit tests', () => {
 
     const failingService = new FailingBeforeCreateService(model);
 
-    await expect(failingService.create({ name: 'Ana' })).rejects.toThrow('erro do hook');
+    await expect(failingService.create({ name: 'Ana' })).rejects.toThrow(
+      'erro do hook',
+    );
   });
 
   it('U5 - create() encapsula erros de persistência em uma BadRequestError', async () => {
     model.create.mockRejectedValue(new Error('database down'));
 
-    await expect(service.create({ name: 'Ana' })).rejects.toBeInstanceOf(BadRequestError);
-    await expect(service.create({ name: 'Ana' })).rejects.toThrow('Erro ao criar registro em Users');
+    await expect(service.create({ name: 'Ana' })).rejects.toBeInstanceOf(
+      BadRequestError,
+    );
+    await expect(service.create({ name: 'Ana' })).rejects.toThrow(
+      'Erro ao criar registro em Users',
+    );
   });
 
   it('U5b - create() não deve mascarar a mensagem real de afterCreate', async () => {
@@ -107,7 +113,9 @@ describe('Service base class unit tests', () => {
     const failingService = new FailingAfterCreateService(model);
     model.create.mockResolvedValue({ userId: 'generated-id' });
 
-    await expect(failingService.create({ name: 'Ana' })).rejects.toThrow('falha ao criar vínculo');
+    await expect(failingService.create({ name: 'Ana' })).rejects.toThrow(
+      'falha ao criar vínculo',
+    );
   });
 
   it('U6 - getAll() repassa options para findAll e retorna a lista', async () => {
@@ -122,8 +130,12 @@ describe('Service base class unit tests', () => {
   it('U7 - getById() lança erro quando o registro não é encontrado', async () => {
     model.findByPk.mockResolvedValue(null);
 
-    await expect(service.getById('missing-id')).rejects.toBeInstanceOf(NotFoundError);
-    await expect(service.getById('missing-id')).rejects.toThrow('Users não encontrado');
+    await expect(service.getById('missing-id')).rejects.toBeInstanceOf(
+      NotFoundError,
+    );
+    await expect(service.getById('missing-id')).rejects.toThrow(
+      'Users não encontrado',
+    );
   });
 
   it('U8 - getById() retorna o registro quando encontrado', async () => {
@@ -137,7 +149,10 @@ describe('Service base class unit tests', () => {
     model.update.mockResolvedValue([1]);
 
     await expect(service.update('1', { name: 'Nova' })).resolves.toBe(true);
-    expect(model.update).toHaveBeenCalledWith({ name: 'Nova' }, { where: { userId: '1' } });
+    expect(model.update).toHaveBeenCalledWith(
+      { name: 'Nova' },
+      { where: { userId: '1' } },
+    );
   });
 
   it('U10 - update() retorna false quando nenhum registro é afetado', async () => {
@@ -157,6 +172,8 @@ describe('Service base class unit tests', () => {
     const defaultService = new Service(model as any, 'userId');
     model.create.mockResolvedValue({ userId: 'generated-id' });
 
-    await expect(defaultService.create({ name: 'Ana' } as any)).resolves.toEqual({ userId: 'generated-id' });
+    await expect(
+      defaultService.create({ name: 'Ana' } as any),
+    ).resolves.toEqual({ userId: 'generated-id' });
   });
 });
