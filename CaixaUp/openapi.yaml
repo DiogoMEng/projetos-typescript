@@ -1,0 +1,1090 @@
+openapi: 3.0.3
+info:
+  title: CaixaUp API
+  version: 1.0.0
+  description: >-
+    API REST de gestão financeira colaborativa por caixinhas. Rotas protegidas
+    usam JWT Bearer. Este contrato documenta os caminhos e validações
+    implementados pela API.
+servers:
+  - url: http://localhost:3000
+    description: Desenvolvimento local
+tags:
+  - name: Auth
+  - name: Users
+  - name: Categories
+  - name: Roles
+  - name: BoxBottoms
+  - name: Transactions
+  - name: Permissions
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Autenticar usuário
+      description: Emite um JWT com validade de cinco dias.
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            example:
+              email: user@example.com
+              password: password123
+      responses:
+        "200":
+          description: Autenticação concluída.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessToken"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /users:
+    post:
+      tags: [Users]
+      summary: Cadastrar usuário
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+      responses:
+        "201":
+          description: Usuário criado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags: [Users]
+      summary: Listar usuários
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de usuários.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /users/{userId}:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+    get:
+      tags: [Users]
+      summary: Consultar usuário
+      operationId: getUser
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Usuário encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Users]
+      summary: Atualizar usuário
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUser"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Users]
+      summary: Excluir usuário
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/DeletedRecord"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /categories:
+    post:
+      tags: [Categories]
+      summary: Criar categoria
+      operationId: createCategory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategory"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags: [Categories]
+      summary: Listar categorias do usuário autenticado
+      operationId: listCategories
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de categorias pertencentes ao usuário.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /categories/{categoryId}:
+    parameters:
+      - $ref: "#/components/parameters/CategoryId"
+    get:
+      tags: [Categories]
+      summary: Consultar categoria
+      operationId: getCategory
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Categoria encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Categories]
+      summary: Atualizar categoria
+      operationId: updateCategory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCategory"
+      responses:
+        "200":
+          description: Categoria atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Categories]
+      summary: Excluir categoria
+      operationId: deleteCategory
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Categoria excluída.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /roles:
+    get:
+      tags: [Roles]
+      summary: Listar papéis
+      operationId: listRoles
+      responses:
+        "200":
+          description: Lista de papéis disponíveis.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Role"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /roles/register:
+    post:
+      tags: [Roles]
+      summary: Criar papel
+      operationId: createRole
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRole"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /box-bottoms:
+    post:
+      tags: [BoxBottoms]
+      summary: Criar caixinha
+      operationId: createBoxBottom
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBoxBottom"
+      responses:
+        "201":
+          description: Caixinha criada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedBoxBottom"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags: [BoxBottoms]
+      summary: Listar caixinhas do usuário autenticado
+      operationId: listBoxBottoms
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de caixinhas do usuário.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BoxBottom"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /box-bottoms/{boxBottomId}:
+    parameters:
+      - $ref: "#/components/parameters/BoxBottomId"
+    get:
+      tags: [BoxBottoms]
+      summary: Consultar caixinha
+      operationId: getBoxBottom
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Caixinha encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BoxBottom"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [BoxBottoms]
+      summary: Atualizar caixinha
+      description: Requer papel OWNER ou MANAGER na caixinha.
+      operationId: updateBoxBottom
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBoxBottom"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [BoxBottoms]
+      summary: Excluir caixinha
+      description: Requer papel OWNER na caixinha.
+      operationId: deleteBoxBottom
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/DeletedRecord"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /transactions/box-bottom/{boxBottomId}/category/{categoryId}:
+    parameters:
+      - $ref: "#/components/parameters/BoxBottomId"
+      - $ref: "#/components/parameters/CategoryId"
+    post:
+      tags: [Transactions]
+      summary: Criar transação
+      description: Requer papel OWNER, MANAGER, EDITOR ou CONTRIBUTOR na caixinha.
+      operationId: createTransaction
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransaction"
+      responses:
+        "201":
+          $ref: "#/components/responses/CreatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /transactions/box-bottom/{boxBottomId}:
+    parameters:
+      - $ref: "#/components/parameters/BoxBottomId"
+    get:
+      tags: [Transactions]
+      summary: Listar transações da caixinha
+      description: Requer associação a caixinha com qualquer papel reconhecido.
+      operationId: listTransactions
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de transações da caixinha.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /transactions/{transactionId}/box-bottom/{boxBottomId}:
+    parameters:
+      - $ref: "#/components/parameters/TransactionId"
+      - $ref: "#/components/parameters/BoxBottomId"
+    get:
+      tags: [Transactions]
+      summary: Consultar transação
+      operationId: getTransaction
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Transação encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags: [Transactions]
+      summary: Atualizar transação
+      description: Requer papel OWNER, MANAGER ou EDITOR na caixinha.
+      operationId: updateTransaction
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTransaction"
+      responses:
+        "200":
+          $ref: "#/components/responses/UpdatedRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    delete:
+      tags: [Transactions]
+      summary: Excluir transação
+      description: Requer papel OWNER, MANAGER ou EDITOR na caixinha.
+      operationId: deleteTransaction
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          $ref: "#/components/responses/DeletedRecord"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /permissions/box-bottom/{boxBottomId}/register:
+    parameters:
+      - $ref: "#/components/parameters/BoxBottomId"
+    post:
+      tags: [Permissions]
+      summary: Associar usuário a uma caixinha
+      description: Requer papel OWNER ou MANAGER na caixinha.
+      operationId: createPermission
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePermission"
+      responses:
+        "201":
+          description: Permissão criada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedPermission"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /permissions/box-bottom/{boxBottomId}:
+    parameters:
+      - $ref: "#/components/parameters/BoxBottomId"
+    get:
+      tags: [Permissions]
+      summary: Listar membros da caixinha
+      description: Requer papel OWNER, MANAGER ou ANALYST na caixinha.
+      operationId: listPermissions
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Lista de membros e suas permissões.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Permission"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /permissions/box-bottom/{userId}/{boxBottomId}:
+    parameters:
+      - $ref: "#/components/parameters/UserId"
+      - $ref: "#/components/parameters/BoxBottomId"
+    put:
+      tags: [Permissions]
+      summary: Alterar papel de um membro
+      description: Requer papel OWNER ou MANAGER na caixinha.
+      operationId: updatePermission
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePermission"
+      responses:
+        "200":
+          description: Papel do membro atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /permissions/{permissionId}/box-bottom/{boxBottomId}:
+    parameters:
+      - $ref: "#/components/parameters/PermissionId"
+      - $ref: "#/components/parameters/BoxBottomId"
+    delete:
+      tags: [Permissions]
+      summary: Remover membro de uma caixinha
+      description: Requer papel OWNER ou MANAGER na caixinha.
+      operationId: deletePermission
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Associação removida.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BoxBottomId:
+      name: boxBottomId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CategoryId:
+      name: categoryId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TransactionId:
+      name: transactionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PermissionId:
+      name: permissionId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: Requisição inválida ou falha de validação.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Token ausente, inválido ou credenciais não autorizadas.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Usuário não possui associação ou papel suficiente.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Recurso não encontrado.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: Erro interno do servidor.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    CreatedRecord:
+      description: Registro criado.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreatedRecord"
+    UpdatedRecord:
+      description: Registro atualizado.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdatedRecord"
+    DeletedRecord:
+      description: Registro excluído.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Message"
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items: {}
+      required: [message]
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+    CreatedRecord:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+      required: [message, data]
+    UpdatedRecord:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+      required: [message, data]
+    AccessToken:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT com validade de cinco dias.
+      required: [accessToken]
+    LoginRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required: [email, password]
+    CreateUser:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required: [name, email, password]
+    UpdateUser:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        email:
+          type: string
+          format: email
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [userId, name, email]
+    CreateBoxBottom:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          minLength: 3
+          maxLength: 255
+        targetValue:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+      required: [name, description, targetValue]
+    UpdateBoxBottom:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          minLength: 3
+          maxLength: 255
+        targetValue:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+    CreatedBoxBottom:
+      type: object
+      properties:
+        message:
+          type: string
+        boxBottomId:
+          type: string
+          format: uuid
+      required: [message, boxBottomId]
+    BoxBottom:
+      type: object
+      properties:
+        boxBottomId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        targetValue:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [boxBottomId, userId, name, description, targetValue]
+    CreateCategory:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        type:
+          type: string
+          enum: [receita, despesa]
+      required: [name, type]
+    UpdateCategory:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        type:
+          type: string
+          enum: [receita, despesa]
+    Category:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum: [receita, despesa]
+      required: [categoryId, userId, name, type]
+    CreateRole:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          minLength: 2
+          maxLength: 255
+      required: [name, description]
+    Role:
+      type: object
+      properties:
+        roleId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+      required: [roleId, name, description]
+    CreateTransaction:
+      type: object
+      additionalProperties: false
+      properties:
+        movementType:
+          type: string
+          enum: [inflow, outflow]
+        value:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          multipleOf: 0.01
+        transactionDate:
+          type: string
+          description: Data em formato ISO 8601 aceita pelo validador da API.
+        description:
+          type: string
+          minLength: 3
+          maxLength: 255
+      required: [movementType, value, transactionDate, description]
+    UpdateTransaction:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        movementType:
+          type: string
+          enum: [inflow, outflow]
+        value:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          multipleOf: 0.01
+        transactionDate:
+          type: string
+          description: Data em formato ISO 8601 aceita pelo validador da API.
+        description:
+          type: string
+          minLength: 3
+          maxLength: 255
+    Transaction:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        boxBottomId:
+          type: string
+          format: uuid
+        categoryId:
+          type: string
+          format: uuid
+        movementType:
+          type: string
+          enum: [inflow, outflow]
+        value:
+          type: number
+        transactionDate:
+          type: string
+          format: date-time
+        description:
+          type: string
+      required:
+        - transactionId
+        - boxBottomId
+        - categoryId
+        - movementType
+        - value
+        - transactionDate
+        - description
+    CreatePermission:
+      type: object
+      additionalProperties: false
+      properties:
+        userId:
+          type: string
+          format: uuid
+        roleId:
+          type: string
+          format: uuid
+      required: [userId, roleId]
+    UpdatePermission:
+      type: object
+      additionalProperties: false
+      properties:
+        roleId:
+          type: string
+          format: uuid
+      required: [roleId]
+    CreatedPermission:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Permission"
+      required: [message, data]
+    Permission:
+      type: object
+      properties:
+        permissionId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        boxBottomId:
+          type: string
+          format: uuid
+        roleId:
+          type: string
+          format: uuid
+      required: [permissionId, userId, boxBottomId, roleId]
